@@ -1,0 +1,13 @@
+/.git/
+/.idea/
+/bin/
+/out/
+/lib/
+/decompiled_*/
+*.iml
+.DS_Store
+.classpath
+.project
+/tessdata/
+/tmp/
+/META-INF/
