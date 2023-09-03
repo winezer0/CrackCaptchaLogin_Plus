@@ -1,7 +1,7 @@
 package com.fuping;
 
-import com.teamdev.jxbrowser.chromium.*;
 import com.teamdev.jxbrowser.chromium.Callback;
+import com.teamdev.jxbrowser.chromium.*;
 import com.teamdev.jxbrowser.chromium.dom.By;
 import com.teamdev.jxbrowser.chromium.dom.DOMDocument;
 import com.teamdev.jxbrowser.chromium.dom.internal.InputElement;
@@ -19,10 +19,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -40,6 +40,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import static com.fuping.LoadConfig.CommonUtils.AutoClearAllCookies;
+import static com.fuping.LoadConfig.CommonUtils.getBrowserProxy;
 
 public class FXMLDocumentController implements Initializable {
 
@@ -261,9 +264,10 @@ public class FXMLDocumentController implements Initializable {
 
 
     @FXML
-    private void startcrack(ActionEvent event) {
+    private void startCrack(ActionEvent event) {
         String baseurl = this.id_baseurlinput.getText();
 
+        //输入框检查
         if (baseurl.equals("")) {
             new Alert(Alert.AlertType.NONE, "请输入登录页面URL", new ButtonType[]{ButtonType.CLOSE}).show();
             return;
@@ -272,8 +276,8 @@ public class FXMLDocumentController implements Initializable {
         if (!baseurl.startsWith("http")) {
             baseurl = "http://" + baseurl;
         }
-        String loginurl = baseurl;
 
+        String loginurl = baseurl;
         String username1 = this.username.getText().trim();
         String password1 = this.password.getText().trim();
         String softid1 = this.softid.getText().trim();
@@ -322,43 +326,11 @@ public class FXMLDocumentController implements Initializable {
             String to = timeout1;
             this.primaryStage = new Stage();
             Browser browser = new Browser(BrowserType.LIGHTWEIGHT);
-
             browser.getContext().getNetworkService().setNetworkDelegate(new MyNetworkDelegate(captchaurlinput));
 
-            //从文件读取代理设置
-            //设置代理服务器  OK
-            //https://www.kancloud.cn/neoman/ui/802531
-
-            System.out.println("Check Proxy on click start button , Proxy Settings will checking ... ");
-            try {
-                // FileReader fproxy = null;
-                //  = new FileReader("dict" + File.separator + "proxyConfig.ini");
-                // BufferedReader bfroxy = new BufferedReader(fproxy);
-                BufferedReader bfroxy = null;
-                try {
-                    bfroxy = new BufferedReader(new InputStreamReader(new FileInputStream("dict" + File.separator + "proxyConfig.ini"), "GBK"));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                    System.out.println("proxy set error :"+ e.getMessage());
-                    try {
-                        bfroxy = new BufferedReader(new InputStreamReader(new FileInputStream("dict" + File.separator + "proxyConfig.ini"), "UTF-8"));
-                    } catch (UnsupportedEncodingException unsupportedEncodingException) {
-                        unsupportedEncodingException.printStackTrace();
-                    }
-                }
-
-                String proxy = null;
-                try {
-                    proxy = bfroxy.readLine();
-                    browser.getContext().getProxyService().setProxyConfig(new CustomProxyConfig(proxy));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    System.out.println("proxy set error :"+ e.getMessage());
-                }
-                System.out.println("proxy line is :"+ proxy);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                System.out.println("proxy set error :"+ e.getMessage());
+            //浏览器代理设置  //参考 使用代理-Working with Proxy  https://www.kancloud.cn/neoman/ui/802531
+            if (getBrowserProxy() != null) {
+                browser.getContext().getProxyService().setProxyConfig(getBrowserProxy());
             }
 
             BrowserView view = new BrowserView(browser);
@@ -453,6 +425,9 @@ public class FXMLDocumentController implements Initializable {
                             BufferedReader brpass = new BufferedReader(frpass);
                             String p;
                             while ((p = brpass.readLine()) != null) {
+                                //清理所有Cookie //可能存在问题,比如验证码, 没有Cookie会怎么样呢?
+                                AutoClearAllCookies(browser);
+
                                 String uu = u;
                                 String pp = p;
                                 FXMLDocumentController.this.captchadata = null;
@@ -461,8 +436,9 @@ public class FXMLDocumentController implements Initializable {
                                         FXMLDocumentController.this.id_output.appendText("正在测试用户名:" + uu + " 密码:" + pp + "\r\n");
                                     }
                                 });
-                                try {
 
+
+                                try {
                                     Browser.invokeAndWaitFinishLoadingMainFrame(browser, new Callback<Browser>() {
                                                 public void invoke(Browser browser) {
                                                     browser.loadURL(loginurl);

@@ -1,6 +1,7 @@
 package com.fuping;
 
 
+import com.teamdev.jxbrowser.chromium.ProductInfo;
 import com.teamdev.jxbrowser.chromium.ay;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +13,9 @@ import javafx.stage.Stage;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigInteger;
+
+import static com.fuping.LoadConfig.CommonUtils.print_info;
+import static com.fuping.LoadConfig.ConstString.ProgramTitle;
 
 public class CrackCaptchaLogin extends Application {
 
@@ -38,7 +42,7 @@ public class CrackCaptchaLogin extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(CrackCaptchaLogin.class.getResource("FXMLDocument.fxml"));
         primaryStage.setScene(new Scene(root, 1069, 652));
-        primaryStage.setTitle("小米范验证码登录爆破工具2.2(NOVASEC)");
+        primaryStage.setTitle(ProgramTitle);
         primaryStage.setResizable(false);
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icon.jpg")));
         primaryStage.show();
@@ -46,6 +50,7 @@ public class CrackCaptchaLogin extends Application {
 
 
     public static void main(String[] args) {
+        print_info("JxBrowser version: " + ProductInfo.getVersion());
         launch(args);
     }
 }
