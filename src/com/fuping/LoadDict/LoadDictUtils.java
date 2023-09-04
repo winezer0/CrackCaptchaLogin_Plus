@@ -87,7 +87,12 @@ public class LoadDictUtils {
         return userPassPairs;
     }
 
-    public static LinkedHashSet<UserPassPair> loadUserPassFile(String userNameFile, String passWordFile, boolean pitchforkMode, String userPassFile, String pair_separator, boolean userPassMode){
+    public static LinkedHashSet<UserPassPair> loadUserPassFile(String userNameFile, String passWordFile,
+                                                               boolean pitchforkMode,
+                                                               String userPassFile, String pair_separator,
+                                                               boolean userPassMode,
+                                                               String userMarkInPass
+    ){
         //判断是加载账号密码对字典还是加载账号字典
         LinkedHashSet<UserPassPair> userPassPairs = new LinkedHashSet<>();
 
@@ -111,7 +116,9 @@ public class LoadDictUtils {
             }
         }
 
-        print_info(String.format("Exclude History File Count Num [%s]", userPassPairs.size()));
+        print_info(String.format("Pairs Count After Exclude History [%s]", userPassPairs.size()));
+        replaceUserMarkInPass(userPassPairs, userMarkInPass);
+        print_info(String.format("Pairs Count After Replace Mark Str [%s]", userPassPairs.size()));
         return userPassPairs;
     }
 
@@ -176,9 +183,9 @@ public class LoadDictUtils {
         String usernamePath = "dict" + File.separator + "username.txt";
         String passwordPath = "dict" + File.separator + "password.txt";
         String userPassPath = "dict" + File.separator + "user_pass.txt";
-        loadUserPassFile(usernamePath, passwordPath, false, null,null , false);
-        loadUserPassFile(usernamePath, passwordPath, true, null,null , false);
-        LinkedHashSet<UserPassPair> inputUserPassPairs = loadUserPassFile(null, null, false, userPassPath, ":", true);
+        loadUserPassFile(usernamePath, passwordPath, false, null,null , false, "%USER%");
+        loadUserPassFile(usernamePath, passwordPath, true, null,null , false, "%USER%");
+        LinkedHashSet<UserPassPair> inputUserPassPairs = loadUserPassFile(null, null, false, userPassPath, ":", true, "%USER%");
 
         String hisUserPassPath = "dict" + File.separator + "history.txt";
         LinkedHashSet<UserPassPair> userPassPairs = excludeHistoryUserPassPairs(inputUserPassPairs, hisUserPassPath, ":");

@@ -17,9 +17,10 @@ public class MyConst {
     public static boolean pitchforkMode = false;
 
     public static String userPassFile = null;
+    public static String pairSeparator = null;
     public static boolean userPassMode = false;
 
-    private static String userMarkInPass = "%USER%";
+    public static String userMarkInPass = "%USER%";
 
     public MyConst(){
         ConfigReader configReader = ConfigReader.getInstance();
@@ -33,9 +34,10 @@ public class MyConst {
         passWordFile = configReader.getString("pass_word_file", null);
         pitchforkMode = configReader.isTrue("pitchfork_mode", false);
         //加载账号密码对文件路径
-        userPassMode = configReader.isTrue("user_pass_mode", false);
         userPassFile = configReader.getString("user_pass_file", null);
-        userPassFile = configReader.getString("pair_separator", ":");
+        pairSeparator = configReader.getString("pair_separator", ":");
+        userPassMode = configReader.isTrue("user_pass_mode", false);
+
         userMarkInPass = configReader.getString("user_mark_in_pass", "%USER%");
     }
 

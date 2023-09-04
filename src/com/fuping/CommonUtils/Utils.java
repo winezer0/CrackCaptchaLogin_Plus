@@ -33,7 +33,7 @@ public class Utils {
         if (isNotEmptyFile(absolutePath)){
             try {
                 encoding = detect(new File(absolutePath)).name();
-                print_info(String.format("Detect File Encoding [%s]", encoding));
+                print_info(String.format("Detect File Encoding [%s] From [%s]", encoding, absolutePath));
             } catch (Exception e){
                 encoding = defaultEncode;
             }

@@ -15,8 +15,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 
+import static com.fuping.LoadConfig.MyConst.*;
+import static com.fuping.LoadDict.LoadDictUtils.loadUserPassFile;
 import static com.fuping.PrintLog.PrintLog.print_info;
-import static com.fuping.LoadConfig.MyConst.ProgramVersion;
 
 public class CrackCaptchaLogin extends Application {
 
@@ -55,7 +56,7 @@ public class CrackCaptchaLogin extends Application {
         //初始化配置文件读取
         MyConst.initialize();
         //加载字典文件
-
+        loadUserPassFile(userNameFile, passWordFile, pitchforkMode, userPassFile,pairSeparator , userPassMode, userMarkInPass);
         //launch(args);
     }
 }
