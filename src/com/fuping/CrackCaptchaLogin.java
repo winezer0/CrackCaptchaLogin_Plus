@@ -1,6 +1,7 @@
 package com.fuping;
 
 
+import com.fuping.LoadConfig.MyConst;
 import com.teamdev.jxbrowser.chromium.ProductInfo;
 import com.teamdev.jxbrowser.chromium.ay;
 import javafx.application.Application;
@@ -15,10 +16,11 @@ import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 
 import static com.fuping.LoadConfig.CommonUtils.print_info;
-import static com.fuping.LoadConfig.ConstString.ProgramTitle;
+import static com.fuping.LoadConfig.MyConst.ProgramVersion;
 
 public class CrackCaptchaLogin extends Application {
 
+    //静态代码块 用于破解 jxBrowser 6.15
     static {
         try {
             Field e = ay.class.getDeclaredField("e");
@@ -35,14 +37,13 @@ public class CrackCaptchaLogin extends Application {
         } catch (Exception e1) {
             e1.printStackTrace();
         }
-
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(CrackCaptchaLogin.class.getResource("FXMLDocument.fxml"));
         primaryStage.setScene(new Scene(root, 1069, 652));
-        primaryStage.setTitle(ProgramTitle);
+        primaryStage.setTitle(String.format("小米范验证码登录爆破工具(%s)", ProgramVersion));
         primaryStage.setResizable(false);
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icon.jpg")));
         primaryStage.show();
@@ -50,7 +51,10 @@ public class CrackCaptchaLogin extends Application {
 
 
     public static void main(String[] args) {
-        print_info("JxBrowser version: " + ProductInfo.getVersion());
+        //初始化配置文件读取
+        MyConst.initialize();
+
+        print_info("Current JxBrowser version: " + ProductInfo.getVersion());
         launch(args);
     }
 }

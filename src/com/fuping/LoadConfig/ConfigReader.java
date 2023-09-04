@@ -10,7 +10,7 @@ import static cn.hutool.core.io.FileUtil.touch;
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.LoadConfig.CommonUtils.print_error;
 import static com.fuping.LoadConfig.CommonUtils.print_info;
-import static com.fuping.LoadConfig.ConstString.SettingProxyString;
+import static com.fuping.LoadConfig.MyConst.ProxyParam;
 
 public class ConfigReader {
     private Properties properties;
@@ -57,23 +57,42 @@ public class ConfigReader {
         return getInstance(configFile);
     }
 
-
-    public String getString(String key, String defaultValue) {
-        //先从配置文件获取,没有获取到再从系统参数 -Dxxx= 中获取
-        String property = properties.getProperty(key, null);
-        //没有获取到再从 系统参数中 文件获取
-        return !isEmptyIfStr(property) ? property.trim() : System.getProperty(key, defaultValue);
+    public String getPropString(String paramString) {
+        String paramValue = properties.getProperty(paramString, null);
+        return isEmptyIfStr(paramValue) ? null : paramValue.trim() ;
     }
+
+    public String getSystemString(String paramString) {
+        String paramValue = System.getProperty(paramString, null);
+        return isEmptyIfStr(paramValue) ? null : paramValue.trim() ;
+    }
+
+
+    public String getString(String paramString, String defaultValue) {
+        //先从系统参数中文件获取
+        String ParamValue =  getSystemString(paramString);
+        if (!isEmptyIfStr(ParamValue)){
+            print_info(String.format("Get Param Value From System.Property: %s=%s", paramString, ParamValue));
+            return ParamValue;
+        }
+
+        //再从配置文件中获取
+        ParamValue = getPropString(paramString);
+        if (!isEmptyIfStr(ParamValue)){
+            print_info(String.format("Get Param Value From Config.Property: %s=%s", paramString, ParamValue));
+            return ParamValue;
+        }
+
+        //两种情况都没有获取到,返回默认值
+        return defaultValue;
+    }
+
 
     public boolean isTrue(String key, boolean defaultValue) {
         return "true".equalsIgnoreCase(getString(key, String.valueOf(defaultValue))
         );
     }
 
-    public boolean isFalse(String key, boolean defaultValue) {
-        return "false".equalsIgnoreCase(getString(key, String.valueOf(defaultValue))
-        );
-    }
 
     public int getNumber(String key, int defaultValue) {
         String value =  getString(key, String.valueOf(defaultValue));
@@ -86,7 +105,7 @@ public class ConfigReader {
 
     public static void main(String[] args) {
         ConfigReader configReader = ConfigReader.getInstance();
-        String browserProxy = configReader.getString(SettingProxyString, null);
-        System.out.println(String.format("%s: %s", SettingProxyString, browserProxy));
+        String browserProxy = configReader.getString(ProxyParam, null);
+        System.out.println(String.format("%s: %s", ProxyParam, browserProxy));
     }
 }

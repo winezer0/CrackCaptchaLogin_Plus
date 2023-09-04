@@ -41,8 +41,9 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static com.fuping.LoadConfig.CommonUtils.AutoClearAllCookies;
-import static com.fuping.LoadConfig.CommonUtils.getBrowserProxy;
+import static com.fuping.BrowserUtils.BrowserUitls.AutoClearAllCookies;
+import static com.fuping.BrowserUtils.BrowserUitls.getBrowserProxy;
+import static com.fuping.LoadConfig.MyConst.ProxyValue;
 
 public class FXMLDocumentController implements Initializable {
 
@@ -329,7 +330,7 @@ public class FXMLDocumentController implements Initializable {
             browser.getContext().getNetworkService().setNetworkDelegate(new MyNetworkDelegate(captchaurlinput));
 
             //浏览器代理设置  //参考 使用代理-Working with Proxy  https://www.kancloud.cn/neoman/ui/802531
-            if (getBrowserProxy() != null) {
+            if (ProxyValue != null) {
                 browser.getContext().getProxyService().setProxyConfig(getBrowserProxy());
             }
 
