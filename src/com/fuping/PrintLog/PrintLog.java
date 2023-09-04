@@ -1,6 +1,6 @@
-package com.fuping.LoadConfig;
+package com.fuping.PrintLog;
 
-public class CommonUtils {
+public class PrintLog {
 
     public static final String scrub(String var0) {
         return var0 == null ? null : var0.replace('\u001b', '.');
@@ -13,7 +13,6 @@ public class CommonUtils {
     public static final void print_error(String var0) {
         System.err.println("[-] " + scrub(var0));
     }
-
 
 }
 

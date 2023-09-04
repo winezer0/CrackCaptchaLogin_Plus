@@ -1,5 +1,6 @@
 package com.fuping;
 
+import com.fuping.LoadDict.UserPassPair;
 import com.teamdev.jxbrowser.chromium.Callback;
 import com.teamdev.jxbrowser.chromium.*;
 import com.teamdev.jxbrowser.chromium.dom.By;
@@ -43,7 +44,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import static com.fuping.BrowserUtils.BrowserUitls.AutoClearAllCookies;
 import static com.fuping.BrowserUtils.BrowserUitls.getBrowserProxy;
-import static com.fuping.LoadConfig.MyConst.ProxyValue;
+import static com.fuping.LoadConfig.MyConst.browserProxySetting;
 
 public class FXMLDocumentController implements Initializable {
 
@@ -330,7 +331,7 @@ public class FXMLDocumentController implements Initializable {
             browser.getContext().getNetworkService().setNetworkDelegate(new MyNetworkDelegate(captchaurlinput));
 
             //浏览器代理设置
-            if (ProxyValue != null) {
+            if (browserProxySetting != null) {
                 //参考 使用代理 https://www.kancloud.cn/neoman/ui/802531
                 browser.getContext().getProxyService().setProxyConfig(getBrowserProxy());
             }

@@ -1,4 +1,4 @@
-package com.fuping;
+package com.fuping.LoadDict;
 
 
 public class UserPassPair {

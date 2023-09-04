@@ -1,6 +1,7 @@
 package com.fuping;
 
 
+import com.fuping.LoadDict.UserPassPair;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.TextArea;

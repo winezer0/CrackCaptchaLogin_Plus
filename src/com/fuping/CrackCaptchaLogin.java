@@ -15,7 +15,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 
-import static com.fuping.LoadConfig.CommonUtils.print_info;
+import static com.fuping.PrintLog.PrintLog.print_info;
 import static com.fuping.LoadConfig.MyConst.ProgramVersion;
 
 public class CrackCaptchaLogin extends Application {
@@ -54,6 +54,8 @@ public class CrackCaptchaLogin extends Application {
         print_info("Inner JxBrowser Version: " + ProductInfo.getVersion());
         //初始化配置文件读取
         MyConst.initialize();
-        launch(args);
+        //加载字典文件
+
+        //launch(args);
     }
 }

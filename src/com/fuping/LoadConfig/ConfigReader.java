@@ -6,10 +6,11 @@ import cn.hutool.core.io.FileUtil;
 import java.io.*;
 import java.util.Properties;
 
-import static cn.hutool.core.io.CharsetDetector.detect;
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
-import static com.fuping.LoadConfig.CommonUtils.print_error;
-import static com.fuping.LoadConfig.CommonUtils.print_info;
+import static com.fuping.CommonUtils.Utils.checkFileEncode;
+import static com.fuping.CommonUtils.Utils.getFileStrAbsolutePath;
+import static com.fuping.PrintLog.PrintLog.print_error;
+import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class ConfigReader {
     private final Properties properties;
@@ -19,30 +20,22 @@ public class ConfigReader {
         //properties = new Properties();
         properties = new Properties();
         //获取配置文件的物理路径
-        String absolutePath = new File(configFile).getAbsolutePath();
+        String absolutePath = getFileStrAbsolutePath(configFile);
 
         //判断文件是否存在 //不存在就进行创建
-        if (!FileUtil.exist(absolutePath)) {
+        if (FileUtil.exist(absolutePath)) {
+            print_info(String.format("Found Config File [%s]", absolutePath));
+        }else{
             print_error(String.format("Not Found File [%s]", absolutePath));
             print_info(String.format("Auto Touch File [%s]", FileUtil.touch(absolutePath).getAbsolutePath()));
-        }else{
-            print_info(String.format("Found Config File [%s]", absolutePath));
         }
-        try {
-            //检测文件编码
-            String encoding = "UTF-8";
-            if (FileUtil.isEmpty(new File(absolutePath))){
-                try {
-                    encoding = detect(new File(absolutePath)).name();
-                    print_info(String.format("Detect File Encoding [%s]", encoding));
-                } catch (Exception e){
-                    encoding = "UTF-8";
-                }
-            }
 
+        try {
+            //监测文件编码
+            String checkEncode = checkFileEncode(absolutePath, "UTF-8");
             //读取文件内容
             InputStream input = new FileInputStream(absolutePath);
-            InputStreamReader reader = new InputStreamReader(input, encoding);
+            InputStreamReader reader = new InputStreamReader(input, checkEncode);
             properties.load(reader);
         } catch (IOException e) {
             print_error(String.format("Unable Read File [%s]", absolutePath));

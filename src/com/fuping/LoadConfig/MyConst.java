@@ -7,16 +7,34 @@ public class MyConst {
     //设置配置参数名称
     public static String ProgramVersion = "NOVA SEC 2.2 20230904 00:46" ;
 
-    //配置文件参数名
-    public static String ProxyValue = null;
-    public static boolean ClearCookiesValue = false;
+    //JxBrowser相关配置参数
+    public static String browserProxySetting = null;
+    public static boolean clearCookiesSetting = false;
+
+    //字典文件相关参数
+    public static String userNameFile = null;
+    public static String passWordFile = null;
+    public static boolean pitchforkMode = false;
+
+    public static String userPassFile = null;
+    public static boolean userPassMode = false;
 
     public MyConst(){
         ConfigReader configReader = ConfigReader.getInstance();
         //读取代理配置参数
-        ProxyValue = configReader.getString("browser_proxy", null);
+        browserProxySetting = configReader.getString("browser_proxy", null);
         //是否清理Cookie
-        ClearCookiesValue = configReader.isTrue("clear_cookies", false);
+        clearCookiesSetting = configReader.isTrue("clear_cookies", false);
+
+        //加载账号密码、文件路径
+        userNameFile = configReader.getString("user_name_file", null);
+        passWordFile = configReader.getString("pass_word_file", null);
+        pitchforkMode = configReader.isTrue("pitchfork_mode", false);
+        //加载账号密码对文件路径
+        userPassFile = configReader.getString("user_pass_file", null);
+        userPassFile = configReader.getString("pair_separator", ":");
+        userPassMode = configReader.isTrue("user_pass_mode", false);
+
     }
 
 
