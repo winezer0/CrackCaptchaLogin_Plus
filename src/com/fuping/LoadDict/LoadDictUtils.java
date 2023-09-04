@@ -174,10 +174,10 @@ public class LoadDictUtils {
 
     public static void main(String[] args) {
         String usernamePath = "dict" + File.separator + "username.txt";
-        String passnamePath = "dict" + File.separator + "password.txt";
+        String passwordPath = "dict" + File.separator + "password.txt";
         String userPassPath = "dict" + File.separator + "user_pass.txt";
-        loadUserPassFile(usernamePath, passnamePath, false, null,null , false);
-        loadUserPassFile(usernamePath, passnamePath, true, null,null , false);
+        loadUserPassFile(usernamePath, passwordPath, false, null,null , false);
+        loadUserPassFile(usernamePath, passwordPath, true, null,null , false);
         LinkedHashSet<UserPassPair> inputUserPassPairs = loadUserPassFile(null, null, false, userPassPath, ":", true);
 
         String hisUserPassPath = "dict" + File.separator + "history.txt";
