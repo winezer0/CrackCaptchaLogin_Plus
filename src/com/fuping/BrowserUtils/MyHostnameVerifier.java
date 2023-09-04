@@ -1,4 +1,4 @@
-package com.fuping;
+package com.fuping.BrowserUtils;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;

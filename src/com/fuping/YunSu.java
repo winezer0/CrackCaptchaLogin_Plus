@@ -1,5 +1,6 @@
 package com.fuping;
 
+import com.fuping.BrowserUtils.MyHostnameVerifier;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;

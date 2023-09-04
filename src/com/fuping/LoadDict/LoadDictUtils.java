@@ -3,8 +3,12 @@ package com.fuping.LoadDict;
 import cn.hutool.core.io.FileUtil;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
 
+import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.PrintLog.PrintLog.print_error;
 import static com.fuping.PrintLog.PrintLog.print_info;
@@ -124,7 +128,7 @@ public class LoadDictUtils {
 
     private static LinkedHashSet<UserPassPair> subtractHashSet(LinkedHashSet<UserPassPair> inputUserPassPairs, LinkedHashSet<UserPassPair> hisUserPassPairs) {
         //将两个Hashset相减
-        LinkedHashSet<UserPassPair> userPassPairs = new LinkedHashSet<>(inputUserPassPairs); // 创建一个新的 HashSet 以保留结果
+        LinkedHashSet<UserPassPair> userPassPairs = new LinkedHashSet<>(inputUserPassPairs);
         for (UserPassPair pairToRemove : hisUserPassPairs) {
             userPassPairs.remove(pairToRemove); // 从结果中移除与 set2 中相同的元素
         }
@@ -155,6 +159,19 @@ public class LoadDictUtils {
 
     }
 
+    public static void replaceUserMarkInPass(LinkedHashSet<UserPassPair> userPassPairs, String userMark) {
+        //仅处理存在的情况
+        if(isEmptyIfStr(userMark) || userPassPairs.size()< 1){
+            return;
+        }
+
+        //替换密码中的用户名标记符号为用户名
+        for (UserPassPair pair : userPassPairs) {
+            String newPassword = pair.getPassword().replace(userMark, pair.getUsername());
+            pair.setPassword(newPassword);
+        }
+    }
+
     public static void main(String[] args) {
         String usernamePath = "dict" + File.separator + "username.txt";
         String passnamePath = "dict" + File.separator + "password.txt";
@@ -166,6 +183,9 @@ public class LoadDictUtils {
         String hisUserPassPath = "dict" + File.separator + "history.txt";
         LinkedHashSet<UserPassPair> userPassPairs = excludeHistoryUserPassPairs(inputUserPassPairs, hisUserPassPath, ":");
         showUserPassPairs(userPassPairs);
+
+        //替换用户名元素中的变量
+        replaceUserMarkInPass(userPassPairs, "%USER%");
 
         for (UserPassPair userPassPair: userPassPairs){
             print_info(String.format("writed %s", userPassPair.toString(":")));

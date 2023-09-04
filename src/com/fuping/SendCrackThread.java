@@ -1,6 +1,8 @@
 package com.fuping;
 
 
+import com.fuping.BrowserUtils.MyHostnameVerifier;
+import com.fuping.BrowserUtils.MyTrustStrategy;
 import com.fuping.LoadDict.UserPassPair;
 import javafx.application.Platform;
 import javafx.concurrent.Task;

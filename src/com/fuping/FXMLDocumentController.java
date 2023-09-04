@@ -1,5 +1,6 @@
 package com.fuping;
 
+import com.fuping.BrowserUtils.MyDialogHandler;
 import com.fuping.LoadDict.UserPassPair;
 import com.teamdev.jxbrowser.chromium.Callback;
 import com.teamdev.jxbrowser.chromium.*;
