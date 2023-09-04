@@ -3,9 +3,7 @@ package com.fuping.LoadDict;
 import cn.hutool.core.io.FileUtil;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.PrintLog.PrintLog.print_error;
@@ -18,7 +16,7 @@ public class LoadDictUtils {
         String absolutePath = getFileStrAbsolutePath(filePath);
 
         //判断文件是否存在
-        if (!isNotEmptyFile(absolutePath)){
+        if (isEmptyFile(absolutePath)){
             print_error(String.format("File Not Found Or Read Empty From [%s]", absolutePath));
             System.exit(0);
             return null;
@@ -43,10 +41,10 @@ public class LoadDictUtils {
     }
 
 
-    public static HashSet<UserPassPair> createPitchforkUserPassPairs(List<String> usernames, List<String> passwords) {
+    public static LinkedHashSet<UserPassPair> createPitchforkUserPassPairs(List<String> usernames, List<String> passwords) {
         //创建 pitchfork 模式的用户密码对
         int minSize = Math.min(usernames.size(), passwords.size());
-        HashSet<UserPassPair> userPassPairs = new HashSet<>();
+        LinkedHashSet<UserPassPair> userPassPairs = new LinkedHashSet<>();
         for (int i = 0; i < minSize; i++) {
             String username = usernames.get(i);
             String password = passwords.get(i);
@@ -56,9 +54,9 @@ public class LoadDictUtils {
         return userPassPairs;
     }
 
-    public static HashSet<UserPassPair> createCartesianUserPassPairs(List<String> usernames, List<String> passwords) {
+    public static LinkedHashSet<UserPassPair> createCartesianUserPassPairs(List<String> usernames, List<String> passwords) {
         //创建 笛卡尔积 模式的用户密码对
-        HashSet<UserPassPair> userPassPairs = new HashSet<>();
+        LinkedHashSet<UserPassPair> userPassPairs = new LinkedHashSet<>();
 
         for (String username : usernames) {
             for (String password : passwords) {
@@ -69,12 +67,12 @@ public class LoadDictUtils {
         return userPassPairs;
     }
 
-    public static HashSet<UserPassPair> splitAndCreatUserPassPairs(List<String> stringList, String separator) {
+    public static LinkedHashSet<UserPassPair> splitAndCreatUserPassPairs(List<String> pairStringList, String pair_separator) {
         //拆分账号密钥对文件 到用户名密码字典
-        HashSet<UserPassPair> userPassPairs = new HashSet<>();
-        for (String str : stringList) {
+        LinkedHashSet<UserPassPair> userPassPairs = new LinkedHashSet<>();
+        for (String str : pairStringList) {
             // 使用 split 方法按冒号分割字符串
-            String[] parts = str.split(separator, 2);
+            String[] parts = str.split(pair_separator, 2);
             if (parts.length == 2) {
                 String username = parts[0];
                 String password = parts[1];
@@ -85,9 +83,9 @@ public class LoadDictUtils {
         return userPassPairs;
     }
 
-    public static HashSet<UserPassPair> loadUserPassFile(String userNameFile, String passWordFile, boolean pitchforkMode, String userPassFile, String pair_separator, boolean userPassMode){
+    public static LinkedHashSet<UserPassPair> loadUserPassFile(String userNameFile, String passWordFile, boolean pitchforkMode, String userPassFile, String pair_separator, boolean userPassMode){
         //判断是加载账号密码对字典还是加载账号字典
-        HashSet<UserPassPair> userPassPairs = new HashSet<>();
+        LinkedHashSet<UserPassPair> userPassPairs = new LinkedHashSet<>();
 
         if(userPassMode){
             if (userPassFile != null){
@@ -108,7 +106,53 @@ public class LoadDictUtils {
                 }
             }
         }
+
+        print_info(String.format("Exclude History File Count Num [%s]", userPassPairs.size()));
         return userPassPairs;
+    }
+
+    public static LinkedHashSet<UserPassPair> excludeHistoryUserPassPairs(LinkedHashSet<UserPassPair> inputUserPassPairs, String historyFile, String separator) {
+        LinkedHashSet<UserPassPair> userPassPairs = inputUserPassPairs;
+        //处理历史账号密码对文件
+        if (isNotEmptyFile(historyFile)){
+            List<String> hisUserPassPairList =  readDictFile(historyFile);
+            LinkedHashSet<UserPassPair> hisUserPassPairs = splitAndCreatUserPassPairs(hisUserPassPairList, separator);
+            userPassPairs = subtractHashSet(inputUserPassPairs, hisUserPassPairs);
+        }
+        return userPassPairs;
+    }
+
+    private static LinkedHashSet<UserPassPair> subtractHashSet(LinkedHashSet<UserPassPair> inputUserPassPairs, LinkedHashSet<UserPassPair> hisUserPassPairs) {
+        //将两个Hashset相减
+        LinkedHashSet<UserPassPair> userPassPairs = new LinkedHashSet<>(inputUserPassPairs); // 创建一个新的 HashSet 以保留结果
+        for (UserPassPair pairToRemove : hisUserPassPairs) {
+            userPassPairs.remove(pairToRemove); // 从结果中移除与 set2 中相同的元素
+        }
+        return userPassPairs;
+    }
+
+    public static void showUserPassPairs(LinkedHashSet<UserPassPair> userPassPairs){
+        //循环输出
+        //for (UserPassPair pair : userPassPairs) { System.out.println(pair.getUsername() + " <--> " + pair.getPassword());}
+        // 使用 ArrayList 转换为数组后输出
+        UserPassPair[] userPassArray = userPassPairs.toArray(new UserPassPair[0]);
+        // 使用 Arrays.toString() 输出数组 //需要先重写userPass的toString方法哦
+        System.out.println(Arrays.toString(userPassArray));
+    }
+
+    public static boolean writeUserPassPairToFile(String historyFile, String separator, UserPassPair userPassPair){
+        //写入账号密码对文件到历史记录文件
+        try {
+            historyFile = getFileStrAbsolutePath(historyFile);
+            String content = String.format("%s%s%s",userPassPair.getUsername(), separator, userPassPair.getPassword());
+            // 使用 Hutool 写入字符串到文件
+            FileUtil.appendString(String.format("%s\n", content), historyFile, "UTF-8");
+            return true;
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
     public static void main(String[] args) {
@@ -117,6 +161,15 @@ public class LoadDictUtils {
         String userPassPath = "dict" + File.separator + "user_pass.txt";
         loadUserPassFile(usernamePath, passnamePath, false, null,null , false);
         loadUserPassFile(usernamePath, passnamePath, true, null,null , false);
-        loadUserPassFile(null, null, false, userPassPath,":" , true);
+        LinkedHashSet<UserPassPair> inputUserPassPairs = loadUserPassFile(null, null, false, userPassPath, ":", true);
+
+        String hisUserPassPath = "dict" + File.separator + "history.txt";
+        LinkedHashSet<UserPassPair> userPassPairs = excludeHistoryUserPassPairs(inputUserPassPairs, hisUserPassPath, ":");
+        showUserPassPairs(userPassPairs);
+
+        for (UserPassPair userPassPair: userPassPairs){
+            print_info(String.format("writed %s", userPassPair.toString(":")));
+            writeUserPassPairToFile(hisUserPassPath, ":", userPassPair);
+        }
     }
 }

@@ -16,10 +16,15 @@ public class Utils {
         return new File(fileStr).getAbsolutePath();
     }
 
-    public static boolean isNotEmptyFile(String fileStr) {
+    public static boolean isEmptyFile(String fileStr) {
         //判断文件是否为空
         String absolutePath = getFileStrAbsolutePath(fileStr);
-        return !FileUtil.isEmpty(new File(absolutePath));
+        return FileUtil.isEmpty(new File(absolutePath));
+    }
+
+    public static boolean isNotEmptyFile(String fileStr) {
+        //判断文件是否不为空
+        return !isEmptyFile(fileStr);
     }
 
     public static String checkFileEncode(String absolutePath, String defaultEncode){
@@ -35,4 +40,6 @@ public class Utils {
         }
         return encoding;
     }
+
+
 }
