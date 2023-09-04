@@ -8,18 +8,15 @@ public class MyConst {
     public static String ProgramVersion = "NOVA SEC 2.2 20230904 00:46" ;
 
     //配置文件参数名
-    public static String ProxyParam = "BrowserProxy";
     public static String ProxyValue = null;
-
-    public static String ClearCookiesParam = "ClearCookie";
     public static boolean ClearCookiesValue = false;
 
     public MyConst(){
         ConfigReader configReader = ConfigReader.getInstance();
         //读取代理配置参数
-        ProxyValue = configReader.getString(ProxyParam, null);
+        ProxyValue = configReader.getString("browser_proxy", null);
         //是否清理Cookie
-        ClearCookiesValue = configReader.isTrue(ClearCookiesParam, false);
+        ClearCookiesValue = configReader.isTrue("clear_cookies", false);
     }
 
 

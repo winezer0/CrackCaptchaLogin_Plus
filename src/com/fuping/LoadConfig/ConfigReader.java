@@ -1,19 +1,18 @@
 package com.fuping.LoadConfig;
 
 
+import cn.hutool.core.io.FileUtil;
+
 import java.io.*;
 import java.util.Properties;
 
 import static cn.hutool.core.io.CharsetDetector.detect;
-import static cn.hutool.core.io.FileUtil.exist;
-import static cn.hutool.core.io.FileUtil.touch;
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.LoadConfig.CommonUtils.print_error;
 import static com.fuping.LoadConfig.CommonUtils.print_info;
-import static com.fuping.LoadConfig.MyConst.ProxyParam;
 
 public class ConfigReader {
-    private Properties properties;
+    private final Properties properties;
     private static ConfigReader instance;
 
     public ConfigReader(String configFile) {
@@ -23,14 +22,24 @@ public class ConfigReader {
         String absolutePath = new File(configFile).getAbsolutePath();
 
         //判断文件是否存在 //不存在就进行创建
-        if (!exist(absolutePath)) {
+        if (!FileUtil.exist(absolutePath)) {
             print_error(String.format("Not Found File [%s]", absolutePath));
-            print_info(String.format("Auto Touch File [%s]", touch(absolutePath).getAbsolutePath()));
+            print_info(String.format("Auto Touch File [%s]", FileUtil.touch(absolutePath).getAbsolutePath()));
+        }else{
+            print_info(String.format("Found Config File [%s]", absolutePath));
         }
-
         try {
             //检测文件编码
-            String encoding = detect(new File(absolutePath)).name();
+            String encoding = "UTF-8";
+            if (FileUtil.isEmpty(new File(absolutePath))){
+                try {
+                    encoding = detect(new File(absolutePath)).name();
+                    print_info(String.format("Detect File Encoding [%s]", encoding));
+                } catch (Exception e){
+                    encoding = "UTF-8";
+                }
+            }
+
             //读取文件内容
             InputStream input = new FileInputStream(absolutePath);
             InputStreamReader reader = new InputStreamReader(input, encoding);
@@ -72,18 +81,19 @@ public class ConfigReader {
         //先从系统参数中文件获取
         String ParamValue =  getSystemString(paramString);
         if (!isEmptyIfStr(ParamValue)){
-            print_info(String.format("Get Param Value From System.Property: %s=%s", paramString, ParamValue));
+            print_info(String.format("Get Param Value From [System Property]: %s=%s", paramString, ParamValue));
             return ParamValue;
         }
 
         //再从配置文件中获取
         ParamValue = getPropString(paramString);
         if (!isEmptyIfStr(ParamValue)){
-            print_info(String.format("Get Param Value From Config.Property: %s=%s", paramString, ParamValue));
+            print_info(String.format("Get Param Value From [Config Property]: %s=%s", paramString, ParamValue));
             return ParamValue;
         }
 
         //两种情况都没有获取到,返回默认值
+        print_info(String.format("Get Param Value From [Default Value]: %s=%s", paramString, ParamValue));
         return defaultValue;
     }
 
@@ -105,7 +115,7 @@ public class ConfigReader {
 
     public static void main(String[] args) {
         ConfigReader configReader = ConfigReader.getInstance();
-        String browserProxy = configReader.getString(ProxyParam, null);
-        System.out.println(String.format("%s: %s", ProxyParam, browserProxy));
+        String browserProxy = configReader.getString("browser_proxy", null);
+        System.out.printf("%s: %s%n", "browser_proxy", browserProxy);
     }
 }

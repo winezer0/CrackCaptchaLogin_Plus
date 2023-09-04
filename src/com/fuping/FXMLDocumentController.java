@@ -329,8 +329,9 @@ public class FXMLDocumentController implements Initializable {
             Browser browser = new Browser(BrowserType.LIGHTWEIGHT);
             browser.getContext().getNetworkService().setNetworkDelegate(new MyNetworkDelegate(captchaurlinput));
 
-            //浏览器代理设置  //参考 使用代理-Working with Proxy  https://www.kancloud.cn/neoman/ui/802531
+            //浏览器代理设置
             if (ProxyValue != null) {
+                //参考 使用代理 https://www.kancloud.cn/neoman/ui/802531
                 browser.getContext().getProxyService().setProxyConfig(getBrowserProxy());
             }
 

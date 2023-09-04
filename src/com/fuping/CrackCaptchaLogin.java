@@ -51,10 +51,9 @@ public class CrackCaptchaLogin extends Application {
 
 
     public static void main(String[] args) {
+        print_info("Inner JxBrowser Version: " + ProductInfo.getVersion());
         //初始化配置文件读取
         MyConst.initialize();
-
-        print_info("Current JxBrowser version: " + ProductInfo.getVersion());
         launch(args);
     }
 }
