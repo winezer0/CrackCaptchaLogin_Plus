@@ -6,6 +6,7 @@ import com.teamdev.jxbrowser.chromium.Callback;
 import com.teamdev.jxbrowser.chromium.*;
 import com.teamdev.jxbrowser.chromium.dom.By;
 import com.teamdev.jxbrowser.chromium.dom.DOMDocument;
+import com.teamdev.jxbrowser.chromium.dom.DOMElement;
 import com.teamdev.jxbrowser.chromium.dom.internal.InputElement;
 import com.teamdev.jxbrowser.chromium.events.*;
 import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
@@ -228,10 +229,10 @@ public class FXMLDocumentController implements Initializable {
     private ToggleGroup bro_yzm_group;
 
 
-    private byte[] captchadata;
+    private byte[] captcha_data;
     private Stage primaryStage;
     private LinkedBlockingQueue<UserPassPair> queue;
-    private Boolean isstopsendcrack;
+    private Boolean is_stop_send_crack;
 
     private String yzmText = null;
 
@@ -274,7 +275,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void startCrack(ActionEvent event) {
         //登陆URL检查
-        String base_url = this.id_base_url_input.getText();
+        String base_url = this.id_base_url_input.getText().trim();
         //输入框检查
         if (base_url.equals("")) {
             new Alert(Alert.AlertType.NONE, "请输入登录页面URL", new ButtonType[]{ButtonType.CLOSE}).show();
@@ -286,6 +287,7 @@ public class FXMLDocumentController implements Initializable {
 
         //验证码输入URL
         String captcha_url_input = this.bro_id_captcha_url_input.getText().trim();
+
         //登录按钮内容
         String submit_input = this.bro_id_submit_ele_input.getText().trim();
 
@@ -311,30 +313,41 @@ public class FXMLDocumentController implements Initializable {
                 }
             }
 
-            String bro_user_input = this.bro_id_user_ele_input.getText();
+            //获取用户名框框的内容
+            String bro_user_input = this.bro_id_user_ele_input.getText().trim();
             if (bro_user_input.equals("")) {
                 this.bro_id_user_ele_input.requestFocus();
                 return;
             }
-            String bro_pass_input = this.bro_id_pass_ele_input.getText();
+            //获取密码框元素的内容
+            String bro_pass_input = this.bro_id_pass_ele_input.getText().trim();
             if (bro_pass_input.equals("")) {
                 this.bro_id_pass_ele_input.requestFocus();
                 return;
             }
-            String bro_captcha_input = this.bro_id_captcha_ele_input.getText();
+
+            //获取验证码框元素的内容
+            String bro_captcha_input = this.bro_id_captcha_ele_input.getText().trim();
             if (bro_captcha_input.equals("")) {
                 this.bro_id_user_ele_input.requestFocus();
                 return;
             }
-            String bro_captcha_url_input = this.bro_id_captcha_url_input.getText();
+
+            //获取验证码输入URL的内容
+            String bro_captcha_url_input = this.bro_id_captcha_url_input.getText().trim();
             if (bro_captcha_url_input.equals("")) {
                 this.bro_id_captcha_url_input.requestFocus();
                 return;
             }
 
+            //创建窗口对象 JavaFX的Stage类是JavaFX应用程序创建窗口的基础
             this.primaryStage = new Stage();
+            //创建浏览器对象 轻量级对象
+            //jxBrowser 支持两种渲染模式： BrowserType.LIGHTWEIGHT 轻量级渲染模式， BrowserType.HEAVYWEIGHT重量级渲染模式。
+            //轻量级渲染模式是通过CPU来加速渲染的，速度更快，占用更少的内存。在轻量级渲染模式下，Chromium引擎会在后台使用CPU渲染网页，然后将网页的图像保存在共享内存中。
+            //重量级渲染模式则使用GPU加速渲染，相对于轻量级模式来说，它需要占用更多的内存，但在某些场景下可能会有更好的性能和更高的渲染质量。
+
             Browser browser = new Browser(BrowserType.LIGHTWEIGHT);
-            browser.getContext().getNetworkService().setNetworkDelegate(new MyNetworkDelegate(captcha_url_input));
 
             //浏览器代理设置
             if (browserProxySetting != null) {
@@ -342,15 +355,18 @@ public class FXMLDocumentController implements Initializable {
                 browser.getContext().getProxyService().setProxyConfig(getBrowserProxy());
             }
 
+            //设置JxBrowser中网络委托的对象，以实现对浏览器的网络请求和响应的控制和处理。//不知道有啥用,可能是为了提前加载验证码
+            browser.getContext().getNetworkService().setNetworkDelegate(new MyNetworkDelegate(captcha_url_input));
+
             BrowserView view = new BrowserView(browser);
             BorderPane borderPane = new BorderPane(view);
 
             ProgressIndicator progressIndicator = new ProgressIndicator(1.0D);
             progressIndicator.setPrefHeight(30.0D);
             progressIndicator.setPrefWidth(30.0D);
-            TextField urlinput = new TextField();
-            HBox Hbox = new HBox(2.0D, new Node[]{progressIndicator, urlinput});
-            HBox.setHgrow(urlinput, Priority.ALWAYS);
+            TextField url_input = new TextField();
+            HBox Hbox = new HBox(2.0D, new Node[]{progressIndicator, url_input});
+            HBox.setHgrow(url_input, Priority.ALWAYS);
             Hbox.setAlignment(Pos.CENTER_LEFT);
 
             borderPane.setTop(Hbox);
@@ -358,16 +374,19 @@ public class FXMLDocumentController implements Initializable {
             Scene scene = new Scene(borderPane, 800.0D, 700.0D);
             this.primaryStage.setScene(scene);
             this.primaryStage.setTitle("请勿操作浏览器页面");
+
+            //显示浏览器框
             if (this.bro_id_show_browser.isSelected()) {
                 this.primaryStage.show();
             }
 
+            //添加监听事件
             browser.addLoadListener(new LoadAdapter() {
                 public void onProvisionalLoadingFrame(ProvisionalLoadingEvent event) {
                     if (event.isMainFrame())
                         Platform.runLater(new Runnable() {
                             public void run() {
-                                urlinput.setText(event.getURL());
+                                url_input.setText(event.getURL());
                             }
                         });
                 }
@@ -404,6 +423,7 @@ public class FXMLDocumentController implements Initializable {
                     super.onFinishLoadingFrame(paramFinishLoadingEvent);
                 }
             });
+
             PopupHandler popupHandler = new PopupHandler() {
                 public PopupContainer handlePopup(PopupParams paramPopupParams) {
                     paramPopupParams.getParent().loadURL(paramPopupParams.getURL());
@@ -419,33 +439,41 @@ public class FXMLDocumentController implements Initializable {
             });
             browser.setDialogHandler(new MyDialogHandler(view));
 
+            //开启一个新的线程
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        Integer interval = (Integer) FXMLDocumentController.this.bro_id_req_interval.getValue();
+
+                        //请求间隔设置
+                        Integer req_interval = FXMLDocumentController.this.bro_id_req_interval.getValue();
+                        //设置默认的请求间隔
                         if (FXMLDocumentController.this.bro_id_req_interval.getValue() == null) {
-                            interval = Integer.valueOf(1500);
+                            req_interval = Integer.valueOf(1500);
                         }
-                        FileReader fruser = new FileReader("dict" + File.separator + "username.txt");
-                        BufferedReader bruser = new BufferedReader(fruser);
-                        String u;
-                        while ((u = bruser.readLine()) != null) {
-                            FileReader frpass = new FileReader("dict" + File.separator + "password.txt");
-                            BufferedReader brpass = new BufferedReader(frpass);
-                            String p;
-                            while ((p = brpass.readLine()) != null) {
+
+                        //读取账号密码字典
+                        BufferedReader userBufferedReader = new BufferedReader(new FileReader("dict" + File.separator + "username.txt"));
+                        String a_user;
+                        while ((a_user = userBufferedReader.readLine()) != null) {
+                            BufferedReader passBufferedReader = new BufferedReader(new FileReader("dict" + File.separator + "password.txt"));
+                            String a_pass;
+                            while ((a_pass = passBufferedReader.readLine()) != null) {
+
                                 //清理所有Cookie //可能存在问题,比如验证码, 没有Cookie会怎么样呢?
                                 AutoClearAllCookies(browser);
 
-                                String uu = u;
-                                String pp = p;
-                                FXMLDocumentController.this.captchadata = null;
+                                //清空上一次记录的的验证码数据
+                                FXMLDocumentController.this.captcha_data = null;
+
+                                String a_user_inner = a_user;
+                                String a_pass_inner = a_pass;
+
+                                //输出当前即将测试的数据
                                 Platform.runLater(new Runnable() {
                                     public void run() {
-                                        FXMLDocumentController.this.bro_id_output.appendText("正在测试用户名:" + uu + " 密码:" + pp + "\r\n");
+                                        FXMLDocumentController.this.bro_id_output.appendText("即将测试用户名:" + a_user_inner + " 密码:" + a_pass_inner + "\r\n");
                                     }
                                 });
-
 
                                 try {
                                     Browser.invokeAndWaitFinishLoadingMainFrame(browser, new Callback<Browser>() {
@@ -454,10 +482,10 @@ public class FXMLDocumentController implements Initializable {
                                                 }
                                             }
                                             , 120);
-                                } catch (IllegalStateException e) {
-                                    String m = e.getMessage();
-                                    System.out.println(m);
-                                    if (m.contains("Channel is already closed")) {
+                                } catch (IllegalStateException illegalStateException) {
+                                    String illegalStateExceptionMessage = illegalStateException.getMessage();
+                                    System.out.println(illegalStateExceptionMessage);
+                                    if (illegalStateExceptionMessage.contains("Channel is already closed")) {
                                         Platform.runLater(new Runnable() {
                                             public void run() {
                                                 FXMLDocumentController.this.bro_id_output.appendText("停止测试\n");
@@ -465,8 +493,8 @@ public class FXMLDocumentController implements Initializable {
                                         });
                                         break;
                                     }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                } catch (Exception exception) {
+                                    exception.printStackTrace();
                                     Platform.runLater(new Runnable() {
                                         public void run() {
                                             FXMLDocumentController.this.bro_id_output.appendText("访问超时\r\n");
@@ -474,59 +502,67 @@ public class FXMLDocumentController implements Initializable {
                                     });
                                     continue;
                                 }
-                                if (interval.intValue() != 0) {
-                                    Thread.sleep(interval.intValue() / 2);
+
+                                //进行线程延迟
+                                if (req_interval.intValue() > 0) {
+                                    Thread.sleep(req_interval / 2);
                                 }
+
+                                //加载URl文档
                                 DOMDocument doc = browser.getDocument();
 
                                 try {
+                                    //输入用户名元素 //需要添加输入XPath|CSS元素
+                                    InputElement userElement;
                                     if (FXMLDocumentController.this.bro_id_user_by_id.isSelected()) {
-                                        InputElement ele = (InputElement) doc.findElement(By.id(bro_user_input));
-                                        ele.setValue(u);
+                                        userElement = (InputElement) doc.findElement(By.id(bro_user_input));
                                     } else if (FXMLDocumentController.this.bro_id_user_by_name.isSelected()) {
-                                        InputElement ele = (InputElement) doc.findElement(By.name(bro_user_input));
-                                        ele.setValue(u);
+                                        userElement = (InputElement) doc.findElement(By.name(bro_user_input));
                                     } else {
-                                        InputElement ele = (InputElement) doc.findElement(By.className(bro_user_input));
-                                        ele.setValue(u);
+                                        userElement = (InputElement) doc.findElement(By.className(bro_user_input));
                                     }
+                                    userElement.setValue(a_user);
 
+                                    //输入密码元素 //需要添加输入XPath|CSS元素
+                                    InputElement passElement;
                                     if (FXMLDocumentController.this.bro_id_pass_by_id.isSelected()) {
-                                        InputElement ele = (InputElement) doc.findElement(By.id(bro_pass_input));
-                                        ele.setValue(p);
+                                        passElement = (InputElement) doc.findElement(By.id(bro_pass_input));
+                                        passElement.setValue(a_pass);
                                     } else if (FXMLDocumentController.this.bro_id_pass_by_name.isSelected()) {
-                                        InputElement ele = (InputElement) doc.findElement(By.name(bro_pass_input));
-                                        ele.setValue(p);
+                                        passElement = (InputElement) doc.findElement(By.name(bro_pass_input));
+                                        passElement.setValue(a_pass);
                                     } else {
-                                        InputElement ele = (InputElement) doc.findElement(By.className(bro_pass_input));
-                                        ele.setValue(p);
+                                        passElement = (InputElement) doc.findElement(By.className(bro_pass_input));
                                     }
-                                } catch (IllegalStateException e) {
-                                    String m = e.getMessage();
+                                    passElement.setValue(a_pass);
+                                } catch (IllegalStateException illegalStateException) {
+                                    String m = illegalStateException.getMessage();
                                     System.out.println(m);
                                     if (m.contains("Channel is already closed")) {
                                         Platform.runLater(new Runnable() {
                                             public void run() {
-                                                FXMLDocumentController.this.bro_id_output.appendText("IllegalStateException异常,无法获取用户名或密码输入框按钮,停止测试\n");
+                                                FXMLDocumentController.this.bro_id_output.appendText("IllegalStateException 异常,无法获取用户名或密码输入框按钮,停止测试\n");
                                             }
                                         });
                                         break;
                                     }
-                                    e.printStackTrace();
-                                } catch (NullPointerException e) {
+                                    illegalStateException.printStackTrace();
+                                } catch (NullPointerException nullPointerException) {
                                     Platform.runLater(new Runnable() {
                                         public void run() {
                                             FXMLDocumentController.this.bro_id_output.appendText("识别用户名密码输入框失败\n");
                                         }
                                     });
                                     continue;
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                } catch (Exception exception) {
+                                    exception.printStackTrace();
                                     continue;
                                 }
 
+                                //获取验证码并进行识别
                                 if (FXMLDocumentController.this.bro_id_have_captcha.isSelected()) {
-                                    if (FXMLDocumentController.this.captchadata == null) {
+                                    //captcha_data 在
+                                    if (FXMLDocumentController.this.captcha_data == null) {
                                         Platform.runLater(new Runnable() {
                                             public void run() {
                                                 FXMLDocumentController.this.bro_id_output.appendText("获取验证码失败\n");
@@ -535,51 +571,46 @@ public class FXMLDocumentController implements Initializable {
                                         continue;
                                     }
 
-                                    /*
-                                    验证码识别
-                                    * */
-
+                                    //验证码识别 //云打码识别
                                     if (bro_yzm_yunRadioBtn.isSelected()) {
-                                        String result = YunSu.createByPost(ys_username, ys_password, ys_type_id, ys_query_timeout2, ys_soft_id,
-                                                ys_soft_key, FXMLDocumentController.this.captchadata);
+                                        String result = YunSu.createByPost(ys_username, ys_password, ys_type_id, ys_query_timeout2, ys_soft_id, ys_soft_key, FXMLDocumentController.this.captcha_data);
                                         System.out.println("查询结果:" + result);
-
-//                                        int k = result.indexOf("|");
+                                        // int k = result.indexOf("|");
                                         if (result.contains("Error_Code")) {
                                             Platform.runLater(new Runnable() {
                                                 public void run() {
                                                     FXMLDocumentController.this.bro_id_output.appendText("获取验证码失败\n");
                                                 }
                                             });
-//                                            continue;
+                                            //continue;
                                             break;
                                         }
                                         yzmText = YunSu.getResult(result);
                                     }
+                                    //验证码识别//本地识别
                                     if (bro_yzm_localRadioBtn.isSelected()) {
-
                                         yzmText = YzmToText.getCode();
-
                                     }
 
-
+                                    //输出已经识别的验证码记录
                                     Platform.runLater(new Runnable() {
                                         public void run() {
                                             FXMLDocumentController.this.bro_id_output.appendText("已识别验证码为:" + yzmText);
                                         }
                                     });
+
+                                    //定位验证码输入框并填写验证码
                                     try {
+                                        InputElement yzmElement;
                                         if (FXMLDocumentController.this.bro_id_captcha_by_id.isSelected()) {
-                                            InputElement ele = (InputElement) doc.findElement(By.id(bro_captcha_input));
-                                            ele.setValue(yzmText);
+                                            yzmElement = (InputElement) doc.findElement(By.id(bro_captcha_input));
                                         } else if (FXMLDocumentController.this.bro_id_captcha_by_name.isSelected()) {
-                                            InputElement ele = (InputElement) doc.findElement(By.name(bro_captcha_input));
-                                            ele.setValue(yzmText);
+                                            yzmElement = (InputElement) doc.findElement(By.name(bro_captcha_input));
                                         } else {
-                                            InputElement ele = (InputElement) doc
-                                                    .findElement(By.className(bro_captcha_input));
-                                            ele.setValue(yzmText);
+                                            yzmElement = (InputElement) doc.findElement(By.className(bro_captcha_input));
                                         }
+                                        yzmElement.setValue(yzmText);
+
                                     } catch (IllegalStateException e) {
                                         Platform.runLater(new Runnable() {
                                             public void run() {
@@ -589,9 +620,13 @@ public class FXMLDocumentController implements Initializable {
                                     }
                                 }
 
+                                //定位提交按钮, 并填写按钮
                                 try {
-                                    if (FXMLDocumentController.this.bro_id_submit_by_id.isSelected())
-                                        doc.findElement(By.id(submit_input)).click();
+                                    DOMElement submitElement;
+                                    if (FXMLDocumentController.this.bro_id_submit_by_id.isSelected()){
+                                        submitElement = doc.findElement(By.id(submit_input));
+                                        submitElement.click();
+                                    }
                                     else if (FXMLDocumentController.this.bro_id_submit_by_name.isSelected())
                                         doc.findElement(By.name(submit_input)).click();
                                     else
@@ -604,21 +639,24 @@ public class FXMLDocumentController implements Initializable {
                                     }
                                 }
 
-
                                 browser.executeCommand(EditorCommand.INSERT_NEW_LINE);
-                                if (interval.intValue() != 0) {
-                                    Thread.sleep(interval.intValue());
+                                if (req_interval.intValue() != 0) {
+                                    Thread.sleep(req_interval.intValue());
                                 }
                                 Platform.runLater(new Runnable() {
                                     public void run() {
-
-                                        FXMLDocumentController.this.bro_id_output.appendText("点击登录后当前URL:"  +  browser.getURL()  + "---标题:" + browser.getTitle() + "---长度:" +  browser.getHTML().length() + "\r\n\r\n");
+                                        String cur_url = browser.getURL();
+                                        String cur_title = browser.getTitle();
+                                        int cur_length = browser.getHTML().length();
+                                        FXMLDocumentController.this.bro_id_output.appendText(
+                                                String.format("点击登录 当前URL:[%s] 网页标题:[%s] 内容长度:[%s]\r\n\r\n", cur_url,cur_title,cur_length)
+                                        );
                                     }
                                 });
                             }
-                            brpass.close();
+                            passBufferedReader.close();
                         }
-                        bruser.close();
+                        userBufferedReader.close();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -634,7 +672,7 @@ public class FXMLDocumentController implements Initializable {
             }
             new Thread(new Runnable() {
                 public void run() {
-                    FXMLDocumentController.this.isstopsendcrack = Boolean.valueOf(false);
+                    FXMLDocumentController.this.is_stop_send_crack = Boolean.valueOf(false);
 
                     if (FXMLDocumentController.this.queue == null)
                         FXMLDocumentController.this.queue = new LinkedBlockingQueue(8100);
@@ -676,7 +714,7 @@ public class FXMLDocumentController implements Initializable {
                             BufferedReader brpass = new BufferedReader(frpass);
                             String password;
                             while ((password = brpass.readLine()) != null) {
-                                if (FXMLDocumentController.this.isstopsendcrack.booleanValue()) {
+                                if (FXMLDocumentController.this.is_stop_send_crack.booleanValue()) {
                                     FXMLDocumentController.this.queue.clear();
                                     bruser.close();
                                     brpass.close();
@@ -699,7 +737,7 @@ public class FXMLDocumentController implements Initializable {
                     }
                     try {
                         while (cdl.getCount() > 0L) {
-                            if (FXMLDocumentController.this.isstopsendcrack.booleanValue()) {
+                            if (FXMLDocumentController.this.is_stop_send_crack.booleanValue()) {
                                 FXMLDocumentController.this.queue.clear();
                                 break;
                             }
@@ -831,7 +869,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void nor_stop_send_crack(ActionEvent event) {
-        this.isstopsendcrack = Boolean.valueOf(true);
+        this.is_stop_send_crack = Boolean.valueOf(true);
     }
 
     @FXML
@@ -861,13 +899,13 @@ public class FXMLDocumentController implements Initializable {
         private long currentid;
         private ByteArrayBuffer cap = new ByteArrayBuffer(4096);
 
-        public MyNetworkDelegate(String captchaurl) {
-            this.captchaurl = captchaurl;
-            int i = captchaurl.indexOf("?");
+        public MyNetworkDelegate(String captcha_url) {
+            this.captchaurl = captcha_url;
+            int i = captcha_url.indexOf("?");
             if (i != -1)
-                this.url = captchaurl.substring(0, i);
+                this.url = captcha_url.substring(0, i);
             else
-                this.url = captchaurl;
+                this.url = captcha_url;
         }
 
         public void onBeforeSendHeaders(BeforeSendHeadersParams paramBeforeSendHeadersParams) {
@@ -879,24 +917,24 @@ public class FXMLDocumentController implements Initializable {
         }
 
         public void onDataReceived(DataReceivedParams paramDataReceivedParams) {
-            String currenturl = paramDataReceivedParams.getURL();
+            String current_url = paramDataReceivedParams.getURL();
             FileOutputStream fos = null;
-            if (currenturl.startsWith(this.url)) {
+            if (current_url.startsWith(this.url)) {
                 try {
-                    System.out.println("已获取验证码数据:" + currenturl);
-                    FXMLDocumentController.this.captchadata = paramDataReceivedParams.getData();
-                    this.cap.append(FXMLDocumentController.this.captchadata, 0, FXMLDocumentController.this.captchadata.length);
-                    FXMLDocumentController.this.captchadata = this.cap.toByteArray();
+                    System.out.println("已获取验证码数据:" + current_url);
+                    FXMLDocumentController.this.captcha_data = paramDataReceivedParams.getData();
+                    this.cap.append(FXMLDocumentController.this.captcha_data, 0, FXMLDocumentController.this.captcha_data.length);
+                    FXMLDocumentController.this.captcha_data = this.cap.toByteArray();
 
                     fos = new FileOutputStream(new File("tmp\\yzm.jpg"));
-                    fos.write(FXMLDocumentController.this.captchadata);
-//                    ImageIO.write(ImageIO.read(new File("tmp\\yzm.jpg")),"JPG",new File("tmp\\yzm2.jpg"));
+                    fos.write(FXMLDocumentController.this.captcha_data);
+                    //ImageIO.write(ImageIO.read(new File("tmp\\yzm.jpg")),"JPG",new File("tmp\\yzm2.jpg"));
 
                     fos.flush();
                     fos.close();
 
 
-//                    System.out.println("验证码数据:" + new String(FXMLDocumentController.this.captchadata).substring(0, 100));
+                    //System.out.println("验证码数据:" + new String(FXMLDocumentController.this.captchadata).substring(0, 100));
                     return;
                 } catch (Exception e) {
                     e.printStackTrace();
