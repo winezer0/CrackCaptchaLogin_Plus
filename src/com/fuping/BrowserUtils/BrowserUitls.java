@@ -52,7 +52,7 @@ public class BrowserUitls {
         }
     }
 
-    public InputElement findElementByAny(DOMDocument doc, String elementValue, boolean useId, boolean useName, boolean useClass, boolean useCss, boolean useXpath) {
+    public static InputElement findElementByAny(DOMDocument doc, String elementValue, boolean useId, boolean useName, boolean useClass, boolean useCss, boolean useXpath) {
         //输入用户名元素 //需要添加输入XPath|CSS元素
         InputElement userElement = null;
         if (useId) {

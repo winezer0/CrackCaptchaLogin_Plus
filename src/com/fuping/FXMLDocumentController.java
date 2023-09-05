@@ -6,7 +6,6 @@ import com.teamdev.jxbrowser.chromium.Callback;
 import com.teamdev.jxbrowser.chromium.*;
 import com.teamdev.jxbrowser.chromium.dom.By;
 import com.teamdev.jxbrowser.chromium.dom.DOMDocument;
-import com.teamdev.jxbrowser.chromium.dom.DOMElement;
 import com.teamdev.jxbrowser.chromium.dom.internal.InputElement;
 import com.teamdev.jxbrowser.chromium.events.*;
 import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
@@ -165,13 +164,37 @@ public class FXMLDocumentController implements Initializable {
     private RadioButton bro_id_user_by_class;
 
     @FXML
+    private RadioButton bro_id_user_by_css;
+
+    @FXML
+    private RadioButton bro_id_user_by_xpath;
+
+    @FXML
     private RadioButton bro_id_pass_by_class;
+
+    @FXML
+    private RadioButton bro_id_pass_by_css;
+
+    @FXML
+    private RadioButton bro_id_pass_by_xpath;
 
     @FXML
     private RadioButton bro_id_submit_by_class;
 
     @FXML
+    private RadioButton bro_id_submit_by_css;
+
+    @FXML
+    private RadioButton bro_id_submit_by_xpath;
+
+    @FXML
     private RadioButton bro_id_captcha_by_class;
+
+    @FXML
+    private RadioButton bro_id_captcha_by_css;
+
+    @FXML
+    private RadioButton bro_id_captcha_by_xpath;
 
     @FXML
     private CheckBox bro_id_show_browser;
@@ -232,7 +255,7 @@ public class FXMLDocumentController implements Initializable {
     private LinkedBlockingQueue<UserPassPair> queue;
     private Boolean is_stop_send_crack;
 
-    private String yzmText = null;
+    private String captchaText = null;
 
     private List<Cookie> cookies = null;
 
@@ -291,7 +314,7 @@ public class FXMLDocumentController implements Initializable {
         String captcha_url_input = this.bro_id_captcha_url_input.getText().trim();
 
         //登录按钮内容
-        String submit_input = this.bro_id_submit_ele_input.getText().trim();
+        String bro_submit_input = this.bro_id_submit_ele_input.getText().trim();
 
         //获取云速认证信息
         String ys_username = this.ys_username.getText().trim();
@@ -428,20 +451,19 @@ public class FXMLDocumentController implements Initializable {
                             }
 
                             //加载URl文档
-                            DOMDocument doc = browser.getDocument();
+                            DOMDocument document = browser.getDocument();
 
-                            String currentModule;
-                            currentModule = "定位账号输入框元素";
                             try {
-                                //输入用户名元素 //需要添加输入XPath|CSS元素
-                                InputElement userElement;
-                                if (FXMLDocumentController.this.bro_id_user_by_id.isSelected()) {
-                                    userElement = (InputElement) doc.findElement(By.id(bro_user_input));
-                                } else if (FXMLDocumentController.this.bro_id_user_by_name.isSelected()) {
-                                    userElement = (InputElement) doc.findElement(By.name(bro_user_input));
-                                } else {
-                                    userElement = (InputElement) doc.findElement(By.className(bro_user_input));
-                                }
+                                //输入用户名元素
+                               InputElement userElement = findElementByAny(document,
+                                       bro_user_input,
+                                       FXMLDocumentController.this.bro_id_user_by_id.isSelected(),
+                                       FXMLDocumentController.this.bro_id_user_by_name.isSelected(),
+                                       FXMLDocumentController.this.bro_id_user_by_class.isSelected(),
+                                       FXMLDocumentController.this.bro_id_user_by_css.isSelected(),
+                                       FXMLDocumentController.this.bro_id_user_by_xpath.isSelected()
+                                );
+
                                 userElement.setValue(userPassPair.getUsername());
                             } catch (IllegalStateException illegalStateException) {
                                 String m = illegalStateException.getMessage();
@@ -449,37 +471,35 @@ public class FXMLDocumentController implements Initializable {
                                 if (m.contains("Channel is already closed")) {
                                     Platform.runLater(new Runnable() {
                                         public void run() {
-                                            FXMLDocumentController.this.bro_id_output.appendText("IllegalStateException 异常,无法获取用户名或密码输入框按钮,停止测试\n");
+                                            FXMLDocumentController.this.bro_id_output.appendText("IllegalStateException 异常,浏览器已经关闭, 停止测试\n");
                                         }
                                     });
                                     break;
                                 }
                                 illegalStateException.printStackTrace();
                             } catch (NullPointerException nullPointerException) {
-                                String finalCurrentModule = currentModule;
                                 Platform.runLater(new Runnable() {
                                     public void run() {
-                                        FXMLDocumentController.this.bro_id_output.appendText(String.format("%s 失败\n", finalCurrentModule));
+                                        FXMLDocumentController.this.bro_id_output.appendText("nullPointerException 异常, 定位元素失败,停止测试\n");
                                     }
                                 });
-                                continue;
+                                break; //continue;
                             } catch (Exception exception) {
                                 exception.printStackTrace();
                                 continue;
                             }
 
 
-                            currentModule = "定位密码输入框元素";
                             try {
                                 //输入密码元素 //需要添加输入XPath|CSS元素
-                                InputElement passElement;
-                                if (FXMLDocumentController.this.bro_id_pass_by_id.isSelected()) {
-                                    passElement = (InputElement) doc.findElement(By.id(bro_pass_input));
-                                } else if (FXMLDocumentController.this.bro_id_pass_by_name.isSelected()) {
-                                    passElement = (InputElement) doc.findElement(By.name(bro_pass_input));
-                                } else {
-                                    passElement = (InputElement) doc.findElement(By.className(bro_pass_input));
-                                }
+                                InputElement passElement = findElementByAny(document,
+                                        bro_pass_input,
+                                        FXMLDocumentController.this.bro_id_pass_by_id.isSelected(),
+                                        FXMLDocumentController.this.bro_id_pass_by_name.isSelected(),
+                                        FXMLDocumentController.this.bro_id_pass_by_class.isSelected(),
+                                        FXMLDocumentController.this.bro_id_pass_by_css.isSelected(),
+                                        FXMLDocumentController.this.bro_id_pass_by_xpath.isSelected()
+                                );
                                 passElement.setValue(userPassPair.getPassword());
                             } catch (IllegalStateException illegalStateException) {
                                 String m = illegalStateException.getMessage();
@@ -487,20 +507,19 @@ public class FXMLDocumentController implements Initializable {
                                 if (m.contains("Channel is already closed")) {
                                     Platform.runLater(new Runnable() {
                                         public void run() {
-                                            FXMLDocumentController.this.bro_id_output.appendText("IllegalStateException 异常,无法获取用户名或密码输入框按钮,停止测试\n");
+                                            FXMLDocumentController.this.bro_id_output.appendText("IllegalStateException 异常,浏览器已经关闭, 停止测试\n");
                                         }
                                     });
                                     break;
                                 }
                                 illegalStateException.printStackTrace();
                             } catch (NullPointerException nullPointerException) {
-                                String finalCurrentModule = currentModule;
                                 Platform.runLater(new Runnable() {
                                     public void run() {
-                                        FXMLDocumentController.this.bro_id_output.appendText(String.format("%s 失败\n", finalCurrentModule));
+                                        FXMLDocumentController.this.bro_id_output.appendText("nullPointerException 异常, 定位元素失败,停止测试\n");
                                     }
                                 });
-                                continue;
+                                break; //continue;
                             } catch (Exception exception) {
                                 exception.printStackTrace();
                                 continue;
@@ -533,31 +552,32 @@ public class FXMLDocumentController implements Initializable {
                                         //continue;
                                         break;
                                     }
-                                    yzmText = YunSu.getResult(result);
+                                    captchaText = YunSu.getResult(result);
                                 }
                                 //验证码识别//本地识别
                                 if (bro_yzm_localRadioBtn.isSelected()) {
-                                    yzmText = YzmToText.getCode();
+                                    captchaText = YzmToText.getCode();
                                 }
 
                                 //输出已经识别的验证码记录
                                 Platform.runLater(new Runnable() {
                                     public void run() {
-                                        FXMLDocumentController.this.bro_id_output.appendText("已识别验证码为:" + yzmText);
+                                        FXMLDocumentController.this.bro_id_output.appendText("已识别验证码为:" + captchaText);
                                     }
                                 });
 
                                 //定位验证码输入框并填写验证码
                                 try {
-                                    InputElement yzmElement;
-                                    if (FXMLDocumentController.this.bro_id_captcha_by_id.isSelected()) {
-                                        yzmElement = (InputElement) doc.findElement(By.id(bro_captcha_input));
-                                    } else if (FXMLDocumentController.this.bro_id_captcha_by_name.isSelected()) {
-                                        yzmElement = (InputElement) doc.findElement(By.name(bro_captcha_input));
-                                    } else {
-                                        yzmElement = (InputElement) doc.findElement(By.className(bro_captcha_input));
-                                    }
-                                    yzmElement.setValue(yzmText);
+                                    InputElement captchaElement = findElementByAny(document,
+                                            bro_captcha_input,
+                                            FXMLDocumentController.this.bro_id_captcha_by_id.isSelected(),
+                                            FXMLDocumentController.this.bro_id_captcha_by_name.isSelected(),
+                                            FXMLDocumentController.this.bro_id_captcha_by_class.isSelected(),
+                                            FXMLDocumentController.this.bro_id_captcha_by_css.isSelected(),
+                                            FXMLDocumentController.this.bro_id_captcha_by_xpath.isSelected()
+                                    );
+
+                                    captchaElement.setValue(captchaText);
                                 } catch (IllegalStateException e) {
                                     Platform.runLater(new Runnable() {
                                         public void run() {
@@ -569,17 +589,18 @@ public class FXMLDocumentController implements Initializable {
 
                             //定位提交按钮, 并填写按钮
                             try {
-                                DOMElement submitElement;
-                                if (FXMLDocumentController.this.bro_id_submit_by_id.isSelected()) {
-                                    submitElement = doc.findElement(By.id(submit_input));
-                                    submitElement.click();
-                                } else if (FXMLDocumentController.this.bro_id_submit_by_name.isSelected())
-                                    doc.findElement(By.name(submit_input)).click();
-                                else
-                                    doc.findElement(By.className(submit_input)).click();
+                                InputElement submitElement = findElementByAny(document,
+                                        bro_submit_input,
+                                        FXMLDocumentController.this.bro_id_submit_by_id.isSelected(),
+                                        FXMLDocumentController.this.bro_id_submit_by_name.isSelected(),
+                                        FXMLDocumentController.this.bro_id_submit_by_class.isSelected(),
+                                        FXMLDocumentController.this.bro_id_submit_by_css.isSelected(),
+                                        FXMLDocumentController.this.bro_id_submit_by_xpath.isSelected()
+                                );
+                                submitElement.click();
                             } catch (Exception e) {
                                 try {
-                                    doc.findElement(By.cssSelector("[type=submit]")).click();
+                                    document.findElement(By.cssSelector("[type=submit]")).click();
                                 } catch (IllegalStateException ee) {
                                     break;
                                 }
