@@ -57,94 +57,94 @@ public class FXMLDocumentController implements Initializable {
     private Button id_crack;
 
     @FXML
-    private RadioButton id_userbyid;
+    private RadioButton bro_id_user_by_id;
 
     @FXML
-    private ToggleGroup usernamegroup;
+    private ToggleGroup bro_user_name_ele_group;
 
     @FXML
-    private RadioButton id_userbyname;
+    private RadioButton bro_id_user_by_name;
 
     @FXML
-    private TextField id_userinput;
+    private TextField bro_id_user_ele_input;
 
     @FXML
-    private RadioButton id_passbyid;
+    private RadioButton bro_id_pass_by_id;
 
     @FXML
-    private ToggleGroup passwordgroup;
+    private ToggleGroup bro_id_password_ele_group;
 
     @FXML
-    private RadioButton id_passbyname;
+    private RadioButton bro_id_pass_by_name;
 
     @FXML
-    private TextField id_passinput;
+    private TextField bro_id_pass_ele_input;
 
     @FXML
-    private RadioButton id_captchabyid;
+    private RadioButton bro_id_captcha_by_id;
 
     @FXML
-    private ToggleGroup captchainputgroup;
+    private ToggleGroup bro_id_captcha_ele_group;
 
     @FXML
-    private RadioButton id_captchabyname;
+    private RadioButton bro_id_captcha_by_name;
 
     @FXML
-    private TextField id_captchainput;
+    private TextField bro_id_captcha_ele_input;
 
     @FXML
     private ToggleGroup captchagroup;
 
     @FXML
-    private TextField id_chatchaurlinput;
+    private TextField bro_id_captcha_url_input;
 
     @FXML
-    private TextField softid;
+    private TextField ys_soft_id;
 
     @FXML
-    private TextField softkey;
+    private TextField ys_soft_key;
 
     @FXML
-    private ComboBox<Integer> timeout;
+    private ComboBox<Integer> ys_query_timeout;
 
     @FXML
-    private Button info;
+    private Button ys_query_info;
 
     @FXML
-    private TextField username;
+    private TextField ys_username;
 
     @FXML
-    private PasswordField password;
+    private PasswordField ys_password;
 
     @FXML
-    private TextField typeid;
+    private TextField ys_type_id;
 
     @FXML
-    private Hyperlink id_typehelp;
+    private Hyperlink ys_type_help;
 
     @FXML
-    private TextArea id_output;
+    private TextArea bro_id_output;
 
     @FXML
-    private RadioButton id_submitbyid;
+    private RadioButton bro_id_submit_by_id;
 
     @FXML
-    private ToggleGroup submitgroup;
+    private ToggleGroup bro_id_submit_ele_group;
 
     @FXML
-    private RadioButton id_submitbyname;
+    private RadioButton bro_id_submit_by_name;
 
     @FXML
-    private TextField id_submitinput;
+    private TextField bro_id_submit_ele_input;
 
     @FXML
-    private TextField id_keyword;
+    private TextField bro_id_success_keyword;
 
     @FXML
-    private ComboBox<Integer> id_interval;
+    private ComboBox<Integer> bro_id_req_interval;
 
     @FXML
-    private CheckBox id_havecaptcha;
+    private CheckBox bro_id_have_captcha;
 
     @FXML
     private HBox id_hbox11;
@@ -162,70 +162,70 @@ public class FXMLDocumentController implements Initializable {
     private HBox id_hbox55;
 
     @FXML
-    private RadioButton id_userbyclass;
+    private RadioButton bro_id_user_by_class;
 
     @FXML
-    private RadioButton id_passbyclass;
+    private RadioButton bro_id_pass_by_class;
 
     @FXML
-    private RadioButton id_submitbyclass;
+    private RadioButton bro_id_submit_by_class;
 
     @FXML
-    private RadioButton id_captchabyclass;
+    private RadioButton bro_id_captcha_by_class;
 
     @FXML
-    private CheckBox id_showbrowser;
+    private CheckBox bro_id_show_browser;
 
     @FXML
-    private TextArea id_requestarea;
+    private TextArea nor_id_request_area;
 
     @FXML
     private HBox id_hbox221;
 
     @FXML
-    private TextField id_chatchaurlinput2;
+    private TextField nor_id_captcha_url_ele_input2;
 
     @FXML
-    private TextField id_keyword2;
+    private TextField id_sucess_keyword2;
 
     @FXML
-    private Button id_setusernamepos;
+    private Button nor_id_set_username_pos;
 
     @FXML
-    private Button id_setpasswordpos;
+    private Button nor_id_set_password_pos;
 
     @FXML
-    private CheckBox id_havecaptcha2;
+    private CheckBox nor_id_have_captcha;
 
     @FXML
-    private Button id_setcaptchapos;
+    private Button nor_id_set_captcha_pos;
 
     @FXML
-    private ComboBox<Integer> id_threads2;
+    private ComboBox<Integer> nor_id_threads;
 
     @FXML
-    private ComboBox<Integer> id_timeout2;
+    private ComboBox<Integer> nor_id_timeout;
 
     @FXML
-    private TextArea id_outputarea2;
+    private TextArea nor_id_output_area;
 
     @FXML
-    private TabPane id_tabpane;
+    private TabPane id_tab_pane;
 
     @FXML
-    private Tab id_browser_mode;
+    private Tab id_browser_op_mode;
 
     @FXML
-    private Tab id_tab2;
+    private Tab id_normal_op_mode;
 
     @FXML
-    private RadioButton yzm_yunRadioBtn;
+    private RadioButton bro_yzm_yunRadioBtn;
 
     @FXML
-    private RadioButton yzm_localRadioBtn;
+    private RadioButton bro_yzm_localRadioBtn;
 
     @FXML
-    private ToggleGroup yzmgroup;
+    private ToggleGroup bro_yzm_group;
 
 
     private byte[] captchadata;
@@ -238,31 +238,36 @@ public class FXMLDocumentController implements Initializable {
     private List<Cookie> cookies = null;
 
     public void initialize(URL url, ResourceBundle rb) {
-        this.id_requestarea.setPromptText(
-                "POST /login.do\r\nHost: 192.168.0.123:8080\r\nUser-Agent: User-Agent:Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36\r\n\r\nusername=$username$&passwd=$$password&captcha=$captcha$");
+        //初始化窗口内容设置
+        this.nor_id_request_area.setPromptText(
+                "POST /login.do\r\n" +
+                        "Host: 192.168.0.123:8080\r\n" +
+                        "User-Agent: User-Agent:Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36\r\n\r\n" +
+                        "username=$username$&passwd=$$password&captcha=$captcha$"
+        );
 
         ObservableList to = FXCollections.observableArrayList(new Integer[]{Integer.valueOf(30), Integer.valueOf(50), Integer.valueOf(60), Integer.valueOf(70), Integer.valueOf(80), Integer.valueOf(90), Integer.valueOf(100)});
-        this.timeout.setItems(to);
+        this.ys_query_timeout.setItems(to);
 
         ObservableList interval = FXCollections.observableArrayList(new Integer[]{Integer.valueOf(0), Integer.valueOf(500), Integer.valueOf(1000), Integer.valueOf(2000), Integer.valueOf(3000), Integer.valueOf(5000), Integer.valueOf(8000),
                 Integer.valueOf(10000), Integer.valueOf(15000), Integer.valueOf(20000)});
-        this.id_interval.setItems(interval);
+        this.bro_id_req_interval.setItems(interval);
 
         ObservableList timeout2 = FXCollections.observableArrayList(new Integer[]{Integer.valueOf(1000), Integer.valueOf(2000), Integer.valueOf(3000), Integer.valueOf(4000), Integer.valueOf(5000), Integer.valueOf(8000), Integer.valueOf(10000)});
 
-        this.id_timeout2.setItems(timeout2);
+        this.nor_id_timeout.setItems(timeout2);
 
         ObservableList threads = FXCollections.observableArrayList(new Integer[]{Integer.valueOf(1), Integer.valueOf(3), Integer.valueOf(5), Integer.valueOf(10), Integer.valueOf(20), Integer.valueOf(30), Integer.valueOf(50), Integer.valueOf(60), Integer.valueOf(70), Integer.valueOf(80), Integer.valueOf(90),
                 Integer.valueOf(100)});
 
-        this.id_threads2.setItems(threads);
+        this.nor_id_threads.setItems(threads);
     }
 
     @FXML
-    private void queryinfo(ActionEvent event) {
+    private void ys_query_info(ActionEvent event) {
         String result = "";
-        result = YunSu.getInfo(this.username.getText().trim(), this.password.getText().trim());
-        this.id_output.appendText(result);
+        result = YunSu.getInfo(this.ys_username.getText().trim(), this.ys_password.getText().trim());
+        this.bro_id_output.appendText(result);
     }
 
 
@@ -270,63 +275,63 @@ public class FXMLDocumentController implements Initializable {
     private void startCrack(ActionEvent event) {
         //登陆URL检查
         String base_url = this.id_base_url_input.getText();
-
         //输入框检查
         if (base_url.equals("")) {
             new Alert(Alert.AlertType.NONE, "请输入登录页面URL", new ButtonType[]{ButtonType.CLOSE}).show();
             return;
         }
-        
         //增加协议头
         if (!base_url.startsWith("http")) { base_url = String.format("http://%s", base_url); }
-
         String login_url = base_url;
-        String username_text = this.username.getText().trim();
-        String password_text = this.password.getText().trim();
-        String soft_id = this.softid.getText().trim();
-        String soft_key = this.softkey.getText().trim();
-        String type_id = this.typeid.getText().trim();
-        String captcha_url_input = this.id_chatchaurlinput.getText().trim();
-        String submit_input = this.id_submitinput.getText().trim();
 
-        Integer time_out_int = this.timeout.getValue();
-        String time_out;
-        if (time_out_int == null)
-            time_out = "60";
-        else {
-            time_out = time_out_int.toString();
-        }
+        //验证码输入URL
+        String captcha_url_input = this.bro_id_captcha_url_input.getText().trim();
+        //登录按钮内容
+        String submit_input = this.bro_id_submit_ele_input.getText().trim();
 
-        YunSuConfig yunSuConfig = new YunSuConfig(username_text, password_text, soft_id, soft_key, type_id, time_out);
+        //获取云速认证信息
+        String ys_username = this.ys_username.getText().trim();
+        String ys_password = this.ys_password.getText().trim();
+        String ys_soft_id = this.ys_soft_id.getText().trim();
+        String ys_soft_key = this.ys_soft_key.getText().trim();
+        String ys_type_id = this.ys_type_id.getText().trim();
+        Integer ys_query_timeout = this.ys_query_timeout.getValue();
+        String ys_query_timeout2;
+        if (ys_query_timeout == null)  ys_query_timeout2 = "60"; else {  ys_query_timeout2 = ys_query_timeout.toString(); }
+        YunSuConfig yunSuConfig = new YunSuConfig(ys_username, ys_password, ys_soft_id, ys_soft_key, ys_type_id, ys_query_timeout2);
 
-        if (this.id_browser_mode.isSelected()) {
-            if ((this.id_havecaptcha.isSelected()) && ((username_text.equals("")) || (password_text.equals("")))) {
-                new Alert(Alert.AlertType.NONE, "云速账号密码不能为空", new ButtonType[]{ButtonType.CLOSE});
+        //浏览器操作模式模式
+        if (this.id_browser_op_mode.isSelected()) {
+
+            //存在验证码时监测云速账号密码是否为空//后续需要修改删除
+            if(this.bro_id_have_captcha.isSelected()) {
+                if ((ys_username.equals("")) || (ys_password.equals(""))) {
+                    new Alert(Alert.AlertType.NONE, "云速账号密码不能为空", new ButtonType[]{ButtonType.CLOSE});
+                    return;
+                }
+            }
+
+            String bro_user_input = this.bro_id_user_ele_input.getText();
+            if (bro_user_input.equals("")) {
+                this.bro_id_user_ele_input.requestFocus();
+                return;
+            }
+            String bro_pass_input = this.bro_id_pass_ele_input.getText();
+            if (bro_pass_input.equals("")) {
+                this.bro_id_pass_ele_input.requestFocus();
+                return;
+            }
+            String bro_captcha_input = this.bro_id_captcha_ele_input.getText();
+            if (bro_captcha_input.equals("")) {
+                this.bro_id_user_ele_input.requestFocus();
+                return;
+            }
+            String bro_captcha_url_input = this.bro_id_captcha_url_input.getText();
+            if (bro_captcha_url_input.equals("")) {
+                this.bro_id_captcha_url_input.requestFocus();
                 return;
             }
 
-            String userinput = this.id_userinput.getText();
-            if (userinput.equals("")) {
-                this.id_userinput.requestFocus();
-                return;
-            }
-            String passinput = this.id_passinput.getText();
-            if (passinput.equals("")) {
-                this.id_passinput.requestFocus();
-                return;
-            }
-            String captchainput = this.id_captchainput.getText();
-            if (captchainput.equals("")) {
-                this.id_userinput.requestFocus();
-                return;
-            }
-            String chatchaurlinput = this.id_chatchaurlinput.getText();
-            if (chatchaurlinput.equals("")) {
-                this.id_chatchaurlinput.requestFocus();
-                return;
-            }
-
-            String to = time_out;
             this.primaryStage = new Stage();
             Browser browser = new Browser(BrowserType.LIGHTWEIGHT);
             browser.getContext().getNetworkService().setNetworkDelegate(new MyNetworkDelegate(captcha_url_input));
@@ -353,7 +358,7 @@ public class FXMLDocumentController implements Initializable {
             Scene scene = new Scene(borderPane, 800.0D, 700.0D);
             this.primaryStage.setScene(scene);
             this.primaryStage.setTitle("请勿操作浏览器页面");
-            if (this.id_showbrowser.isSelected()) {
+            if (this.bro_id_show_browser.isSelected()) {
                 this.primaryStage.show();
             }
 
@@ -372,7 +377,7 @@ public class FXMLDocumentController implements Initializable {
                         Platform.runLater(new Runnable() {
                             public void run() {
                                 progressIndicator.setProgress(-1.0D);
-                                FXMLDocumentController.this.id_output.appendText("开始访问URL:" + paramStartLoadingEvent.getValidatedURL() + "\n");
+                                FXMLDocumentController.this.bro_id_output.appendText("开始访问URL:" + paramStartLoadingEvent.getValidatedURL() + "\n");
                             }
                         });
                     super.onStartLoadingFrame(paramStartLoadingEvent);
@@ -417,8 +422,8 @@ public class FXMLDocumentController implements Initializable {
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        Integer interval = (Integer) FXMLDocumentController.this.id_interval.getValue();
-                        if (FXMLDocumentController.this.id_interval.getValue() == null) {
+                        Integer interval = (Integer) FXMLDocumentController.this.bro_id_req_interval.getValue();
+                        if (FXMLDocumentController.this.bro_id_req_interval.getValue() == null) {
                             interval = Integer.valueOf(1500);
                         }
                         FileReader fruser = new FileReader("dict" + File.separator + "username.txt");
@@ -437,7 +442,7 @@ public class FXMLDocumentController implements Initializable {
                                 FXMLDocumentController.this.captchadata = null;
                                 Platform.runLater(new Runnable() {
                                     public void run() {
-                                        FXMLDocumentController.this.id_output.appendText("正在测试用户名:" + uu + " 密码:" + pp + "\r\n");
+                                        FXMLDocumentController.this.bro_id_output.appendText("正在测试用户名:" + uu + " 密码:" + pp + "\r\n");
                                     }
                                 });
 
@@ -455,7 +460,7 @@ public class FXMLDocumentController implements Initializable {
                                     if (m.contains("Channel is already closed")) {
                                         Platform.runLater(new Runnable() {
                                             public void run() {
-                                                FXMLDocumentController.this.id_output.appendText("停止测试\n");
+                                                FXMLDocumentController.this.bro_id_output.appendText("停止测试\n");
                                             }
                                         });
                                         break;
@@ -464,7 +469,7 @@ public class FXMLDocumentController implements Initializable {
                                     e.printStackTrace();
                                     Platform.runLater(new Runnable() {
                                         public void run() {
-                                            FXMLDocumentController.this.id_output.appendText("访问超时\r\n");
+                                            FXMLDocumentController.this.bro_id_output.appendText("访问超时\r\n");
                                         }
                                     });
                                     continue;
@@ -475,25 +480,25 @@ public class FXMLDocumentController implements Initializable {
                                 DOMDocument doc = browser.getDocument();
 
                                 try {
-                                    if (FXMLDocumentController.this.id_userbyid.isSelected()) {
-                                        InputElement ele = (InputElement) doc.findElement(By.id(userinput));
+                                    if (FXMLDocumentController.this.bro_id_user_by_id.isSelected()) {
+                                        InputElement ele = (InputElement) doc.findElement(By.id(bro_user_input));
                                         ele.setValue(u);
-                                    } else if (FXMLDocumentController.this.id_userbyname.isSelected()) {
-                                        InputElement ele = (InputElement) doc.findElement(By.name(userinput));
+                                    } else if (FXMLDocumentController.this.bro_id_user_by_name.isSelected()) {
+                                        InputElement ele = (InputElement) doc.findElement(By.name(bro_user_input));
                                         ele.setValue(u);
                                     } else {
-                                        InputElement ele = (InputElement) doc.findElement(By.className(userinput));
+                                        InputElement ele = (InputElement) doc.findElement(By.className(bro_user_input));
                                         ele.setValue(u);
                                     }
 
-                                    if (FXMLDocumentController.this.id_passbyid.isSelected()) {
-                                        InputElement ele = (InputElement) doc.findElement(By.id(passinput));
+                                    if (FXMLDocumentController.this.bro_id_pass_by_id.isSelected()) {
+                                        InputElement ele = (InputElement) doc.findElement(By.id(bro_pass_input));
                                         ele.setValue(p);
-                                    } else if (FXMLDocumentController.this.id_passbyname.isSelected()) {
-                                        InputElement ele = (InputElement) doc.findElement(By.name(passinput));
+                                    } else if (FXMLDocumentController.this.bro_id_pass_by_name.isSelected()) {
+                                        InputElement ele = (InputElement) doc.findElement(By.name(bro_pass_input));
                                         ele.setValue(p);
                                     } else {
-                                        InputElement ele = (InputElement) doc.findElement(By.className(passinput));
+                                        InputElement ele = (InputElement) doc.findElement(By.className(bro_pass_input));
                                         ele.setValue(p);
                                     }
                                 } catch (IllegalStateException e) {
@@ -502,7 +507,7 @@ public class FXMLDocumentController implements Initializable {
                                     if (m.contains("Channel is already closed")) {
                                         Platform.runLater(new Runnable() {
                                             public void run() {
-                                                FXMLDocumentController.this.id_output.appendText("IllegalStateException异常,无法获取用户名或密码输入框按钮,停止测试\n");
+                                                FXMLDocumentController.this.bro_id_output.appendText("IllegalStateException异常,无法获取用户名或密码输入框按钮,停止测试\n");
                                             }
                                         });
                                         break;
@@ -511,7 +516,7 @@ public class FXMLDocumentController implements Initializable {
                                 } catch (NullPointerException e) {
                                     Platform.runLater(new Runnable() {
                                         public void run() {
-                                            FXMLDocumentController.this.id_output.appendText("识别用户名密码输入框失败\n");
+                                            FXMLDocumentController.this.bro_id_output.appendText("识别用户名密码输入框失败\n");
                                         }
                                     });
                                     continue;
@@ -520,11 +525,11 @@ public class FXMLDocumentController implements Initializable {
                                     continue;
                                 }
 
-                                if (FXMLDocumentController.this.id_havecaptcha.isSelected()) {
+                                if (FXMLDocumentController.this.bro_id_have_captcha.isSelected()) {
                                     if (FXMLDocumentController.this.captchadata == null) {
                                         Platform.runLater(new Runnable() {
                                             public void run() {
-                                                FXMLDocumentController.this.id_output.appendText("获取验证码失败\n");
+                                                FXMLDocumentController.this.bro_id_output.appendText("获取验证码失败\n");
                                             }
                                         });
                                         continue;
@@ -534,16 +539,16 @@ public class FXMLDocumentController implements Initializable {
                                     验证码识别
                                     * */
 
-                                    if (yzm_yunRadioBtn.isSelected()) {
-                                        String result = YunSu.createByPost(username_text, password_text, type_id, to, soft_id,
-                                                soft_key, FXMLDocumentController.this.captchadata);
+                                    if (bro_yzm_yunRadioBtn.isSelected()) {
+                                        String result = YunSu.createByPost(ys_username, ys_password, ys_type_id, ys_query_timeout2, ys_soft_id,
+                                                ys_soft_key, FXMLDocumentController.this.captchadata);
                                         System.out.println("查询结果:" + result);
 
 //                                        int k = result.indexOf("|");
                                         if (result.contains("Error_Code")) {
                                             Platform.runLater(new Runnable() {
                                                 public void run() {
-                                                    FXMLDocumentController.this.id_output.appendText("获取验证码失败\n");
+                                                    FXMLDocumentController.this.bro_id_output.appendText("获取验证码失败\n");
                                                 }
                                             });
 //                                            continue;
@@ -551,7 +556,7 @@ public class FXMLDocumentController implements Initializable {
                                         }
                                         yzmText = YunSu.getResult(result);
                                     }
-                                    if (yzm_localRadioBtn.isSelected()) {
+                                    if (bro_yzm_localRadioBtn.isSelected()) {
 
                                         yzmText = YzmToText.getCode();
 
@@ -560,34 +565,34 @@ public class FXMLDocumentController implements Initializable {
 
                                     Platform.runLater(new Runnable() {
                                         public void run() {
-                                            FXMLDocumentController.this.id_output.appendText("已识别验证码为:" + yzmText);
+                                            FXMLDocumentController.this.bro_id_output.appendText("已识别验证码为:" + yzmText);
                                         }
                                     });
                                     try {
-                                        if (FXMLDocumentController.this.id_captchabyid.isSelected()) {
-                                            InputElement ele = (InputElement) doc.findElement(By.id(captchainput));
+                                        if (FXMLDocumentController.this.bro_id_captcha_by_id.isSelected()) {
+                                            InputElement ele = (InputElement) doc.findElement(By.id(bro_captcha_input));
                                             ele.setValue(yzmText);
-                                        } else if (FXMLDocumentController.this.id_captchabyname.isSelected()) {
-                                            InputElement ele = (InputElement) doc.findElement(By.name(captchainput));
+                                        } else if (FXMLDocumentController.this.bro_id_captcha_by_name.isSelected()) {
+                                            InputElement ele = (InputElement) doc.findElement(By.name(bro_captcha_input));
                                             ele.setValue(yzmText);
                                         } else {
                                             InputElement ele = (InputElement) doc
-                                                    .findElement(By.className(captchainput));
+                                                    .findElement(By.className(bro_captcha_input));
                                             ele.setValue(yzmText);
                                         }
                                     } catch (IllegalStateException e) {
                                         Platform.runLater(new Runnable() {
                                             public void run() {
-                                                FXMLDocumentController.this.id_output.appendText("IllegalStateException异常,无法获取登录按钮,停止测试\n");
+                                                FXMLDocumentController.this.bro_id_output.appendText("IllegalStateException异常,无法获取登录按钮,停止测试\n");
                                             }
                                         });
                                     }
                                 }
 
                                 try {
-                                    if (FXMLDocumentController.this.id_submitbyid.isSelected())
+                                    if (FXMLDocumentController.this.bro_id_submit_by_id.isSelected())
                                         doc.findElement(By.id(submit_input)).click();
-                                    else if (FXMLDocumentController.this.id_submitbyname.isSelected())
+                                    else if (FXMLDocumentController.this.bro_id_submit_by_name.isSelected())
                                         doc.findElement(By.name(submit_input)).click();
                                     else
                                         doc.findElement(By.className(submit_input)).click();
@@ -607,7 +612,7 @@ public class FXMLDocumentController implements Initializable {
                                 Platform.runLater(new Runnable() {
                                     public void run() {
 
-                                        FXMLDocumentController.this.id_output.appendText("点击登录后当前URL:"  +  browser.getURL()  + "---标题:" + browser.getTitle() + "---长度:" +  browser.getHTML().length() + "\r\n\r\n");
+                                        FXMLDocumentController.this.bro_id_output.appendText("点击登录后当前URL:"  +  browser.getURL()  + "---标题:" + browser.getTitle() + "---长度:" +  browser.getHTML().length() + "\r\n\r\n");
                                     }
                                 });
                             }
@@ -619,8 +624,11 @@ public class FXMLDocumentController implements Initializable {
                     }
                 }
             }).start();
-        } else if (this.id_tab2.isSelected()) {
-            if ((this.id_havecaptcha2.isSelected()) && ((username_text.equals("")) || (password_text.equals("")))) {
+        }
+
+        //普通爆破模式
+        else if (this.id_normal_op_mode.isSelected()) {
+            if ((this.nor_id_have_captcha.isSelected()) && ((ys_username.equals("")) || (ys_password.equals("")))) {
                 new Alert(Alert.AlertType.NONE, "云速账号密码不能为空", new ButtonType[]{ButtonType.CLOSE});
                 return;
             }
@@ -634,29 +642,29 @@ public class FXMLDocumentController implements Initializable {
                         FXMLDocumentController.this.queue.clear();
                     }
 
-                    Integer thread = (Integer) FXMLDocumentController.this.id_threads2.getValue();
+                    Integer thread = (Integer) FXMLDocumentController.this.nor_id_threads.getValue();
                     if (thread == null) {
                         thread = Integer.valueOf(1);
                     }
-                    Integer timeout2 = (Integer) FXMLDocumentController.this.id_timeout2.getValue();
+                    Integer timeout2 = (Integer) FXMLDocumentController.this.nor_id_timeout.getValue();
                     if (timeout2 == null) {
                         timeout2 = Integer.valueOf(3000);
                     }
                     CountDownLatch cdl = new CountDownLatch(thread.intValue());
 
-                    String request = FXMLDocumentController.this.id_requestarea.getText();
+                    String request = FXMLDocumentController.this.nor_id_request_area.getText();
                     if (request.equals("")) {
                         return;
                     }
 
                     String schema = login_url.startsWith("http") ? "http" : "https";
-                    String keyword2 = FXMLDocumentController.this.id_keyword2.getText();
-                    String captchaurlinput2 = FXMLDocumentController.this.id_chatchaurlinput2.getText();
+                    String keyword2 = FXMLDocumentController.this.id_sucess_keyword2.getText();
+                    String captchaurlinput2 = FXMLDocumentController.this.nor_id_captcha_url_ele_input2.getText();
 
                     for (int i = 0; i < thread.intValue(); i++) {
                         new Thread(
-                                new SendCrackThread(cdl, FXMLDocumentController.this.queue, request, schema, FXMLDocumentController.this.id_outputarea2, keyword2,
-                                        captchaurlinput2, timeout2, Boolean.valueOf(FXMLDocumentController.this.id_havecaptcha2.isSelected()), yunSuConfig, login_url))
+                                new SendCrackThread(cdl, FXMLDocumentController.this.queue, request, schema, FXMLDocumentController.this.nor_id_output_area, keyword2,
+                                        captchaurlinput2, timeout2, Boolean.valueOf(FXMLDocumentController.this.nor_id_have_captcha.isSelected()), yunSuConfig, login_url))
                                 .start();
                     }
                     try {
@@ -704,7 +712,7 @@ public class FXMLDocumentController implements Initializable {
                     System.out.println("爆破结束");
                     Platform.runLater(new Runnable() {
                         public void run() {
-                            FXMLDocumentController.this.id_outputarea2.appendText("爆破结束。\n");
+                            FXMLDocumentController.this.nor_id_output_area.appendText("爆破结束。\n");
                         }
                     });
                 }
@@ -714,7 +722,7 @@ public class FXMLDocumentController implements Initializable {
 
 
     @FXML
-    private void typehelp(ActionEvent event) {
+    private void ys_type_help(ActionEvent event) {
         String url = "http://www.ysdm.net/home/PriceType";
         try {
             URI uri = URI.create(url);
@@ -752,11 +760,11 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void showbrowser(ActionEvent event) {
+    private void show_browser(ActionEvent event) {
         if (this.primaryStage == null) {
             return;
         }
-        if (this.id_showbrowser.isSelected())
+        if (this.bro_id_show_browser.isSelected())
             this.primaryStage.show();
         else
             this.primaryStage.hide();
@@ -775,7 +783,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void localdm(ActionEvent event) {
+    private void bro_localdm(ActionEvent event) {
 
 
         this.id_hbox44.setDisable(true);
@@ -783,51 +791,51 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void checkhavecaptcha(ActionEvent event) {
-        if (this.id_havecaptcha.isSelected()) {
+    private void bro_check_have_captcha(ActionEvent event) {
+        if (this.bro_id_have_captcha.isSelected()) {
             this.id_hbox11.setDisable(false);
             this.id_hbox22.setDisable(false);
             this.id_hbox33.setDisable(false);
             this.id_hbox44.setDisable(false);
             this.id_hbox55.setDisable(false);
-            this.yzm_localRadioBtn.setDisable(false);
-            this.yzm_yunRadioBtn.setDisable(false);
+            this.bro_yzm_localRadioBtn.setDisable(false);
+            this.bro_yzm_yunRadioBtn.setDisable(false);
         } else {
             this.id_hbox11.setDisable(true);
             this.id_hbox22.setDisable(true);
             this.id_hbox33.setDisable(true);
             this.id_hbox44.setDisable(true);
             this.id_hbox55.setDisable(true);
-            this.yzm_localRadioBtn.setDisable(true);
-            this.yzm_yunRadioBtn.setDisable(true);
+            this.bro_yzm_localRadioBtn.setDisable(true);
+            this.bro_yzm_yunRadioBtn.setDisable(true);
         }
     }
 
     @FXML
-    private void setusernamepos(ActionEvent event) {
-        IndexRange selection = this.id_requestarea.getSelection();
-        this.id_requestarea.replaceText(selection, "$username$");
+    private void nor_set_username_pos(ActionEvent event) {
+        IndexRange selection = this.nor_id_request_area.getSelection();
+        this.nor_id_request_area.replaceText(selection, "$username$");
     }
 
     @FXML
-    private void setpasswordpos(ActionEvent event) {
-        IndexRange selection = this.id_requestarea.getSelection();
-        this.id_requestarea.replaceText(selection, "$password$");
+    private void nor_set_password_pos(ActionEvent event) {
+        IndexRange selection = this.nor_id_request_area.getSelection();
+        this.nor_id_request_area.replaceText(selection, "$password$");
     }
 
     @FXML
-    private void setcaptchapos(ActionEvent event) {
-        IndexRange selection = this.id_requestarea.getSelection();
-        this.id_requestarea.replaceText(selection, "$captcha$");
+    private void nor_set_captcha_pos(ActionEvent event) {
+        IndexRange selection = this.nor_id_request_area.getSelection();
+        this.nor_id_request_area.replaceText(selection, "$captcha$");
     }
 
     @FXML
-    private void stopsendcrack(ActionEvent event) {
+    private void nor_stop_send_crack(ActionEvent event) {
         this.isstopsendcrack = Boolean.valueOf(true);
     }
 
     @FXML
-    private void openyunsu(ActionEvent event) {
+    private void open_yun_su(ActionEvent event) {
         String url = "http://www.ysdm.net/";
         try {
             URI uri = URI.create(url);
@@ -905,10 +913,10 @@ public class FXMLDocumentController implements Initializable {
                 x = new String(paramDataReceivedParams.getData(), charset);
                 //System.out.println(paramDataReceivedParams.getURL() + "   Data Length: " + x.length());
 
-                if (x.contains(FXMLDocumentController.this.id_keyword.getText()))
+                if (x.contains(FXMLDocumentController.this.bro_id_success_keyword.getText()))
                     Platform.runLater(new Runnable() {
                         public void run() {
-                            FXMLDocumentController.this.id_output.appendText(paramDataReceivedParams.getURL() + ":关键字匹配成功。\n");
+                            FXMLDocumentController.this.bro_id_output.appendText(paramDataReceivedParams.getURL() + ":关键字匹配成功。\n");
                         }
                     });
             } catch (UnsupportedEncodingException e) {
