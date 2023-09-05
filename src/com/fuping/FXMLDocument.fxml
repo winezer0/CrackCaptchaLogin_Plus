@@ -83,8 +83,19 @@
                                     <RadioButton fx:id="bro_id_submit_by_css" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="CSS" toggleGroup="$bro_id_submit_ele_group" />
                                     <RadioButton fx:id="bro_id_submit_by_XPATH" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="XPATH" toggleGroup="$bro_id_submit_ele_group" />
                                     <TextField fx:id="bro_id_submit_ele_input" prefHeight="30.0" prefWidth="79.0" text="login" HBox.hgrow="ALWAYS" />
-                                    <ComboBox fx:id="bro_id_req_interval" promptText="请求间隔(毫秒)" />
-                                    <CheckBox fx:id="bro_id_show_browser" mnemonicParsing="false" onAction="#show_browser" prefHeight="23.0" prefWidth="111.0" selected="true" text="显示浏览器" />
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </padding>
+                                 <VBox.margin>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="10" >
+                                 <children>
+                                    <Label prefHeight="23.0" prefWidth="120.0" text="浏览器设置" />
+                                    <CheckBox fx:id="bro_id_show_browser" mnemonicParsing="false" onAction="#show_browser" prefHeight="23.0" prefWidth="120.0" selected="true" text="显示浏览器" />
+                                    <ComboBox fx:id="bro_id_req_interval" prefHeight="23.0" prefWidth="120.0" promptText="请求间隔毫秒" />
                                  </children>
                                  <padding>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -106,14 +117,15 @@
                                  </padding>
                               </HBox>
                               <Separator prefWidth="200.0" />
-                              <HBox prefHeight="0.0" prefWidth="843.0" spacing="2.0">
+                              <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="10" >
                                  <children>
-                                    <CheckBox fx:id="bro_id_have_captcha" mnemonicParsing="false" onAction="#bro_check_have_captcha" prefHeight="21.0" prefWidth="249.0" selected="false" text="是否识别验证码" />
-                                    <RadioButton fx:id="bro_yzm_yunRadioBtn" mnemonicParsing="false" onAction="#ydm_mode" prefHeight="20.0" prefWidth="136.0" selected="true" text="云打码">
+                                    <Label prefHeight="23.0" prefWidth="120.0" text="验证码设置" />
+                                    <CheckBox fx:id="bro_id_have_captcha" mnemonicParsing="false" onAction="#bro_check_have_captcha" prefHeight="23.0" prefWidth="120.0" text="识别验证码开关" selected="false" />
+                                    <RadioButton fx:id="bro_yzm_yunRadioBtn" mnemonicParsing="false" onAction="#ydm_mode" prefHeight="23.0" prefWidth="120.0" selected="true" text="远程识别">
                                        <toggleGroup>
                                           <ToggleGroup fx:id="bro_yzm_group"/>
                                        </toggleGroup></RadioButton>
-                                    <RadioButton fx:id="bro_yzm_localRadioBtn" mnemonicParsing="false" onAction="#bro_local_dm" text="本地打码" toggleGroup="$bro_yzm_group" />
+                                    <RadioButton fx:id="bro_yzm_localRadioBtn" mnemonicParsing="false" onAction="#bro_local_dm" prefHeight="23.0" prefWidth="120.0" text="本地识别" toggleGroup="$bro_yzm_group" />
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -121,6 +133,18 @@
                                  <padding>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                  </padding>
+                              </HBox>
+                              <HBox fx:id="id_bro_id_captcha_url" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
+                                 <children>
+                                    <Label prefHeight="23.0" prefWidth="99.0" text="验证码图片URL" />
+                                    <TextField fx:id="bro_id_captcha_url_input" prefHeight="23.0" prefWidth="79.0" text="http://127.0.0.1/demo/index.php/Home/Login/verify.html" HBox.hgrow="ALWAYS" />
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </padding>
+                                 <VBox.margin>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </VBox.margin>
                               </HBox>
                               <HBox fx:id="id_bro_id_captcha_ele" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                  <children>
@@ -135,18 +159,6 @@
                                     <RadioButton fx:id="bro_id_captcha_by_css" mnemonicParsing="false" prefHeight="28.0" prefWidth="80.0" text="CSS" toggleGroup="$bro_id_captcha_ele_group" />
                                     <RadioButton fx:id="bro_id_captcha_by_xpath" mnemonicParsing="false" prefHeight="28.0" prefWidth="80.0" text="XPATH" toggleGroup="$bro_id_captcha_ele_group" />
                                     <TextField fx:id="bro_id_captcha_ele_input" text="verify" HBox.hgrow="ALWAYS" />
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </padding>
-                                 <VBox.margin>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </VBox.margin>
-                              </HBox>
-                              <HBox fx:id="id_bro_id_captcha_url" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
-                                 <children>
-                                    <Label prefHeight="23.0" prefWidth="99.0" text="验证码图片URL" />
-                                    <TextField fx:id="bro_id_captcha_url_input" prefHeight="23.0" prefWidth="79.0" text="http://127.0.0.1/demo/index.php/Home/Login/verify.html" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <padding>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
