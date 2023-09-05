@@ -23,6 +23,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import static com.fuping.CommonUtils.Utils.writeUserPassPairToFile;
+import static com.fuping.LoadConfig.MyConst.HistoryFilePath;
+
 public class SendCrackThread extends Task<String> {
     private CountDownLatch cdl;
     private LinkedBlockingQueue<UserPassPair> queue;
@@ -64,14 +67,14 @@ public class SendCrackThread extends Task<String> {
 
             httpclient.execute(new HttpGet(this.baseurl));
 
-            StringBuilder sb = new StringBuilder();
-            UserPassPair up;
-            while ((up = (UserPassPair) this.queue.poll(5L, TimeUnit.SECONDS)) != null) {
-                sb.setLength(0);
-
-                String newrequest = this.request.replace("$username$", up.getUsername()).replace("$password$",
-                        up.getPassword());
+            StringBuilder stringBuilder = new StringBuilder();
+            UserPassPair userPassPair;
+            while ((userPassPair = this.queue.poll(5L, TimeUnit.SECONDS)) != null) {
+                stringBuilder.setLength(0);
+                String newrequest = this.request.replace("$username$", userPassPair.getUsername()).replace("$password$", userPassPair.getPassword());
                 String lastresult = null;
+
+
 
                 if (this.ishavechptcha.booleanValue()) {
                     CloseableHttpResponse response = httpclient.execute(new HttpGet(this.chatchaurlinput2));
@@ -95,7 +98,7 @@ public class SendCrackThread extends Task<String> {
 
                     String xlastresult = lastresult;
 
-                    sb.append("已识别验证码为:" + xlastresult);
+                    stringBuilder.append("已识别验证码为:" + xlastresult);
                 } else {
                     Platform.runLater(new Runnable() {
                         public void run() {
@@ -140,10 +143,11 @@ public class SendCrackThread extends Task<String> {
                     }
                     String respnsedata = EntityUtils.toString(httpresponse.getEntity(), "utf-8");
 
-                    sb.append("响应状态码:" + httpresponse.getStatusLine().getStatusCode())
-                            .append("响应content-length:" + httpresponse.getEntity().getContentLength() + "\n");
+                    stringBuilder.append("响应状态码:" + httpresponse.getStatusLine().getStatusCode()).append("响应content-length:" + httpresponse.getEntity().getContentLength() + "\n");
                     httpresponse.close();
-                } else {
+                }
+
+                else {
                     HttpPost httppost = new HttpPost(url);
                     int m = newrequest.indexOf("\n\n");
                     String post = newrequest.substring(m + 2);
@@ -160,17 +164,17 @@ public class SendCrackThread extends Task<String> {
                     }
                     String respnsedata = EntityUtils.toString(httpresponse.getEntity(), "utf-8");
 
-                    sb.append(" 响应状态码:" + httpresponse.getStatusLine().getStatusCode())
+                    stringBuilder.append(" 响应状态码:" + httpresponse.getStatusLine().getStatusCode())
                             .append(" 响应content-length:" + httpresponse.getEntity().getContentLength());
 
                     httpresponse.close();
                     System.out.println(respnsedata);
                     if (respnsedata.contains(this.keyword2)) {
-                        sb.append(" 关键字匹配成功:" + this.keyword2);
+                        stringBuilder.append(" 关键字匹配成功:" + this.keyword2);
                     }
-                    sb.append("\n");
+                    stringBuilder.append("\n");
 
-                    String xx = sb.toString();
+                    String xx = stringBuilder.toString();
                     System.out.println(xx);
                     Platform.runLater(new Runnable() {
                         public void run() {
@@ -178,6 +182,9 @@ public class SendCrackThread extends Task<String> {
                         }
                     });
                 }
+
+                //进行历史记录
+                writeUserPassPairToFile(HistoryFilePath, ":", userPassPair);
             }
         } catch (Exception e) {
             e.printStackTrace();

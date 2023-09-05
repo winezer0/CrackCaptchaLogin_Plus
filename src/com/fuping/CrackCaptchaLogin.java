@@ -17,6 +17,7 @@ import java.math.BigInteger;
 
 import static com.fuping.LoadConfig.MyConst.*;
 import static com.fuping.LoadDict.LoadDictUtils.loadUserPassFile;
+import static com.fuping.LoadDict.LoadDictUtils.userPassPairsHashSet;
 import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class CrackCaptchaLogin extends Application {
@@ -56,7 +57,7 @@ public class CrackCaptchaLogin extends Application {
         //初始化配置文件读取
         MyConst.initialize();
         //预加载字典文件
-        UserPassPairs = loadUserPassFile(userNameFile, passWordFile, pitchforkMode, userPassFile, pairSeparator, userPassMode, userMarkInPass);
+        userPassPairsHashSet  = loadUserPassFile(UserNameFile, PassWordFile, PitchforkMode, UserPassFile, PairSeparator, UserPassMode, UserMarkInPass);
         //开始进行爆破操作
         launch(args);
     }

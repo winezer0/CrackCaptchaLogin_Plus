@@ -102,12 +102,12 @@
                               <Separator prefWidth="200.0" />
                               <HBox prefHeight="0.0" prefWidth="843.0" spacing="2.0">
                                  <children>
-                                    <CheckBox fx:id="bro_id_have_captcha" mnemonicParsing="false" onAction="#bro_check_have_captcha" prefHeight="21.0" prefWidth="249.0" selected="true" text="是否识别验证码" />
-                                    <RadioButton fx:id="bro_yzm_yunRadioBtn" mnemonicParsing="false" onAction="#ydm" prefHeight="20.0" prefWidth="136.0" selected="true" text="云打码">
+                                    <CheckBox fx:id="bro_id_have_captcha" mnemonicParsing="false" onAction="#bro_check_have_captcha" prefHeight="21.0" prefWidth="249.0" selected="false" text="是否识别验证码" />
+                                    <RadioButton fx:id="bro_yzm_yunRadioBtn" mnemonicParsing="false" onAction="#ydm_mode" prefHeight="20.0" prefWidth="136.0" selected="true" text="云打码">
                                        <toggleGroup>
                                           <ToggleGroup fx:id="bro_yzm_group"/>
                                        </toggleGroup></RadioButton>
-                                    <RadioButton fx:id="bro_yzm_localRadioBtn" mnemonicParsing="false" onAction="#bro_localdm" text="本地打码" toggleGroup="$bro_yzm_group" />
+                                    <RadioButton fx:id="bro_yzm_localRadioBtn" mnemonicParsing="false" onAction="#bro_local_dm" text="本地打码" toggleGroup="$bro_yzm_group" />
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -116,7 +116,7 @@
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                  </padding>
                               </HBox>
-                              <HBox fx:id="id_hbox11" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
+                              <HBox fx:id="id_bro_id_captcha_ele" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                  <children>
                                     <Label prefHeight="30.0" prefWidth="136.0" text="识别验证码输入框" />
                                     <RadioButton fx:id="bro_id_captcha_by_id" mnemonicParsing="false" prefHeight="28.0" prefWidth="110.0" selected="true" text="使用id属性">
@@ -135,7 +135,7 @@
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                  </VBox.margin>
                               </HBox>
-                              <HBox fx:id="id_hbox22" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
+                              <HBox fx:id="id_bro_id_captcha_url" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                  <children>
                                     <Label prefHeight="23.0" prefWidth="99.0" text="验证码图片URL" />
                                     <TextField fx:id="bro_id_captcha_url_input" prefHeight="23.0" prefWidth="79.0" text="http://127.0.0.1/demo/index.php/Home/Login/verify.html" HBox.hgrow="ALWAYS" />
@@ -247,7 +247,7 @@
       <VBox prefHeight="13.0" prefWidth="847.0" BorderPane.alignment="CENTER">
          <children>
             <Separator prefWidth="200.0" />
-            <HBox fx:id="id_hbox33" alignment="CENTER_LEFT" prefHeight="19.0" prefWidth="135.0" spacing="2.0">
+            <HBox fx:id="id_ys_open" alignment="CENTER_LEFT" prefHeight="19.0" prefWidth="135.0" spacing="2.0">
                <children>
                   <Label prefHeight="21.0" prefWidth="1216.0" text="云速设置" HBox.hgrow="ALWAYS" />
                   <Hyperlink onAction="#open_yun_su" prefHeight="21.0" prefWidth="511.0" text="云速官网" />
@@ -256,7 +256,7 @@
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </padding>
             </HBox>
-            <HBox fx:id="id_hbox44" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
+            <HBox fx:id="id_ys_info" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                <children>
                   <Label prefHeight="23.0" prefWidth="55.0" text="软件ID" />
                   <TextField fx:id="ys_soft_id" prefHeight="30.0" prefWidth="110.0" text="1" />
@@ -269,7 +269,7 @@
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </padding>
             </HBox>
-            <HBox fx:id="id_hbox55" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
+            <HBox fx:id="id_ys_config" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                <children>
                   <Label prefHeight="23.0" prefWidth="55.0" text="用户名" />
                   <TextField fx:id="ys_username" prefHeight="30.0" prefWidth="110.0" text="demo" />
