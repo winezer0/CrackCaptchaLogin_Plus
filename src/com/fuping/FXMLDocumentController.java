@@ -268,8 +268,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void startCrack(ActionEvent event) {
-
-
+        //登陆URL检查
         String base_url = this.id_base_url_input.getText();
 
         //输入框检查
@@ -277,10 +276,9 @@ public class FXMLDocumentController implements Initializable {
             new Alert(Alert.AlertType.NONE, "请输入登录页面URL", new ButtonType[]{ButtonType.CLOSE}).show();
             return;
         }
-
-        if (!base_url.startsWith("http")) {
-            base_url = "http://" + base_url;
-        }
+        
+        //增加协议头
+        if (!base_url.startsWith("http")) { base_url = String.format("http://%s", base_url); }
 
         String login_url = base_url;
         String username_text = this.username.getText().trim();
@@ -292,7 +290,7 @@ public class FXMLDocumentController implements Initializable {
         String submit_input = this.id_submitinput.getText().trim();
 
         Integer time_out_int = this.timeout.getValue();
-        String time_out = null;
+        String time_out;
         if (time_out_int == null)
             time_out = "60";
         else {
