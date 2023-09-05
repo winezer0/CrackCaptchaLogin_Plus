@@ -293,6 +293,52 @@ public class FXMLDocumentController implements Initializable {
         this.bro_id_output.appendText(result);
     }
 
+    private String findElementAndInput(DOMDocument document,
+                                       String locate_info,
+                                       String input_string,
+                                       boolean idSelected,
+                                       boolean nameSelected,
+                                       boolean classSelected,
+                                       boolean cssSelected,
+                                       boolean xpathSelected) {
+        String action_string = "success";
+        try {
+            InputElement findElement = findElementByAny(document,
+                    locate_info,
+                    idSelected,
+                    nameSelected,
+                    classSelected,
+                    cssSelected,
+                    xpathSelected
+            );
+
+            findElement.setValue(input_string);
+        } catch (IllegalStateException illegalStateException) {
+            String eMessage = illegalStateException.getMessage();
+            System.out.println(eMessage);
+            if (eMessage.contains("Channel is already closed")) {
+                Platform.runLater(new Runnable() {
+                    public void run() {
+                        FXMLDocumentController.this.bro_id_output.appendText("IllegalStateException 异常,浏览器已经关闭, 停止测试\n");
+                    }
+                });
+            }
+            illegalStateException.printStackTrace();
+            action_string = "break";
+        } catch (NullPointerException nullPointerException) {
+            Platform.runLater(new Runnable() {
+                public void run() {
+                    FXMLDocumentController.this.bro_id_output.appendText("nullPointerException 异常, 定位元素失败,停止测试\n");
+                }
+            });
+            action_string = "break";
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            action_string = "continue";
+        }
+        return action_string;
+    }
+
     @FXML
     private void startCrack(ActionEvent event) {
 
