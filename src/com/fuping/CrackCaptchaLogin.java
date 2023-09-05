@@ -55,8 +55,9 @@ public class CrackCaptchaLogin extends Application {
         print_info("Inner JxBrowser Version: " + ProductInfo.getVersion());
         //初始化配置文件读取
         MyConst.initialize();
-        //加载字典文件
-        loadUserPassFile(userNameFile, passWordFile, pitchforkMode, userPassFile,pairSeparator , userPassMode, userMarkInPass);
-        //launch(args);
+        //预加载字典文件
+        UserPassPairs = loadUserPassFile(userNameFile, passWordFile, pitchforkMode, userPassFile, pairSeparator, userPassMode, userMarkInPass);
+        //开始进行爆破操作
+        launch(args);
     }
 }

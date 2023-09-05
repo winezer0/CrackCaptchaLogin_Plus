@@ -40,6 +40,4 @@ public class Utils {
         }
         return encoding;
     }
-
-
 }

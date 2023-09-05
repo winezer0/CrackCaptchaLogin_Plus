@@ -7,7 +7,7 @@
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="634.0" spacing="2.0" BorderPane.alignment="CENTER">
          <children>
-            <TextField fx:id="id_baseurlinput" promptText="请输入登录页面的URL" text="http://127.0.0.1/demo/index.php/Home/Login/login.html" HBox.hgrow="ALWAYS" />
+            <TextField fx:id="id_base_url_input" promptText="请输入登录页面的URL" text="http://127.0.0.1/demo/index.php/Home/Login/login.html" HBox.hgrow="ALWAYS" />
             <Button fx:id="id_crack" mnemonicParsing="false" onAction="#startCrack" text="开始" />
             <Hyperlink onAction="#help" prefHeight="28.0" prefWidth="56.0" text="帮助" />
          </children>
@@ -24,7 +24,7 @@
          <children>
             <TabPane fx:id="id_tabpane" prefHeight="87.0" prefWidth="847.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                <tabs>
-                  <Tab fx:id="id_tab1" text="模拟操作浏览器方式">
+                  <Tab fx:id="id_browser_mode" text="模拟操作浏览器方式">
                      <content>
                         <VBox prefHeight="135.0" prefWidth="847.0">
                            <children>

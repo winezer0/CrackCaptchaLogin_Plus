@@ -1,8 +1,15 @@
 package com.fuping.LoadConfig;
 
+import com.fuping.LoadDict.UserPassPair;
+
+import java.util.LinkedHashSet;
+
 public class MyConst {
     // 私有静态成员变量，用于保存单例实例
     private static MyConst myConst;
+
+    //存储字典列表
+    public static LinkedHashSet<UserPassPair> UserPassPairs = null;
 
     //设置配置参数名称
     public static String ProgramVersion = "NOVA SEC 2.2 20230904 00:46" ;
