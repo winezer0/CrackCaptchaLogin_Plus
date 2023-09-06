@@ -119,7 +119,6 @@ public class Utils {
 
         //将账号密码字典格式从 HashSet 转为 数组,便于索引统计
         UserPassPair[] userPassPairsArray = userPassPairsHashSet.toArray(new UserPassPair[0]);
-        userPassPairsHashSet.clear();  //清空变量,已经不再需要了
         return userPassPairsArray;
     }
 
