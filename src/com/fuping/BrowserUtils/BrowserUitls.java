@@ -52,20 +52,26 @@ public class BrowserUitls {
         }
     }
 
-    public static InputElement findElementByAny(DOMDocument doc, String elementValue, boolean useId, boolean useName, boolean useClass, boolean useCss, boolean useXpath) {
-        //输入用户名元素 //需要添加输入XPath|CSS元素
-        InputElement userElement = null;
-        if (useId) {
-            userElement = (InputElement) doc.findElement(By.id(elementValue));
-        } else if (useName) {
-            userElement = (InputElement) doc.findElement(By.name(elementValue));
-        } else if (useClass){
-            userElement = (InputElement) doc.findElement(By.className(elementValue));
-        } if (useCss){
-            userElement = (InputElement) doc.findElement(By.cssSelector(elementValue));
-        } if (useXpath){
-            userElement = (InputElement) doc.findElement(By.xpath(elementValue));
+    public static InputElement findElementByOption(DOMDocument doc, String elementValue, String selectOption ) {
+        //输入用户名元素 //需要添加输入XPath|css元素
+        InputElement inputElement;
+        switch (selectOption) {
+            case "id":
+                inputElement = (InputElement) doc.findElement(By.id(elementValue));
+                break;
+            case "name":
+                inputElement = (InputElement) doc.findElement(By.name(elementValue));
+                break;
+            case "class":
+                inputElement = (InputElement) doc.findElement(By.className(elementValue));
+                break;
+            case "css":
+                inputElement = (InputElement) doc.findElement(By.cssSelector(elementValue));
+                break;
+            case "xpath":
+            default:
+                inputElement = (InputElement) doc.findElement(By.xpath(elementValue));
         }
-        return userElement;
+        return inputElement;
     }
 }

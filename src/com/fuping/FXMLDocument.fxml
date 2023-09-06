@@ -10,7 +10,7 @@
       <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="634.0" spacing="2.0" BorderPane.alignment="CENTER">
          <children>
             <TextField fx:id="id_login_url_input" promptText="请输入登录页面的URL" text="" HBox.hgrow="ALWAYS" />
-            <Button fx:id="id_crack" mnemonicParsing="false" onAction="#startCrack" text="开始" />
+            <Button mnemonicParsing="false" onAction="#startCrack" text="开始" />
             <Hyperlink onAction="#program_help" prefHeight="28.0" prefWidth="56.0" text="帮助" />
          </children>
          <BorderPane.margin>
@@ -24,24 +24,26 @@
    <center>
       <VBox prefHeight="612.0" prefWidth="223.0" BorderPane.alignment="CENTER">
          <children>
-            <TabPane fx:id="id_tab_pane" prefHeight="87.0" prefWidth="847.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <TabPane prefHeight="87.0" prefWidth="847.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                <tabs>
-                  <Tab fx:id="id_browser_op_mode" text="模拟操作浏览器方式">
+                  <Tab fx:id="id_browser_op_mode" text="浏览器模拟方式">
                      <content>
                         <VBox prefHeight="135.0" prefWidth="847.0">
                            <children>
                               <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                  <children>
-                                    <Label prefHeight="23.0" prefWidth="133.0" text="识别账号输入框" />
-                                    <RadioButton fx:id="bro_id_user_by_id" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="id" selected="true" >
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="bro_user_name_ele_group"/>
-                                       </toggleGroup>
-                                    </RadioButton>
-                                    <RadioButton fx:id="bro_id_user_by_name" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="name" toggleGroup="$bro_user_name_ele_group" />
-                                    <RadioButton fx:id="bro_id_user_by_class" mnemonicParsing="false" prefHeight="20.0" prefWidth="80.0" text="class" toggleGroup="$bro_user_name_ele_group" />
-                                    <RadioButton fx:id="bro_id_user_by_css" mnemonicParsing="false" prefHeight="20.0" prefWidth="80.0" text="CSS" toggleGroup="$bro_user_name_ele_group" />
-                                    <RadioButton fx:id="bro_id_user_by_xpath" mnemonicParsing="false" prefHeight="20.0" prefWidth="80.0" text="XPATH" toggleGroup="$bro_user_name_ele_group" />
+                                    <Label prefHeight="23.0" prefWidth="108.0" text="识别账号输入框" />
+                                       <ComboBox fx:id="bro_id_user_ele_type" prefHeight="30.0" prefWidth="120.0" promptText="选择定位方式">
+                                          <items>
+                                             <FXCollections fx:factory="observableArrayList">
+                                                <String fx:value="id" />
+                                                <String fx:value="name" />
+                                                <String fx:value="class" />
+                                                <String fx:value="css" />
+                                                <String fx:value="xpath" />
+                                             </FXCollections>
+                                          </items>
+                                       </ComboBox>
                                     <TextField fx:id="bro_id_user_ele_input" promptText="账号输入框定位信息" text="" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <VBox.margin>
@@ -53,16 +55,18 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                  <children>
-                                    <Label prefHeight="23.0" prefWidth="132.0" text="识别密码输入框" />
-                                    <RadioButton fx:id="bro_id_pass_by_id" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" selected="true" text="id">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="bro_id_password_ele_group"/>
-                                       </toggleGroup>
-                                    </RadioButton>
-                                    <RadioButton fx:id="bro_id_pass_by_name" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="name" toggleGroup="$bro_id_password_ele_group" />
-                                    <RadioButton fx:id="bro_id_pass_by_class" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="class" toggleGroup="$bro_id_password_ele_group" />
-                                    <RadioButton fx:id="bro_id_pass_by_css" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="CSS" toggleGroup="$bro_id_password_ele_group" />
-                                    <RadioButton fx:id="bro_id_pass_by_xpath" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="XPATH" toggleGroup="$bro_id_password_ele_group" />
+                                    <Label prefHeight="23.0" prefWidth="108.0" text="识别密码输入框" />
+                                    <ComboBox fx:id="bro_id_pass_ele_type" prefHeight="30.0" prefWidth="120.0" promptText="选择定位方式">
+                                       <items>
+                                          <FXCollections fx:factory="observableArrayList">
+                                             <String fx:value="id" />
+                                             <String fx:value="name" />
+                                             <String fx:value="class" />
+                                             <String fx:value="css" />
+                                             <String fx:value="xpath" />
+                                          </FXCollections>
+                                       </items>
+                                    </ComboBox>
                                     <TextField fx:id="bro_id_pass_ele_input" promptText="密码输入框定位信息" text="" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <padding>
@@ -74,16 +78,18 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                  <children>
-                                    <Label prefHeight="23.0" prefWidth="134.0" text="识别登录按钮" />
-                                    <RadioButton fx:id="bro_id_submit_by_id" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="id" selected="true" >
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="bro_id_submit_ele_group"/>
-                                       </toggleGroup>
-                                    </RadioButton>
-                                    <RadioButton fx:id="bro_id_submit_by_name" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="nam" toggleGroup="$bro_id_submit_ele_group" />
-                                    <RadioButton fx:id="bro_id_submit_by_class" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="class" toggleGroup="$bro_id_submit_ele_group" />
-                                    <RadioButton fx:id="bro_id_submit_by_css" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="CSS" toggleGroup="$bro_id_submit_ele_group" />
-                                    <RadioButton fx:id="bro_id_submit_by_XPATH" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="XPATH" toggleGroup="$bro_id_submit_ele_group" />
+                                    <Label prefHeight="23.0" prefWidth="108.0" text="识别登录按钮" />
+                                    <ComboBox fx:id="bro_id_submit_ele_type" prefHeight="30.0" prefWidth="120.0" promptText="选择定位方式">
+                                       <items>
+                                          <FXCollections fx:factory="observableArrayList">
+                                             <String fx:value="id" />
+                                             <String fx:value="name" />
+                                             <String fx:value="class" />
+                                             <String fx:value="css" />
+                                             <String fx:value="xpath" />
+                                          </FXCollections>
+                                       </items>
+                                    </ComboBox>
                                     <TextField fx:id="bro_id_submit_ele_input" prefHeight="30.0" prefWidth="79.0" promptText="登录按钮定位信息" text="" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <padding>
@@ -95,9 +101,9 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="10" >
                                  <children>
-                                    <Label prefHeight="23.0" prefWidth="120.0" text="浏览器设置" />
-                                    <CheckBox fx:id="bro_id_show_browser" mnemonicParsing="false" onAction="#bro_id_show_browser_action" prefHeight="23.0" prefWidth="120.0" text="显示浏览器" />
-                                    <ComboBox fx:id="bro_id_load_time_sleep" prefHeight="23.0" prefWidth="120.0" promptText="请求间隔毫秒">
+                                    <Label prefHeight="23.0" prefWidth="108.0" text="浏览器设置" />
+                                    <CheckBox fx:id="bro_id_show_browser" mnemonicParsing="false" onAction="#bro_id_show_browser_action" prefHeight="23.0" prefWidth="108.0" text="显示浏览器" />
+                                    <ComboBox fx:id="bro_id_load_time_sleep" prefHeight="23.0" prefWidth="108.0" promptText="请求间隔毫秒">
                                        <value>
                                           <Integer fx:value="1500" />
                                        </value>
@@ -149,14 +155,14 @@
                               <Separator prefWidth="200.0" />
                               <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="10" >
                                  <children>
-                                    <Label prefHeight="23.0" prefWidth="120.0" text="验证码设置" />
-                                    <CheckBox fx:id="bro_id_captcha_identify" mnemonicParsing="false" onAction="#bro_id_captcha_identify_action" prefHeight="23.0" prefWidth="120.0" text="识别验证码开关"/>
-                                    <RadioButton fx:id="bro_id_yzm_remote_identify" mnemonicParsing="false" onAction="#bro_id_yzm_remote_identify_action" prefHeight="23.0" prefWidth="120.0" text="远程识别" selected="true" >
+                                    <Label prefHeight="23.0" prefWidth="108.0" text="验证码设置" />
+                                    <CheckBox fx:id="bro_id_captcha_switch" mnemonicParsing="false" onAction="#bro_id_captcha_identify_action" prefHeight="23.0" prefWidth="108.0" text="识别验证码"/>
+                                    <RadioButton fx:id="bro_id_yzm_remote_identify" mnemonicParsing="false" onAction="#bro_id_yzm_remote_identify_action" prefHeight="23.0" prefWidth="108.0" text="远程识别" selected="true" >
                                        <toggleGroup>
                                           <ToggleGroup fx:id="bro_yzm_group"/>
                                        </toggleGroup>
                                     </RadioButton>
-                                    <RadioButton fx:id="bro_id_yzm_local_identify" mnemonicParsing="false" onAction="#bro_id_yzm_local_identify_action" prefHeight="23.0" prefWidth="120.0" text="本地识别" toggleGroup="$bro_yzm_group" />
+                                    <RadioButton fx:id="bro_id_yzm_local_identify" mnemonicParsing="false" onAction="#bro_id_yzm_local_identify_action" prefHeight="23.0" prefWidth="108.0" text="本地识别" toggleGroup="$bro_yzm_group" />
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -179,16 +185,18 @@
                               </HBox>
                               <HBox fx:id="id_bro_id_captcha_ele" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                  <children>
-                                    <Label prefHeight="30.0" prefWidth="136.0" text="验证码输入框" />
-                                    <RadioButton fx:id="bro_id_captcha_by_id" mnemonicParsing="false" prefHeight="28.0" prefWidth="80.0" selected="true" text="id">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="bro_id_captcha_ele_group"/>
-                                       </toggleGroup>
-                                    </RadioButton>
-                                    <RadioButton fx:id="bro_id_captcha_by_name" mnemonicParsing="false" prefHeight="28.0" prefWidth="80.0" text="name" toggleGroup="$bro_id_captcha_ele_group" />
-                                    <RadioButton fx:id="bro_id_captcha_by_class" mnemonicParsing="false" prefHeight="28.0" prefWidth="80.0" text="class" toggleGroup="$bro_id_captcha_ele_group" />
-                                    <RadioButton fx:id="bro_id_captcha_by_css" mnemonicParsing="false" prefHeight="28.0" prefWidth="80.0" text="CSS" toggleGroup="$bro_id_captcha_ele_group" />
-                                    <RadioButton fx:id="bro_id_captcha_by_xpath" mnemonicParsing="false" prefHeight="28.0" prefWidth="80.0" text="XPATH" toggleGroup="$bro_id_captcha_ele_group" />
+                                    <Label prefHeight="30.0" prefWidth="108.0" text="验证码输入框" />
+                                    <ComboBox fx:id="bro_id_captcha_ele_type" prefHeight="30.0" prefWidth="120.0" promptText="选择定位方式">
+                                       <items>
+                                          <FXCollections fx:factory="observableArrayList">
+                                             <String fx:value="id" />
+                                             <String fx:value="name" />
+                                             <String fx:value="class" />
+                                             <String fx:value="css" />
+                                             <String fx:value="xpath" />
+                                          </FXCollections>
+                                       </items>
+                                    </ComboBox>
                                     <TextField fx:id="bro_id_captcha_ele_input" promptText="验证码输入框定位信息" text="" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <padding>
@@ -201,7 +209,7 @@
                               <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                  <children>
                                     <Label prefHeight="23.0" prefWidth="108" text="验证码错误匹配" />
-                                    <TextField fx:id="bro_id_captcha_fail" prefHeight="23.0" prefWidth="79.0" promptText="验证码错误正则匹配[暂未实现]" text="" HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="bro_id_captcha_regex" prefHeight="23.0" prefWidth="79.0" promptText="验证码错误正则匹配[暂未实现]" text="" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <padding>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -239,7 +247,7 @@
                                              <children>
                                                 <Label prefHeight="15.0" prefWidth="90.0" text="请输入请求：" />
                                                 <TextArea fx:id="nor_id_request_area" prefHeight="200.0" prefWidth="200.0" promptText="这里设置请求头" VBox.vgrow="ALWAYS" />
-                                                <HBox fx:id="id_hbox221" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
+                                                <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                                    <children>
                                                       <Label prefHeight="23.0" prefWidth="112.0" text="图片验证码URL地址" />
                                                       <TextField fx:id="nor_id_captcha_url_ele_input2" prefHeight="23.0" prefWidth="591.0" text="http://luckyuat.watsonsestore.com.cn/CodeImg.aspx?type=2&amp;t=0.9500656142342141" HBox.hgrow="ALWAYS" />
@@ -367,7 +375,7 @@
                      </items>
                   </ComboBox>
 
-                  <Button fx:id="ys_query_info" mnemonicParsing="false" onAction="#ys_query_info_action" prefHeight="30.0" prefWidth="99.0" text="账户查询" />
+                  <Button mnemonicParsing="false" onAction="#ys_query_info_action" prefHeight="30.0" prefWidth="99.0" text="账户查询" />
                </children>
                <padding>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -381,7 +389,7 @@
                   <PasswordField fx:id="ys_password" prefHeight="30.0" prefWidth="538.0" text="demo" HBox.hgrow="ALWAYS" />
                   <Label prefHeight="23.0" prefWidth="102.0" text="  题目类型" />
                   <TextField fx:id="ys_type_id" prefHeight="30.0" prefWidth="75.0" text="3040" />
-                  <Hyperlink fx:id="ys_type_help" onAction="#ys_type_help_action" prefHeight="28.0" prefWidth="83.0" text="类型参考" />
+                  <Hyperlink onAction="#ys_type_help_action" prefHeight="28.0" prefWidth="83.0" text="类型参考" />
                </children>
                <padding>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

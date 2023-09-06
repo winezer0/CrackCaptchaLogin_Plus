@@ -45,6 +45,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import static com.fuping.BrowserUtils.BrowserUitls.*;
 import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.LoadConfig.MyConst.*;
+import static com.fuping.LoadConfig.MyConst.DefaultPassEleType;
 import static com.fuping.LoadDict.LoadDictUtils.userPassPairsHashSet;
 import static com.fuping.PrintLog.PrintLog.print_error;
 import static com.fuping.PrintLog.PrintLog.print_info;
@@ -52,220 +53,103 @@ import static com.fuping.PrintLog.PrintLog.print_info;
 public class FXMLDocumentController implements Initializable {
 
 
-    @FXML
-    private TextField id_login_url_input;
-
-    @FXML
-    private Button id_crack;
-
-    @FXML
-    private RadioButton bro_id_user_by_id;
-
-    @FXML
-    private ToggleGroup bro_user_name_ele_group;
-
-    @FXML
-    private RadioButton bro_id_user_by_name;
-
-    @FXML
-    private TextField bro_id_user_ele_input;
-
-    @FXML
-    private RadioButton bro_id_pass_by_id;
-
-    @FXML
-    private ToggleGroup bro_id_password_ele_group;
-
-    @FXML
-    private RadioButton bro_id_pass_by_name;
-
-    @FXML
-    private TextField bro_id_pass_ele_input;
-
-    @FXML
-    private RadioButton bro_id_captcha_by_id;
-
-    @FXML
-    private ToggleGroup bro_id_captcha_ele_group;
-
-    @FXML
-    private RadioButton bro_id_captcha_by_name;
-
-    @FXML
-    private TextField bro_id_captcha_ele_input;
-
-    @FXML
-    private ToggleGroup captchagroup;
-
-    @FXML
-    private TextField bro_id_captcha_url_input;
-
-    @FXML
-    private TextField ys_soft_id;
-
-    @FXML
-    private TextField ys_soft_key;
-
-    @FXML
-    private ComboBox<Integer> ys_query_timeout;
-
-    @FXML
-    private Button ys_query_info;
-
-    @FXML
-    private TextField ys_username;
-
-    @FXML
-    private PasswordField ys_password;
-
-    @FXML
-    private TextField ys_type_id;
-
-    @FXML
-    private Hyperlink ys_type_help;
-
-    @FXML
-    private TextArea bro_id_output;
-
-    @FXML
-    private RadioButton bro_id_submit_by_id;
-
-    @FXML
-    private ToggleGroup bro_id_submit_ele_group;
-
-    @FXML
-    private RadioButton bro_id_submit_by_name;
-
-    @FXML
-    private TextField bro_id_submit_ele_input;
-
-    @FXML
-    private TextField bro_id_success_regex;
-
-    @FXML
-    private TextField bro_id_failure_regex;
-
-    @FXML
-    private TextField bro_id_captcha_fail;
-
-    @FXML
-    private ComboBox<Integer> bro_id_load_time_sleep;
-
-    @FXML
-    private CheckBox bro_id_captcha_identify;
-
-    @FXML
-    private HBox id_bro_id_captcha_ele;
-
-    @FXML
-    private HBox id_bro_id_captcha_url;
-
-    @FXML
-    private HBox id_ys_open;
-
-    @FXML
-    private HBox id_ys_info;
-
-    @FXML
-    private HBox id_ys_config;
-
-    @FXML
-    private RadioButton bro_id_user_by_class;
-
-    @FXML
-    private RadioButton bro_id_user_by_css;
-
-    @FXML
-    private RadioButton bro_id_user_by_xpath;
-
-    @FXML
-    private RadioButton bro_id_pass_by_class;
-
-    @FXML
-    private RadioButton bro_id_pass_by_css;
-
-    @FXML
-    private RadioButton bro_id_pass_by_xpath;
-
-    @FXML
-    private RadioButton bro_id_submit_by_class;
-
-    @FXML
-    private RadioButton bro_id_submit_by_css;
-
-    @FXML
-    private RadioButton bro_id_submit_by_xpath;
-
-    @FXML
-    private RadioButton bro_id_captcha_by_class;
-
-    @FXML
-    private RadioButton bro_id_captcha_by_css;
-
-    @FXML
-    private RadioButton bro_id_captcha_by_xpath;
-
-    @FXML
-    private CheckBox bro_id_show_browser;
-
-    @FXML
-    private TextArea nor_id_request_area;
-
-    @FXML
-    private HBox id_hbox221;
-
-    @FXML
-    private TextField nor_id_captcha_url_ele_input2;
-
-    @FXML
-    private TextField id_sucess_keyword2;
-
-    @FXML
-    private Button nor_id_set_username_pos;
-
-    @FXML
-    private Button nor_id_set_password_pos;
-
-    @FXML
-    private CheckBox nor_id_captcha_identify;
-
-    @FXML
-    private Button nor_id_set_captcha_pos;
-
-    @FXML
-    private ComboBox<Integer> nor_id_threads;
-
-    @FXML
-    private ComboBox<Integer> nor_id_timeout;
-
-    @FXML
-    private TextArea nor_id_output_area;
-
-    @FXML
-    private TabPane id_tab_pane;
-
+    //操作模式选择
     @FXML
     private Tab id_browser_op_mode;
-
     @FXML
     private Tab id_normal_op_mode;
 
+    //第1页元素选择
     @FXML
     private RadioButton bro_id_yzm_remote_identify;
-
     @FXML
     private RadioButton bro_id_yzm_local_identify;
-
     @FXML
-    private ToggleGroup bro_yzm_group;
+    private TextField id_login_url_input;
+    @FXML
+    private TextField bro_id_user_ele_input;
+    @FXML
+    private TextField bro_id_pass_ele_input;
+    @FXML
+    private TextField bro_id_captcha_ele_input;
+    @FXML
+    private TextField bro_id_captcha_url_input;
+    @FXML
+    private TextField ys_soft_id;
+    @FXML
+    private TextField ys_soft_key;
+    @FXML
+    private ComboBox<Integer> ys_query_timeout;
+    @FXML
+    private TextField ys_username;
+    @FXML
+    private PasswordField ys_password;
+    @FXML
+    private TextField ys_type_id;
+    @FXML
+    private HBox id_ys_open;
+    @FXML
+    private HBox id_ys_info;
+    @FXML
+    private HBox id_ys_config;
+    @FXML
+    private TextArea bro_id_output;
+    @FXML
+    private TextField bro_id_submit_ele_input;
+    @FXML
+    private TextField bro_id_success_regex;
+    @FXML
+    private TextField bro_id_failure_regex;
+    @FXML
+    private TextField bro_id_captcha_regex;
+    @FXML
+    private ComboBox<Integer> bro_id_load_time_sleep;
+    @FXML
+    private CheckBox bro_id_captcha_switch;
+    @FXML
+    private HBox id_bro_id_captcha_ele;
+    @FXML
+    private HBox id_bro_id_captcha_url;
+    @FXML
+    private ComboBox<String> bro_id_user_ele_type;
+    @FXML
+    private ComboBox<String> bro_id_pass_ele_type;
+    @FXML
+    private ComboBox<String> bro_id_submit_ele_type;
+    @FXML
+    private ComboBox<String> bro_id_captcha_ele_type;
+    @FXML
+    private CheckBox bro_id_show_browser;
 
-    private byte[] captcha_data;
+
+    //第2页的元素
+    @FXML
+    private TextArea nor_id_request_area;
+    @FXML
+    private TextField nor_id_captcha_url_ele_input2;
+    @FXML
+    private TextField nor_id_success_keyword;
+    @FXML
+    private Button nor_id_set_username_pos;
+    @FXML
+    private Button nor_id_set_password_pos;
+    @FXML
+    private CheckBox nor_id_captcha_identify;
+    @FXML
+    private Button nor_id_set_captcha_pos;
+    @FXML
+    private ComboBox<Integer> nor_id_threads;
+    @FXML
+    private ComboBox<Integer> nor_id_timeout;
+    @FXML
+    private TextArea nor_id_output_area;
+
+
     private Stage primaryStage;
+    private byte[] captcha_data;
     private LinkedBlockingQueue<UserPassPair> queue;
     private Boolean is_stop_send_crack;
-
     private String captchaText = null;
-
     private List<Cookie> cookies = null;
 
     @Override
@@ -274,24 +158,32 @@ public class FXMLDocumentController implements Initializable {
 
         //设置登录URL
         this.id_login_url_input.setText(DefaultLoginUrl);
+        //设置登录框
         this.bro_id_user_ele_input.setText(DefaultNameEleValue);
+        this.bro_id_user_ele_type.setValue(DefaultNameEleType);
+        //设置密码框
         this.bro_id_pass_ele_input.setText(DefaultPassEleValue);
+        this.bro_id_pass_ele_type.setValue(DefaultPassEleType);
+        //设置提交按钮
         this.bro_id_submit_ele_input.setText(DefaultSubmitEleValue);
+        this.bro_id_submit_ele_type.setValue(DefaultSubmitEleType);
+        //设置浏览器选项
         this.bro_id_show_browser.setSelected(DefaultShowBrowser);
         this.bro_id_load_time_sleep.setValue(DefaultLoadTimeSleep);
+        //设置关键字匹配
         this.bro_id_success_regex.setText(DefaultSuccessRegex);
         this.bro_id_failure_regex.setText(DefaultFailureRegex);
-        this.bro_id_captcha_identify.setSelected(DefaultIdentCaptcha);
+        this.bro_id_captcha_regex.setText(DefaultCaptchaRegex);
         //设置验证码识别方式
-        if (DefaultLocalIdentify) {
-            bro_id_yzm_local_identify.setSelected(true);} else { bro_id_yzm_remote_identify.setSelected(true);}
+        this.bro_id_captcha_switch.setSelected(DefaultCaptchaSwitch);
+        if (DefaultLocalIdentify) {bro_id_yzm_local_identify.setSelected(true);} else { bro_id_yzm_remote_identify.setSelected(true);}
         this.bro_id_captcha_url_input.setText(DefaultCaptchaUrl);
         this.bro_id_captcha_ele_input.setText(DefaultCaptchaEleValue);
+        this.bro_id_captcha_ele_type.setValue(DefaultCaptchaEleType);
 
         //云速超时时间时间的配置 修改到FXML文件里面配置
         //ObservableList to = FXCollections.observableArrayList(new Integer[]{Integer.valueOf(30), Integer.valueOf(50), Integer.valueOf(60), Integer.valueOf(70), Integer.valueOf(80), Integer.valueOf(90), Integer.valueOf(100)});
         //this.ys_query_timeout.setItems(to);
-
         //ObservableList interval = FXCollections.observableArrayList(new Integer[]{Integer.valueOf(0), Integer.valueOf(500), Integer.valueOf(1000), Integer.valueOf(2000), Integer.valueOf(3000), Integer.valueOf(5000), Integer.valueOf(8000), Integer.valueOf(10000), Integer.valueOf(15000), Integer.valueOf(20000)});
         //this.bro_id_req_interval.setItems(interval);
 
@@ -317,17 +209,10 @@ public class FXMLDocumentController implements Initializable {
         this.bro_id_output.appendText(query_info_result);
     }
 
-    private String findElementAndInput(DOMDocument document,
-                                       String locate_info,
-                                       String input_string,
-                                       boolean idSelected,
-                                       boolean nameSelected,
-                                       boolean classSelected,
-                                       boolean cssSelected,
-                                       boolean xpathSelected) {
+    private String findElementAndInput(DOMDocument document, String locate_info, String selectedOption, String input_string) {
         String action_string = "success";
         try {
-            InputElement findElement = findElementByAny(document, locate_info,idSelected, nameSelected, classSelected, cssSelected, xpathSelected);
+            InputElement findElement = findElementByOption(document, locate_info, selectedOption);
             findElement.setValue(input_string);
         }
         catch (IllegalStateException illegalStateException) {
@@ -368,9 +253,6 @@ public class FXMLDocumentController implements Initializable {
         //验证码输入URL
         String captcha_url_input = this.bro_id_captcha_url_input.getText().trim();
 
-        //登录按钮内容
-        String bro_submit_input = this.bro_id_submit_ele_input.getText().trim();
-
         //获取云速认证信息
         String ys_username = this.ys_username.getText().trim();
         String ys_password = this.ys_password.getText().trim();
@@ -380,15 +262,14 @@ public class FXMLDocumentController implements Initializable {
         Integer ys_query_timeout = this.ys_query_timeout.getValue();
         String ys_query_timeout2;
 
-        if (ys_query_timeout == null)  ys_query_timeout2 = "60";
-        else {  ys_query_timeout2 = ys_query_timeout.toString(); }
+        if (ys_query_timeout == null)  ys_query_timeout2 = "60";  else { ys_query_timeout2 = ys_query_timeout.toString(); }
 
         YunSuConfig yunSuConfig = new YunSuConfig(ys_username, ys_password, ys_soft_id, ys_soft_key, ys_type_id, ys_query_timeout2);
 
         //浏览器操作模式模式
         if (this.id_browser_op_mode.isSelected()) {
             //存在验证码时监测云速账号密码是否为空//后续需要修改删除
-           if(this.bro_id_captcha_identify.isSelected()) {
+           if(this.bro_id_captcha_switch.isSelected()) {
                 if ((ys_username.equals("")) || (ys_password.equals(""))) {
                     new Alert(Alert.AlertType.NONE, "云速账号密码不能为空", new ButtonType[]{ButtonType.CLOSE});
                     return;
@@ -397,6 +278,7 @@ public class FXMLDocumentController implements Initializable {
 
             //获取用户名框框的内容
             String bro_user_input = this.bro_id_user_ele_input.getText().trim();
+            String bro_user_option = this.bro_id_user_ele_type.getValue();
             if (bro_user_input.equals("")) {
                 this.bro_id_user_ele_input.requestFocus();
                 return;
@@ -404,6 +286,7 @@ public class FXMLDocumentController implements Initializable {
 
             //获取密码框元素的内容
             String bro_pass_input = this.bro_id_pass_ele_input.getText().trim();
+            String bro_pass_option = this.bro_id_pass_ele_type.getValue();
             if (bro_pass_input.equals("")) {
                 this.bro_id_pass_ele_input.requestFocus();
                 return;
@@ -411,6 +294,7 @@ public class FXMLDocumentController implements Initializable {
 
             //获取验证码框元素的内容
             String bro_captcha_input = this.bro_id_captcha_ele_input.getText().trim();
+            String bro_captcha_option = this.bro_id_captcha_ele_type.getValue();
             if (bro_captcha_input.equals("")) {
                 this.bro_id_user_ele_input.requestFocus();
                 return;
@@ -422,6 +306,10 @@ public class FXMLDocumentController implements Initializable {
                 this.bro_id_captcha_url_input.requestFocus();
                 return;
             }
+
+            //登录按钮内容
+            String bro_submit_input = this.bro_id_submit_ele_input.getText().trim();
+            String bro_submit_option = this.bro_id_submit_ele_type.getValue();
 
             //创建窗口对象 JavaFX的Stage类是JavaFX应用程序创建窗口的基础
             this.primaryStage = new Stage();
@@ -499,16 +387,7 @@ public class FXMLDocumentController implements Initializable {
 
                             String result_action = null;
                             //输入用户名
-                            result_action = findElementAndInput(
-                                    document,
-                                    bro_user_input,
-                                    userPassPair.getUsername(),
-                                    FXMLDocumentController.this.bro_id_user_by_id.isSelected(),
-                                    FXMLDocumentController.this.bro_id_user_by_name.isSelected(),
-                                    FXMLDocumentController.this.bro_id_user_by_class.isSelected(),
-                                    FXMLDocumentController.this.bro_id_user_by_css.isSelected(),
-                                    FXMLDocumentController.this.bro_id_user_by_xpath.isSelected()
-                            );
+                            result_action = findElementAndInput(document, bro_user_input, bro_user_option, userPassPair.getUsername());
 
                             //处理资源寻找状态
                             if(!"success".equals(result_action)){
@@ -516,14 +395,7 @@ public class FXMLDocumentController implements Initializable {
                                 if("break".equals(result_action)) break; else if("continue".equals(result_action)) continue;
                             }
 
-                            result_action = findElementAndInput(document,
-                                    bro_pass_input,
-                                    userPassPair.getPassword(),
-                                    FXMLDocumentController.this.bro_id_pass_by_id.isSelected(),
-                                    FXMLDocumentController.this.bro_id_pass_by_name.isSelected(),
-                                    FXMLDocumentController.this.bro_id_pass_by_class.isSelected(),
-                                    FXMLDocumentController.this.bro_id_pass_by_css.isSelected(),
-                                    FXMLDocumentController.this.bro_id_pass_by_xpath.isSelected()
+                            result_action = findElementAndInput(document,bro_pass_input, bro_pass_option, userPassPair.getPassword()
                             );
 
                             //处理资源寻找状态
@@ -533,7 +405,7 @@ public class FXMLDocumentController implements Initializable {
                             }
 
                             //获取验证码并进行识别
-                            if (FXMLDocumentController.this.bro_id_captcha_identify.isSelected()) {
+                            if (FXMLDocumentController.this.bro_id_captcha_switch.isSelected()) {
                                 //captcha_data 在
                                 if (FXMLDocumentController.this.captcha_data == null) {
                                     printlnErrorOnUIAndConsole("获取验证码失败 (captcha数据为空)");
@@ -559,15 +431,7 @@ public class FXMLDocumentController implements Initializable {
                                 printlnInfoOnUIAndConsole(String.format("已识别验证码为:%s", captchaText));
 
                                 //定位验证码输入框并填写验证码
-                                String action_captcha = findElementAndInput(document,
-                                        bro_captcha_input,
-                                        captchaText,
-                                        FXMLDocumentController.this.bro_id_captcha_by_id.isSelected(),
-                                        FXMLDocumentController.this.bro_id_captcha_by_name.isSelected(),
-                                        FXMLDocumentController.this.bro_id_captcha_by_class.isSelected(),
-                                        FXMLDocumentController.this.bro_id_captcha_by_css.isSelected(),
-                                        FXMLDocumentController.this.bro_id_captcha_by_xpath.isSelected()
-                                );
+                                String action_captcha = findElementAndInput(document,bro_captcha_input, bro_captcha_option, captchaText);
                             }
 
                             //处理资源寻找状态
@@ -578,14 +442,7 @@ public class FXMLDocumentController implements Initializable {
 
                             //定位提交按钮, 并填写按钮
                             try {
-                                InputElement submitElement = findElementByAny(document,
-                                        bro_submit_input,
-                                        FXMLDocumentController.this.bro_id_submit_by_id.isSelected(),
-                                        FXMLDocumentController.this.bro_id_submit_by_name.isSelected(),
-                                        FXMLDocumentController.this.bro_id_submit_by_class.isSelected(),
-                                        FXMLDocumentController.this.bro_id_submit_by_css.isSelected(),
-                                        FXMLDocumentController.this.bro_id_submit_by_xpath.isSelected()
-                                );
+                                InputElement submitElement = findElementByOption(document, bro_submit_input, bro_submit_option);
                                 submitElement.click();
                             } catch (Exception e) {
                                 try {
@@ -641,7 +498,7 @@ public class FXMLDocumentController implements Initializable {
                         FXMLDocumentController.this.queue.clear();
                     }
 
-                    Integer thread = (Integer) FXMLDocumentController.this.nor_id_threads.getValue();
+                    Integer thread = FXMLDocumentController.this.nor_id_threads.getValue();
                     if (thread == null) {
                         thread = Integer.valueOf(1);
                     }
@@ -657,7 +514,7 @@ public class FXMLDocumentController implements Initializable {
                     }
 
                     String schema = login_url.startsWith("http") ? "http" : "https";
-                    String keyword2 = FXMLDocumentController.this.id_sucess_keyword2.getText();
+                    String keyword2 = FXMLDocumentController.this.nor_id_success_keyword.getText();
                     String captchaurlinput2 = FXMLDocumentController.this.nor_id_captcha_url_ele_input2.getText();
 
                     for (int i = 0; i < thread.intValue(); i++) {
@@ -761,7 +618,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void bro_id_captcha_identify_action(ActionEvent event) {
-        if (this.bro_id_captcha_identify.isSelected()) {
+        if (this.bro_id_captcha_switch.isSelected()) {
             this.id_bro_id_captcha_ele.setDisable(false);
             this.id_bro_id_captcha_url.setDisable(false);
             this.id_ys_open.setDisable(false);
@@ -863,15 +720,18 @@ public class FXMLDocumentController implements Initializable {
             try {
                 String receive = new String(paramDataReceivedParams.getData(), charset);
                 String success_key = FXMLDocumentController.this.bro_id_success_regex.getText();
-                //if (!isEmptyIfStr(success_key) && receive.contains(success_key))
                 if(containsMatchingSubString(receive, success_key)){
                     printlnInfoOnUIAndConsole(String.format("%s 页面存在登录成功关键字 [%s]", paramDataReceivedParams.getURL(), success_key));
                 }
 
                 String failure_key = FXMLDocumentController.this.bro_id_failure_regex.getText();
-                //if (!isEmptyIfStr(failure_key) && receive.contains(failure_key))
                 if(containsMatchingSubString(receive, failure_key)){
                     printlnInfoOnUIAndConsole(String.format("%s 页面存在登录失败关键字 [%s]", paramDataReceivedParams.getURL(), failure_key));
+                }
+
+                String captcha_fail = FXMLDocumentController.this.bro_id_captcha_regex.getText();
+                if(containsMatchingSubString(receive, captcha_fail)){
+                    printlnInfoOnUIAndConsole(String.format("%s 页面存在验证码失败关键字 [%s]", paramDataReceivedParams.getURL(), captcha_fail));
                 }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();

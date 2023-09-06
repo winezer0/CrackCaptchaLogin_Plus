@@ -9,7 +9,7 @@ public class MyConst {
     public static String LogRecodeFilePath = null ;
 
     //设置配置参数名称
-    public static String ProgramVersion = "NOVA SEC 2.2 20230904 00:46" ;
+    public static String ProgramVersion = "NOVASEC 3.0 20230906 14:36" ;
 
     //JxBrowser相关配置参数
     public static String BrowserProxySetting = null;
@@ -29,21 +29,22 @@ public class MyConst {
     public static String DefaultLoginUrl = null;
 
     public static String DefaultNameEleValue = null;
-    public static String NameEleType = null;
+    public static String DefaultNameEleType = null;
 
     public static String DefaultPassEleValue = null;
-    public static String PassEleType = null;
+    public static String DefaultPassEleType = null;
 
     public static String DefaultSubmitEleValue = null;
-    public static String SubmitEleType = null;
+    public static String DefaultSubmitEleType = null;
 
     public static boolean DefaultShowBrowser = false;
     public static int DefaultLoadTimeSleep = 1500;
 
     public static String DefaultSuccessRegex = null;
     public static String DefaultFailureRegex = null;
+    public static String DefaultCaptchaRegex = null;
 
-    public static boolean DefaultIdentCaptcha = false;
+    public static boolean DefaultCaptchaSwitch = false;
     public static boolean DefaultLocalIdentify = false;
 
     public static String DefaultCaptchaUrl = null;
@@ -72,26 +73,27 @@ public class MyConst {
         //加载默认的登录框配置
         DefaultLoginUrl = configReader.getString("login_url", "http://127.0.0.1/demo/index.php/Home/Login/login.html");
         DefaultNameEleValue = configReader.getString("name_ele_value", "username");
-        NameEleType = configReader.getString("name_ele_type", "id");
+        DefaultNameEleType = configReader.getString("name_ele_type", null);
 
         DefaultPassEleValue = configReader.getString("pass_ele_value", "password");
-        PassEleType = configReader.getString("pass_ele_type", "id");
+        DefaultPassEleType = configReader.getString("pass_ele_type", null);
 
         DefaultSubmitEleValue = configReader.getString("submit_ele_value", "login");
-        SubmitEleType = configReader.getString("button_ele_type", "id");
+        DefaultSubmitEleType = configReader.getString("submit_ele_type", null);
 
-        DefaultShowBrowser = configReader.isTrue("show_browser", false);
-        DefaultLoadTimeSleep = Integer.parseInt(configReader.getString("load_time_sleep", "1500"));
+        DefaultShowBrowser = configReader.isTrue("browser_show", false);
+        DefaultLoadTimeSleep = Integer.parseInt(configReader.getString("browser_sleep", "1500"));
 
         DefaultSuccessRegex = configReader.getString("success_regex", "welcome");
         DefaultFailureRegex = configReader.getString("failure_regex", "登录失败");
+        DefaultCaptchaRegex = configReader.getString("captcha_regex", "验证码错误");
 
-        DefaultIdentCaptcha = configReader.isTrue("ident_captcha", false);
+        DefaultCaptchaSwitch = configReader.isTrue("captcha_switch", false);
         DefaultLocalIdentify = configReader.isTrue("local_Identify", false);
 
         DefaultCaptchaUrl = configReader.getString("captcha_url", "http://127.0.0.1/demo/index.php/Home/Login/verify.html");
         DefaultCaptchaEleValue = configReader.getString("captcha_ele_value", "verify");
-        DefaultCaptchaEleType = configReader.getString("captcha_ele_type", "id");
+        DefaultCaptchaEleType = configReader.getString("captcha_ele_type", null);
     }
 
 
