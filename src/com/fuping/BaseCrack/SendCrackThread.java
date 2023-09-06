@@ -1,9 +1,11 @@
-package com.fuping;
+package com.fuping.BaseCrack;
 
 
 import com.fuping.BrowserUtils.MyHostnameVerifier;
 import com.fuping.BrowserUtils.MyTrustStrategy;
 import com.fuping.LoadDict.UserPassPair;
+import com.fuping.CaptchaIdentify.YunSu;
+import com.fuping.CaptchaIdentify.YunSuConfig;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.TextArea;

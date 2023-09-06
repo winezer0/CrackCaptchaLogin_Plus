@@ -1,6 +1,10 @@
 package com.fuping;
 
+import com.fuping.BaseCrack.SendCrackThread;
 import com.fuping.BrowserUtils.MyDialogHandler;
+import com.fuping.CaptchaIdentify.YunSu;
+import com.fuping.CaptchaIdentify.YunSuConfig;
+import com.fuping.CaptchaIdentify.YzmToText;
 import com.fuping.LoadDict.UserPassPair;
 import com.teamdev.jxbrowser.chromium.Callback;
 import com.teamdev.jxbrowser.chromium.*;
@@ -11,8 +15,6 @@ import com.teamdev.jxbrowser.chromium.events.*;
 import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
 import com.teamdev.jxbrowser.chromium.javafx.DefaultNetworkDelegate;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -51,7 +53,7 @@ public class FXMLDocumentController implements Initializable {
 
 
     @FXML
-    private TextField id_base_url_input;
+    private TextField id_login_url_input;
 
     @FXML
     private Button id_crack;
@@ -141,10 +143,14 @@ public class FXMLDocumentController implements Initializable {
     private TextField bro_id_success_keyword;
 
     @FXML
-    private ComboBox<Integer> bro_id_req_interval;
+    private TextField bro_id_failure_keyword;
+
 
     @FXML
-    private CheckBox bro_id_have_captcha;
+    private ComboBox<Integer> bro_id_load_time_sleep;
+
+    @FXML
+    private CheckBox bro_id_captcha_identify;
 
     @FXML
     private HBox id_bro_id_captcha_ele;
@@ -219,7 +225,7 @@ public class FXMLDocumentController implements Initializable {
     private Button nor_id_set_password_pos;
 
     @FXML
-    private CheckBox nor_id_have_captcha;
+    private CheckBox nor_id_captcha_identify;
 
     @FXML
     private Button nor_id_set_captcha_pos;
@@ -243,10 +249,10 @@ public class FXMLDocumentController implements Initializable {
     private Tab id_normal_op_mode;
 
     @FXML
-    private RadioButton bro_yzm_yunRadioBtn;
+    private RadioButton bro_id_yzm_remote_identify;
 
     @FXML
-    private RadioButton bro_yzm_localRadioBtn;
+    private RadioButton bro_id_yzm_local_identify;
 
     @FXML
     private ToggleGroup bro_yzm_group;
@@ -262,33 +268,49 @@ public class FXMLDocumentController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //初始化窗口内容设置
-        this.nor_id_request_area.setPromptText(
-                "POST /login.do\r\n" +
-                        "Host: 192.168.0.123:8080\r\n" +
-                        "User-Agent: User-Agent:Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36\r\n\r\n" +
-                        "username=$username$&passwd=$$password&captcha=$captcha$"
+        //初始化窗口1的内容设置
+
+        //设置登录URL
+        this.id_login_url_input.setText(DefaultLoginUrl);
+        this.bro_id_user_ele_input.setText(DefaultNameEleValue);
+        this.bro_id_pass_ele_input.setText(DefaultPassEleValue);
+        this.bro_id_submit_ele_input.setText(DefaultSubmitEleValue);
+        this.bro_id_show_browser.setSelected(DefaultShowBrowser);
+        this.bro_id_load_time_sleep.setValue(DefaultLoadTimeSleep);
+        this.bro_id_success_keyword.setText(DefaultSuccessKey);
+        this.bro_id_failure_keyword.setText(DefaultFailureKey);
+        this.bro_id_failure_keyword.setText("失败关键字过滤功能暂未实现");
+        this.bro_id_captcha_identify.setSelected(DefaultIdentCaptcha);
+        //设置验证码识别方式
+        if (DefaultLocalIdentify) {
+            bro_id_yzm_local_identify.setSelected(true);} else { bro_id_yzm_remote_identify.setSelected(true);}
+        this.bro_id_captcha_url_input.setText(DefaultCaptchaUrl);
+        this.bro_id_captcha_ele_input.setText(DefaultCaptchaEleValue);
+
+        //云速超时时间时间的配置 修改到FXML文件里面配置
+        //ObservableList to = FXCollections.observableArrayList(new Integer[]{Integer.valueOf(30), Integer.valueOf(50), Integer.valueOf(60), Integer.valueOf(70), Integer.valueOf(80), Integer.valueOf(90), Integer.valueOf(100)});
+        //this.ys_query_timeout.setItems(to);
+
+        //ObservableList interval = FXCollections.observableArrayList(new Integer[]{Integer.valueOf(0), Integer.valueOf(500), Integer.valueOf(1000), Integer.valueOf(2000), Integer.valueOf(3000), Integer.valueOf(5000), Integer.valueOf(8000), Integer.valueOf(10000), Integer.valueOf(15000), Integer.valueOf(20000)});
+        //this.bro_id_req_interval.setItems(interval);
+
+
+        //初始化窗口2的内容设置
+        this.nor_id_request_area.setPromptText("POST /login.do\r\n" +
+                "Host: 192.168.0.123:8080\r\n" +
+                "User-Agent: User-Agent:Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36\r\n\r\n" +
+                "username=$username$&passwd=$$password&captcha=$captcha$"
         );
 
-        ObservableList to = FXCollections.observableArrayList(new Integer[]{Integer.valueOf(30), Integer.valueOf(50), Integer.valueOf(60), Integer.valueOf(70), Integer.valueOf(80), Integer.valueOf(90), Integer.valueOf(100)});
-        this.ys_query_timeout.setItems(to);
-
-        ObservableList interval = FXCollections.observableArrayList(new Integer[]{Integer.valueOf(0), Integer.valueOf(500), Integer.valueOf(1000), Integer.valueOf(2000), Integer.valueOf(3000), Integer.valueOf(5000), Integer.valueOf(8000),
-                Integer.valueOf(10000), Integer.valueOf(15000), Integer.valueOf(20000)});
-        this.bro_id_req_interval.setItems(interval);
-
-        ObservableList timeout2 = FXCollections.observableArrayList(new Integer[]{Integer.valueOf(1000), Integer.valueOf(2000), Integer.valueOf(3000), Integer.valueOf(4000), Integer.valueOf(5000), Integer.valueOf(8000), Integer.valueOf(10000)});
-
-        this.nor_id_timeout.setItems(timeout2);
-
-        ObservableList threads = FXCollections.observableArrayList(new Integer[]{Integer.valueOf(1), Integer.valueOf(3), Integer.valueOf(5), Integer.valueOf(10), Integer.valueOf(20), Integer.valueOf(30), Integer.valueOf(50), Integer.valueOf(60), Integer.valueOf(70), Integer.valueOf(80), Integer.valueOf(90),
-                Integer.valueOf(100)});
-
-        this.nor_id_threads.setItems(threads);
+        //已修改到FXML文件里面配置
+        //ObservableList timeout2 = FXCollections.observableArrayList(new Integer[]{Integer.valueOf(1000), Integer.valueOf(2000), Integer.valueOf(3000), Integer.valueOf(4000), Integer.valueOf(5000), Integer.valueOf(8000), Integer.valueOf(10000)});
+        //this.nor_id_timeout.setItems(timeout2);
+        //ObservableList threads = FXCollections.observableArrayList(new Integer[]{Integer.valueOf(1), Integer.valueOf(3), Integer.valueOf(5), Integer.valueOf(10), Integer.valueOf(20), Integer.valueOf(30), Integer.valueOf(50), Integer.valueOf(60), Integer.valueOf(70), Integer.valueOf(80), Integer.valueOf(90), Integer.valueOf(100)});
+        //this.nor_id_threads.setItems(threads);
     }
 
     @FXML
-    private void ys_query_info(ActionEvent event) {
+    private void ys_query_info_action(ActionEvent event) {
         String query_info_result = "";
         query_info_result = YunSu.getInfo(this.ys_username.getText().trim(), this.ys_password.getText().trim());
         this.bro_id_output.appendText(query_info_result);
@@ -330,7 +352,7 @@ public class FXMLDocumentController implements Initializable {
     private void startCrack(ActionEvent event) {
 
         //读取登录 URL
-        String login_url = this.id_base_url_input.getText().trim();
+        String login_url = this.id_login_url_input.getText().trim();
         //登陆 URL 检查
         if (login_url.equals("") || !login_url.startsWith("http")) {
             new Alert(Alert.AlertType.NONE, "请输入完整的登录页面URL", new ButtonType[]{ButtonType.CLOSE}).show();
@@ -365,7 +387,7 @@ public class FXMLDocumentController implements Initializable {
         //浏览器操作模式模式
         if (this.id_browser_op_mode.isSelected()) {
             //存在验证码时监测云速账号密码是否为空//后续需要修改删除
-           if(this.bro_id_have_captcha.isSelected()) {
+           if(this.bro_id_captcha_identify.isSelected()) {
                 if ((ys_username.equals("")) || (ys_password.equals(""))) {
                     new Alert(Alert.AlertType.NONE, "云速账号密码不能为空", new ButtonType[]{ButtonType.CLOSE});
                     return;
@@ -425,10 +447,10 @@ public class FXMLDocumentController implements Initializable {
                 public void run() {
                     try {
                         //请求间隔设置
-                        Integer req_interval = FXMLDocumentController.this.bro_id_req_interval.getValue();
+                        Integer req_interval = FXMLDocumentController.this.bro_id_load_time_sleep.getValue();
 
                         //设置默认的请求间隔
-                        if (FXMLDocumentController.this.bro_id_req_interval.getValue() == null) {
+                        if (FXMLDocumentController.this.bro_id_load_time_sleep.getValue() == null) {
                             req_interval = Integer.valueOf(1500);
                         }
 
@@ -510,7 +532,7 @@ public class FXMLDocumentController implements Initializable {
                             }
 
                             //获取验证码并进行识别
-                            if (FXMLDocumentController.this.bro_id_have_captcha.isSelected()) {
+                            if (FXMLDocumentController.this.bro_id_captcha_identify.isSelected()) {
                                 //captcha_data 在
                                 if (FXMLDocumentController.this.captcha_data == null) {
                                     printlnErrorOnUIAndConsole("获取验证码失败 (captcha数据为空)");
@@ -518,7 +540,7 @@ public class FXMLDocumentController implements Initializable {
                                 }
 
                                 //验证码识别 //云打码识别
-                                if (bro_yzm_yunRadioBtn.isSelected()) {
+                                if (bro_id_yzm_remote_identify.isSelected()) {
                                     String result = YunSu.createByPost(ys_username, ys_password, ys_type_id, ys_query_timeout2, ys_soft_id, ys_soft_key, FXMLDocumentController.this.captcha_data);
                                     // int k = result.indexOf("|");
                                     if (result.contains("Error_Code")) {
@@ -528,7 +550,7 @@ public class FXMLDocumentController implements Initializable {
                                     captchaText = YunSu.getResult(result);
                                 }
                                 //验证码识别//本地识别
-                                if (bro_yzm_localRadioBtn.isSelected()) {
+                                if (bro_id_yzm_local_identify.isSelected()) {
                                     captchaText = YzmToText.getCode();
                                 }
 
@@ -604,7 +626,7 @@ public class FXMLDocumentController implements Initializable {
 
         //普通爆破模式
         else if (this.id_normal_op_mode.isSelected()) {
-            if ((this.nor_id_have_captcha.isSelected()) && ((ys_username.equals("")) || (ys_password.equals("")))) {
+            if ((this.nor_id_captcha_identify.isSelected()) && ((ys_username.equals("")) || (ys_password.equals("")))) {
                 new Alert(Alert.AlertType.NONE, "云速账号密码不能为空", new ButtonType[]{ButtonType.CLOSE});
                 return;
             }
@@ -640,7 +662,7 @@ public class FXMLDocumentController implements Initializable {
                     for (int i = 0; i < thread.intValue(); i++) {
                         new Thread(
                                 new SendCrackThread(cdl, FXMLDocumentController.this.queue, request, schema, FXMLDocumentController.this.nor_id_output_area, keyword2,
-                                        captchaurlinput2, timeout2, Boolean.valueOf(FXMLDocumentController.this.nor_id_have_captcha.isSelected()), yunSuConfig, login_url))
+                                        captchaurlinput2, timeout2, Boolean.valueOf(FXMLDocumentController.this.nor_id_captcha_identify.isSelected()), yunSuConfig, login_url))
                                 .start();
                     }
                     try {
@@ -699,19 +721,19 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void ys_type_help(ActionEvent event) {
+    private void ys_type_help_action(ActionEvent event) {
         String url = "http://www.ysdm.net/home/PriceType";
         OpenUrlWithLocalBrowser(url);
     }
 
     @FXML
-    private void help(ActionEvent event) {
+    private void program_help(ActionEvent event) {
         String url = "http://www.cnblogs.com/SEC-fsq/p/5712792.html";
         OpenUrlWithLocalBrowser(url);
     }
 
     @FXML
-    private void show_browser(ActionEvent event) {
+    private void bro_id_show_browser_action(ActionEvent event) {
         if (this.primaryStage == null) {
             return;
         }
@@ -722,7 +744,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void ydm_mode(ActionEvent event) {
+    private void bro_id_yzm_remote_identify_action(ActionEvent event) {
         this.id_bro_id_captcha_ele.setDisable(false);
         this.id_bro_id_captcha_url.setDisable(false);
         this.id_ys_open.setDisable(false);
@@ -731,46 +753,46 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void bro_local_dm(ActionEvent event) {
+    private void bro_id_yzm_local_identify_action(ActionEvent event) {
         this.id_ys_info.setDisable(true);
         this.id_ys_config.setDisable(true);
     }
 
     @FXML
-    private void bro_check_have_captcha(ActionEvent event) {
-        if (this.bro_id_have_captcha.isSelected()) {
+    private void bro_id_captcha_identify_action(ActionEvent event) {
+        if (this.bro_id_captcha_identify.isSelected()) {
             this.id_bro_id_captcha_ele.setDisable(false);
             this.id_bro_id_captcha_url.setDisable(false);
             this.id_ys_open.setDisable(false);
             this.id_ys_info.setDisable(false);
             this.id_ys_config.setDisable(false);
-            this.bro_yzm_localRadioBtn.setDisable(false);
-            this.bro_yzm_yunRadioBtn.setDisable(false);
+            this.bro_id_yzm_local_identify.setDisable(false);
+            this.bro_id_yzm_remote_identify.setDisable(false);
         } else {
             this.id_bro_id_captcha_ele.setDisable(true);
             this.id_bro_id_captcha_url.setDisable(true);
             this.id_ys_open.setDisable(true);
             this.id_ys_info.setDisable(true);
             this.id_ys_config.setDisable(true);
-            this.bro_yzm_localRadioBtn.setDisable(true);
-            this.bro_yzm_yunRadioBtn.setDisable(true);
+            this.bro_id_yzm_local_identify.setDisable(true);
+            this.bro_id_yzm_remote_identify.setDisable(true);
         }
     }
 
     @FXML
-    private void nor_set_username_pos(ActionEvent event) {
+    private void nor_id_set_username_pos_action(ActionEvent event) {
         IndexRange selection = this.nor_id_request_area.getSelection();
         this.nor_id_request_area.replaceText(selection, "$username$");
     }
 
     @FXML
-    private void nor_set_password_pos(ActionEvent event) {
+    private void nor_id_set_password_pos_action(ActionEvent event) {
         IndexRange selection = this.nor_id_request_area.getSelection();
         this.nor_id_request_area.replaceText(selection, "$password$");
     }
 
     @FXML
-    private void nor_set_captcha_pos(ActionEvent event) {
+    private void nor_id_set_captcha_pos_action(ActionEvent event) {
         IndexRange selection = this.nor_id_request_area.getSelection();
         this.nor_id_request_area.replaceText(selection, "$captcha$");
     }

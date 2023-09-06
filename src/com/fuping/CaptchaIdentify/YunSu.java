@@ -1,4 +1,4 @@
-package com.fuping;
+package com.fuping.CaptchaIdentify;
 
 import com.fuping.BrowserUtils.MyHostnameVerifier;
 import org.apache.http.client.config.RequestConfig;

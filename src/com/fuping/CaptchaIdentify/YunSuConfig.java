@@ -1,4 +1,4 @@
-package com.fuping;
+package com.fuping.CaptchaIdentify;
 
 
 public class YunSuConfig

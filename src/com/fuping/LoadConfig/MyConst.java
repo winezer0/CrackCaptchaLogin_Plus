@@ -26,29 +26,29 @@ public class MyConst {
     public static String UserMarkInPass = "%USER%";
 
     //登录配置参数
-    public static String LoginUrl = null;
+    public static String DefaultLoginUrl = null;
 
-    public static String LoginNameEleValue = null;
-    public static String LoginNameEleType = null;
+    public static String DefaultNameEleValue = null;
+    public static String NameEleType = null;
 
-    public static String LoginPassEleValue = null;
-    public static String LoginPassEleType = null;
+    public static String DefaultPassEleValue = null;
+    public static String PassEleType = null;
 
-    public static String LoginButtonEleValue = null;
-    public static String LoginButtonEleType = null;
+    public static String DefaultSubmitEleValue = null;
+    public static String SubmitEleType = null;
 
-    public static boolean ShowBrowser = false;
-    public static int LoadTimeSleep = 1500;
+    public static boolean DefaultShowBrowser = false;
+    public static int DefaultLoadTimeSleep = 1500;
 
-    public static String LoginSuccessKeywords = null;
-    public static String LoginFailureKeywords = null;
+    public static String DefaultSuccessKey = null;
+    public static String DefaultFailureKey = null;
 
-    public static boolean IdentCaptcha = false;
-    public static boolean LocalIdentify = false;
+    public static boolean DefaultIdentCaptcha = false;
+    public static boolean DefaultLocalIdentify = false;
 
-    public static String LoginCaptchaUrl = null;
-    public static String LoginCaptchaEleValue = null;
-    public static String LoginCaptchaEleType = null;
+    public static String DefaultCaptchaUrl = null;
+    public static String DefaultCaptchaEleValue = null;
+    public static String DefaultCaptchaEleType = null;
 
 
     public MyConst(){
@@ -70,28 +70,28 @@ public class MyConst {
         UserMarkInPass = configReader.getString("user_mark_in_pass", "%USER%");
 
         //加载默认的登录框配置
-        LoginUrl = configReader.getString("login_url", "http://127.0.0.1/demo/index.php/Home/Login/login.html");
-        LoginNameEleValue = configReader.getString("login_name_ele_value", "username");
-        LoginNameEleType = configReader.getString("login_name_ele_type", "id");
+        DefaultLoginUrl = configReader.getString("login_url", "http://127.0.0.1/demo/index.php/Home/Login/login.html");
+        DefaultNameEleValue = configReader.getString("name_ele_value", "username");
+        NameEleType = configReader.getString("name_ele_type", "id");
 
-        LoginPassEleValue = configReader.getString("login_pass_ele_value", "password");
-        LoginPassEleType = configReader.getString("login_pass_ele_type", "id");
+        DefaultPassEleValue = configReader.getString("pass_ele_value", "password");
+        PassEleType = configReader.getString("pass_ele_type", "id");
 
-        LoginButtonEleValue = configReader.getString("login_button_ele_value", "login");
-        LoginButtonEleType = configReader.getString("login_button_ele_type", "id");
+        DefaultSubmitEleValue = configReader.getString("submit_ele_value", "login");
+        SubmitEleType = configReader.getString("button_ele_type", "id");
 
-        ShowBrowser = configReader.isTrue("show_browser", false);
-        LoadTimeSleep = Integer.parseInt(configReader.getString("load_time_sleep", "1500"));
+        DefaultShowBrowser = configReader.isTrue("show_browser", false);
+        DefaultLoadTimeSleep = Integer.parseInt(configReader.getString("load_time_sleep", "1500"));
 
-        LoginSuccessKeywords = configReader.getString("login_success_keywords", "welcome");
-        LoginFailureKeywords = configReader.getString("login_failure_keywords", "登录失败");
+        DefaultSuccessKey = configReader.getString("success_keyword", "welcome");
+        DefaultFailureKey = configReader.getString("failure_keyword", "登录失败");
 
-        IdentCaptcha = configReader.isTrue("ident_captcha", false);
-        LocalIdentify = configReader.isTrue("local_Identify", false);
+        DefaultIdentCaptcha = configReader.isTrue("ident_captcha", false);
+        DefaultLocalIdentify = configReader.isTrue("local_Identify", false);
 
-        LoginCaptchaUrl = configReader.getString("login_captcha_url", "http://127.0.0.1/demo/index.php/Home/Login/verify.html");
-        LoginCaptchaEleValue = configReader.getString("login_captcha_ele_value", "verify");
-        LoginCaptchaEleType = configReader.getString("login_captcha_ele_type", "id");
+        DefaultCaptchaUrl = configReader.getString("captcha_url", "http://127.0.0.1/demo/index.php/Home/Login/verify.html");
+        DefaultCaptchaEleValue = configReader.getString("captcha_ele_value", "verify");
+        DefaultCaptchaEleType = configReader.getString("captcha_ele_type", "id");
     }
 
 
