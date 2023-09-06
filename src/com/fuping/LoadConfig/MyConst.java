@@ -25,6 +25,32 @@ public class MyConst {
     public static boolean UserPassMode = false;
     public static String UserMarkInPass = "%USER%";
 
+    //登录配置参数
+    public static String LoginUrl = null;
+
+    public static String LoginNameEleValue = null;
+    public static String LoginNameEleType = null;
+
+    public static String LoginPassEleValue = null;
+    public static String LoginPassEleType = null;
+
+    public static String LoginButtonEleValue = null;
+    public static String LoginButtonEleType = null;
+
+    public static boolean ShowBrowser = false;
+    public static int LoadTimeSleep = 1500;
+
+    public static String LoginSuccessKeywords = null;
+    public static String LoginFailureKeywords = null;
+
+    public static boolean IdentCaptcha = false;
+    public static boolean LocalIdentify = false;
+
+    public static String LoginCaptchaUrl = null;
+    public static String LoginCaptchaEleValue = null;
+    public static String LoginCaptchaEleType = null;
+
+
     public MyConst(){
         ConfigReader configReader = ConfigReader.getInstance();
         //读取代理配置参数
@@ -42,6 +68,30 @@ public class MyConst {
         UserPassMode = configReader.isTrue("user_pass_mode", false);
 
         UserMarkInPass = configReader.getString("user_mark_in_pass", "%USER%");
+
+        //加载默认的登录框配置
+        LoginUrl = configReader.getString("login_url", "http://127.0.0.1/demo/index.php/Home/Login/login.html");
+        LoginNameEleValue = configReader.getString("login_name_ele_value", "username");
+        LoginNameEleType = configReader.getString("login_name_ele_type", "id");
+
+        LoginPassEleValue = configReader.getString("login_pass_ele_value", "password");
+        LoginPassEleType = configReader.getString("login_pass_ele_type", "id");
+
+        LoginButtonEleValue = configReader.getString("login_button_ele_value", "login");
+        LoginButtonEleType = configReader.getString("login_button_ele_type", "id");
+
+        ShowBrowser = configReader.isTrue("show_browser", false);
+        LoadTimeSleep = Integer.parseInt(configReader.getString("load_time_sleep", "1500"));
+
+        LoginSuccessKeywords = configReader.getString("login_success_keywords", "welcome");
+        LoginFailureKeywords = configReader.getString("login_failure_keywords", "登录失败");
+
+        IdentCaptcha = configReader.isTrue("ident_captcha", false);
+        LocalIdentify = configReader.isTrue("local_Identify", false);
+
+        LoginCaptchaUrl = configReader.getString("login_captcha_url", "http://127.0.0.1/demo/index.php/Home/Login/verify.html");
+        LoginCaptchaEleValue = configReader.getString("login_captcha_ele_value", "verify");
+        LoginCaptchaEleType = configReader.getString("login_captcha_ele_type", "id");
     }
 
 
@@ -52,11 +102,7 @@ public class MyConst {
     }
 
     public static void main(String[] args) {
-        // 获取单例实例
-        MyConst MyConst1 = MyConst.initialize();
-        MyConst MyConst2 = MyConst.initialize();
-        // 检查是否是同一个实例
-        System.out.println(MyConst1 == MyConst2); // 应该输出 true
+       MyConst.initialize();
     }
 
 }

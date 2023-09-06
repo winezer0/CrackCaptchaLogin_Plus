@@ -86,7 +86,7 @@ public class ConfigReader {
         }
 
         //两种情况都没有获取到,返回默认值
-        print_info(String.format("Get Param Value From [Default Value]: %s=%s", paramString, ParamValue));
+        print_info(String.format("Get Param Value From [Default Value]: %s=%s", paramString, defaultValue));
         return defaultValue;
     }
 

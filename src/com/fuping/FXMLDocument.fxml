@@ -7,7 +7,7 @@
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="634.0" spacing="2.0" BorderPane.alignment="CENTER">
          <children>
-            <TextField fx:id="id_base_url_input" promptText="请输入登录页面的URL" text="http://127.0.0.1/demo/index.php/Home/Login/login.html" HBox.hgrow="ALWAYS" />
+            <TextField fx:id="id_base_url_input" promptText="请输入登录页面的URL" text="" HBox.hgrow="ALWAYS" />
             <Button fx:id="id_crack" mnemonicParsing="false" onAction="#startCrack" text="开始" />
             <Hyperlink onAction="#help" prefHeight="28.0" prefWidth="56.0" text="帮助" />
          </children>
@@ -40,7 +40,7 @@
                                     <RadioButton fx:id="bro_id_user_by_class" mnemonicParsing="false" prefHeight="20.0" prefWidth="80.0" text="class" toggleGroup="$bro_user_name_ele_group" />
                                     <RadioButton fx:id="bro_id_user_by_css" mnemonicParsing="false" prefHeight="20.0" prefWidth="80.0" text="CSS" toggleGroup="$bro_user_name_ele_group" />
                                     <RadioButton fx:id="bro_id_user_by_xpath" mnemonicParsing="false" prefHeight="20.0" prefWidth="80.0" text="XPATH" toggleGroup="$bro_user_name_ele_group" />
-                                    <TextField fx:id="bro_id_user_ele_input" text="username" HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="bro_id_user_ele_input" text="" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -61,7 +61,7 @@
                                     <RadioButton fx:id="bro_id_pass_by_class" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="class" toggleGroup="$bro_id_password_ele_group" />
                                     <RadioButton fx:id="bro_id_pass_by_css" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="CSS" toggleGroup="$bro_id_password_ele_group" />
                                     <RadioButton fx:id="bro_id_pass_by_xpath" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="XPATH" toggleGroup="$bro_id_password_ele_group" />
-                                    <TextField fx:id="bro_id_pass_ele_input" text="password" HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="bro_id_pass_ele_input" text="" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <padding>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -82,7 +82,7 @@
                                     <RadioButton fx:id="bro_id_submit_by_class" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="class" toggleGroup="$bro_id_submit_ele_group" />
                                     <RadioButton fx:id="bro_id_submit_by_css" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="CSS" toggleGroup="$bro_id_submit_ele_group" />
                                     <RadioButton fx:id="bro_id_submit_by_XPATH" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="XPATH" toggleGroup="$bro_id_submit_ele_group" />
-                                    <TextField fx:id="bro_id_submit_ele_input" prefHeight="30.0" prefWidth="79.0" text="login" HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="bro_id_submit_ele_input" prefHeight="30.0" prefWidth="79.0" text="" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <padding>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -137,7 +137,7 @@
                               <HBox fx:id="id_bro_id_captcha_url" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                  <children>
                                     <Label prefHeight="23.0" prefWidth="99.0" text="验证码图片URL" />
-                                    <TextField fx:id="bro_id_captcha_url_input" prefHeight="23.0" prefWidth="79.0" text="http://127.0.0.1/demo/index.php/Home/Login/verify.html" HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="bro_id_captcha_url_input" prefHeight="23.0" prefWidth="79.0" text="" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <padding>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -158,7 +158,7 @@
                                     <RadioButton fx:id="bro_id_captcha_by_class" mnemonicParsing="false" prefHeight="28.0" prefWidth="80.0" text="class" toggleGroup="$bro_id_captcha_ele_group" />
                                     <RadioButton fx:id="bro_id_captcha_by_css" mnemonicParsing="false" prefHeight="28.0" prefWidth="80.0" text="CSS" toggleGroup="$bro_id_captcha_ele_group" />
                                     <RadioButton fx:id="bro_id_captcha_by_xpath" mnemonicParsing="false" prefHeight="28.0" prefWidth="80.0" text="XPATH" toggleGroup="$bro_id_captcha_ele_group" />
-                                    <TextField fx:id="bro_id_captcha_ele_input" text="verify" HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="bro_id_captcha_ele_input" text="" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <padding>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -212,7 +212,7 @@
                                                 <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
                                                    <children>
                                                       <Label prefHeight="23.0" prefWidth="111.0" text="匹配响应内容关键字" />
-                                                      <TextField fx:id="nor_id_success_keyword" prefHeight="23.0" prefWidth="627.0" promptText="请输入关键字" text="welcome" HBox.hgrow="ALWAYS" />
+                                                      <TextField fx:id="nor_id_success_keyword" prefHeight="23.0" prefWidth="627.0" promptText="请输入关键字" text="" HBox.hgrow="ALWAYS" />
                                                    </children>
                                                    <padding>
                                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
