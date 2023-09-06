@@ -125,7 +125,7 @@
                               <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
                                  <children>
                                     <Label prefHeight="34.0" prefWidth="108.0" text="登录成功匹配关键字" />
-                                    <TextField fx:id="bro_id_success_keyword" prefHeight="31.0" prefWidth="729.0" promptText="登录成功匹配关键字" text="" HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="bro_id_success_regex" prefHeight="31.0" prefWidth="729.0" promptText="登录成功正则匹配关键字" text="" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -137,7 +137,7 @@
                               <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
                                  <children>
                                     <Label prefHeight="34.0" prefWidth="108.0" text="登录失败匹配关键字" />
-                                    <TextField fx:id="bro_id_failure_keyword" prefHeight="31.0" prefWidth="729.0" promptText="登录失败匹配关键字" text="" HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="bro_id_failure_regex" prefHeight="31.0" prefWidth="729.0" promptText="登录失败正则匹配关键字" text="" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

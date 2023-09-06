@@ -40,8 +40,8 @@ public class MyConst {
     public static boolean DefaultShowBrowser = false;
     public static int DefaultLoadTimeSleep = 1500;
 
-    public static String DefaultSuccessKey = null;
-    public static String DefaultFailureKey = null;
+    public static String DefaultSuccessRegex = null;
+    public static String DefaultFailureRegex = null;
 
     public static boolean DefaultIdentCaptcha = false;
     public static boolean DefaultLocalIdentify = false;
@@ -83,8 +83,8 @@ public class MyConst {
         DefaultShowBrowser = configReader.isTrue("show_browser", false);
         DefaultLoadTimeSleep = Integer.parseInt(configReader.getString("load_time_sleep", "1500"));
 
-        DefaultSuccessKey = configReader.getString("success_keyword", "welcome");
-        DefaultFailureKey = configReader.getString("failure_keyword", "登录失败");
+        DefaultSuccessRegex = configReader.getString("success_regex", "welcome");
+        DefaultFailureRegex = configReader.getString("failure_regex", "登录失败");
 
         DefaultIdentCaptcha = configReader.isTrue("ident_captcha", false);
         DefaultLocalIdentify = configReader.isTrue("local_Identify", false);

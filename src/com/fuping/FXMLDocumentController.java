@@ -140,10 +140,10 @@ public class FXMLDocumentController implements Initializable {
     private TextField bro_id_submit_ele_input;
 
     @FXML
-    private TextField bro_id_success_keyword;
+    private TextField bro_id_success_regex;
 
     @FXML
-    private TextField bro_id_failure_keyword;
+    private TextField bro_id_failure_regex;
 
 
     @FXML
@@ -277,9 +277,8 @@ public class FXMLDocumentController implements Initializable {
         this.bro_id_submit_ele_input.setText(DefaultSubmitEleValue);
         this.bro_id_show_browser.setSelected(DefaultShowBrowser);
         this.bro_id_load_time_sleep.setValue(DefaultLoadTimeSleep);
-        this.bro_id_success_keyword.setText(DefaultSuccessKey);
-        this.bro_id_failure_keyword.setText(DefaultFailureKey);
-        this.bro_id_failure_keyword.setText("失败关键字过滤功能暂未实现");
+        this.bro_id_success_regex.setText(DefaultSuccessRegex);
+        this.bro_id_failure_regex.setText(DefaultFailureRegex);
         this.bro_id_captcha_identify.setSelected(DefaultIdentCaptcha);
         //设置验证码识别方式
         if (DefaultLocalIdentify) {
@@ -861,13 +860,13 @@ public class FXMLDocumentController implements Initializable {
             if (charset.equals("")) { charset = "utf-8"; }
             try {
                 String receive = new String(paramDataReceivedParams.getData(), charset);
-                String success_key = FXMLDocumentController.this.bro_id_success_keyword.getText();
+                String success_key = FXMLDocumentController.this.bro_id_success_regex.getText();
                 //if (!isEmptyIfStr(success_key) && receive.contains(success_key))
                 if(containsMatchingSubString(receive, success_key)){
                     printlnInfoOnUIAndConsole(String.format("%s 页面存在登录成功关键字 [%s]", paramDataReceivedParams.getURL(), success_key));
                 }
 
-                String failure_key = FXMLDocumentController.this.bro_id_failure_keyword.getText();
+                String failure_key = FXMLDocumentController.this.bro_id_failure_regex.getText();
                 //if (!isEmptyIfStr(failure_key) && receive.contains(failure_key))
                 if(containsMatchingSubString(receive, failure_key)){
                     printlnInfoOnUIAndConsole(String.format("%s 页面存在登录失败关键字 [%s]", paramDataReceivedParams.getURL(), failure_key));
