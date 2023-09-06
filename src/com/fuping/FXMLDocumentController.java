@@ -145,6 +145,8 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextField bro_id_failure_regex;
 
+    @FXML
+    private TextField bro_id_captcha_fail;
 
     @FXML
     private ComboBox<Integer> bro_id_load_time_sleep;

@@ -124,7 +124,7 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
                                  <children>
-                                    <Label prefHeight="34.0" prefWidth="108.0" text="登录成功匹配关键字" />
+                                    <Label prefHeight="34.0" prefWidth="108.0" text="登录成功匹配" />
                                     <TextField fx:id="bro_id_success_regex" prefHeight="31.0" prefWidth="729.0" promptText="登录成功正则匹配关键字" text="" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <VBox.margin>
@@ -136,7 +136,7 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
                                  <children>
-                                    <Label prefHeight="34.0" prefWidth="108.0" text="登录失败匹配关键字" />
+                                    <Label prefHeight="34.0" prefWidth="108.0" text="登录失败匹配" />
                                     <TextField fx:id="bro_id_failure_regex" prefHeight="31.0" prefWidth="729.0" promptText="登录失败正则匹配关键字" text="" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <VBox.margin>
@@ -167,7 +167,7 @@
                               </HBox>
                               <HBox fx:id="id_bro_id_captcha_url" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                  <children>
-                                    <Label prefHeight="23.0" prefWidth="99.0" text="验证码图片地址" />
+                                    <Label prefHeight="23.0" prefWidth="108" text="验证码图片地址" />
                                     <TextField fx:id="bro_id_captcha_url_input" prefHeight="23.0" prefWidth="79.0" promptText="请输入验证码图片URL" text="" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <padding>
@@ -179,7 +179,7 @@
                               </HBox>
                               <HBox fx:id="id_bro_id_captcha_ele" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                  <children>
-                                    <Label prefHeight="30.0" prefWidth="136.0" text="识别验证码输入框" />
+                                    <Label prefHeight="30.0" prefWidth="136.0" text="验证码输入框" />
                                     <RadioButton fx:id="bro_id_captcha_by_id" mnemonicParsing="false" prefHeight="28.0" prefWidth="80.0" selected="true" text="id">
                                        <toggleGroup>
                                           <ToggleGroup fx:id="bro_id_captcha_ele_group"/>
@@ -198,14 +198,22 @@
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                  </VBox.margin>
                               </HBox>
+                              <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
+                                 <children>
+                                    <Label prefHeight="23.0" prefWidth="108" text="验证码错误匹配" />
+                                    <TextField fx:id="bro_id_captcha_fail" prefHeight="23.0" prefWidth="79.0" promptText="验证码错误正则匹配[暂未实现]" text="" HBox.hgrow="ALWAYS" />
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </padding>
+                                 <VBox.margin>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </VBox.margin>
+                              </HBox>
+
                               <Separator prefHeight="0.0" prefWidth="638.0" />
                               <VBox prefHeight="200.0" prefWidth="100.0" spacing="2.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Label prefHeight="15.0" prefWidth="649.0" text="输出：">
-                                       <VBox.margin>
-                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                       </VBox.margin>
-                                    </Label>
                                     <TextArea fx:id="bro_id_output" prefHeight="202.0" prefWidth="841.0" VBox.vgrow="ALWAYS" />
                                  </children>
                                  <VBox.margin>
