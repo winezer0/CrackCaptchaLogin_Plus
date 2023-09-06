@@ -5,6 +5,8 @@ import com.fuping.LoadDict.UserPassPair;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static cn.hutool.core.io.CharsetDetector.detect;
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
@@ -121,6 +123,18 @@ public class Utils {
         UserPassPair[] userPassPairsArray = userPassPairsHashSet.toArray(new UserPassPair[0]);
         return userPassPairsArray;
     }
+
+    public static boolean containsMatchingSubString(String receive, String keyRegex) {
+        if(isEmptyIfStr(keyRegex)){return false;}
+
+        // 编译正则表达式
+        Pattern pattern = Pattern.compile(keyRegex);
+        // 创建匹配器对象
+        Matcher matcher = pattern.matcher(receive);
+        // 查找匹配的子字符串
+        return matcher.find();
+    }
+
 
     public static void main(String[] args) {
         String urlString = "https://www.example.com/login.jsp?session=1";

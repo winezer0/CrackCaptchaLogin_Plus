@@ -849,8 +849,6 @@ public class FXMLDocumentController implements Initializable {
 
                     yzm_fos.flush();
                     yzm_fos.close();
-
-
                     //System.out.println("验证码数据:" + new String(FXMLDocumentController.this.captchadata).substring(0, 100));
                     return;
                 } catch (Exception e) {
@@ -860,15 +858,19 @@ public class FXMLDocumentController implements Initializable {
             }
 
             String charset = paramDataReceivedParams.getCharset();
-            if (charset.equals("")) {
-                charset = "utf-8";
-            }
-            String x = null;
+            if (charset.equals("")) { charset = "utf-8"; }
             try {
-                x = new String(paramDataReceivedParams.getData(), charset);
-                //System.out.println(paramDataReceivedParams.getURL() + "   Data Length: " + x.length());
-                if (x.contains(FXMLDocumentController.this.bro_id_success_keyword.getText())){
-                    printlnInfoOnUIAndConsole(String.format("%s:关键字匹配成功", paramDataReceivedParams.getURL()));
+                String receive = new String(paramDataReceivedParams.getData(), charset);
+                String success_key = FXMLDocumentController.this.bro_id_success_keyword.getText();
+                //if (!isEmptyIfStr(success_key) && receive.contains(success_key))
+                if(containsMatchingSubString(receive, success_key)){
+                    printlnInfoOnUIAndConsole(String.format("%s 页面存在登录成功关键字 [%s]", paramDataReceivedParams.getURL(), success_key));
+                }
+
+                String failure_key = FXMLDocumentController.this.bro_id_failure_keyword.getText();
+                //if (!isEmptyIfStr(failure_key) && receive.contains(failure_key))
+                if(containsMatchingSubString(receive, failure_key)){
+                    printlnInfoOnUIAndConsole(String.format("%s 页面存在登录失败关键字 [%s]", paramDataReceivedParams.getURL(), failure_key));
                 }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
