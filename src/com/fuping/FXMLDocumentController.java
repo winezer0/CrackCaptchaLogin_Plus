@@ -87,7 +87,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private ComboBox<Integer> bro_id_load_sleep_combo;
     @FXML //设置字典组合模式
-    private ComboBox<String> bro_id_dict_mode_combo;
+    private ComboBox<String> bro_id_dict_compo_mode_combo;
     @FXML
     private CheckBox bro_id_show_browser_check;
     @FXML
@@ -504,6 +504,7 @@ public class FXMLDocumentController implements Initializable {
         setWithCheck(this.bro_id_show_browser_check, DefaultShowBrowser);
         setWithCheck(this.bro_id_exclude_history_check, ExcludeHistory);
         setWithCheck(this.bro_id_load_sleep_combo, DefaultLoadTimeSleep);
+        setWithCheck(this.bro_id_dict_compo_mode_combo, DictCompoMode);
         //设置关键字匹配
         setWithCheck(this.bro_id_success_regex_text, DefaultSuccessRegex);
         setWithCheck(this.bro_id_failure_regex_text, DefaultFailureRegex);
@@ -597,12 +598,17 @@ public class FXMLDocumentController implements Initializable {
         }
         //基于登录URL初始化|URL更新|日志文件配置
         initBaseOnLoginUrl(login_url);
-        //加载字典配置
-        if(isModifiedLoginUrl(login_url) || isModifiedUserPassFile()|| isModifiedExcludeHistory(bro_id_exclude_history_check.isSelected())){
+
+        //检查是否存在关键按钮信息修改,修改了的需要更新到全局变量,并且重新更新加载字典
+        boolean isModifiedAuthFile = isModifiedAuthFile();
+        boolean isModifiedLoginUrl = isModifiedLoginUrl(login_url);
+        boolean isModifiedDictMode = isModifiedDictMode(this.bro_id_dict_compo_mode_combo.getValue());
+        boolean isModifiedExcludeHistory = isModifiedExcludeHistory(this.bro_id_exclude_history_check.isSelected());
+        if(isModifiedAuthFile||isModifiedLoginUrl||isModifiedDictMode||isModifiedExcludeHistory){
             //当登录URL或账号密码文件修改后,就需要重新更新
             printlnInfoOnUIAndConsole(String.format("加载账号密码文件开始..."));
             //点击登录后加载字典文件
-            HashSet<UserPassPair> UserPassPairsHashSet = loadUserPassFile(UserNameFile, PassWordFile, PitchforkMode, UserPassFile, PairSeparator, UserPassMode);
+            HashSet<UserPassPair> UserPassPairsHashSet = loadUserPassFile(UserNameFile, PassWordFile, UserPassFile, PairSeparator, DictCompoMode);
             //过滤历史字典记录,并转换为Array格式
             UserPassPairsArray = processedUserPassHashSet(UserPassPairsHashSet, HistoryFilePath, ExcludeHistory, UserMarkInPass);
         }
@@ -622,7 +628,6 @@ public class FXMLDocumentController implements Initializable {
         String ys_type_id = this.ys_type_id_text.getText().trim();
         Integer yzm_query_timeout = this.yzm_query_timeout_combo.getValue();
         YunSuConfig yunSuConfig = new YunSuConfig(ys_username, ys_password, ys_soft_id, ys_soft_key, ys_type_id, yzm_query_timeout.toString());
-
 
         //验证码输入URL
         String captcha_url_input = this.bro_id_captcha_url_text.getText().trim();

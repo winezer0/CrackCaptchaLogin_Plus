@@ -85,14 +85,13 @@ public class LoadDictUtils {
         return userPassPairs;
     }
 
-    public static HashSet<UserPassPair> loadUserPassFile(String userNameFile, String passWordFile, boolean pitchforkMode,
-                                                         String userPassFile, String pair_separator, boolean userPassMode
+    public static HashSet<UserPassPair> loadUserPassFile(String userNameFile, String passWordFile,String userPassFile, String pair_separator, String DictCompoMode
     ){
         //判断是加载账号密码对字典还是加载账号字典
         HashSet<UserPassPair> userPassPairs = new HashSet<>();
 
         //根据不同的模式生成账号密码对文件
-        if(userPassMode){
+        if("pair_file".equals(DictCompoMode)){
             if (userPassFile != null){
                 //处理账号密码对文件
                 List<String> userPassPairList =  readDictFile(userPassFile);
@@ -104,7 +103,7 @@ public class LoadDictUtils {
                 List<String> userNameList =  readDictFile(userNameFile);
                 List<String> passWordList =  readDictFile(passWordFile);
                 //判断是否使用 pitchfork 模式
-                if(pitchforkMode){
+                if("pitchfork".equals(DictCompoMode)){
                     userPassPairs = createPitchforkUserPassPairs(userNameList, passWordList);
                 }else {
                     userPassPairs = createCartesianUserPassPairs(userNameList, passWordList);
@@ -164,13 +163,13 @@ public class LoadDictUtils {
         String usernamePath = "dict" + File.separator + "username.txt";
         String passwordPath = "dict" + File.separator + "password.txt";
         //笛卡尔积读取的账号密码字典
-        inputUserPassPairs = loadUserPassFile(usernamePath, passwordPath, false, null,null , false);
+        loadUserPassFile(usernamePath, passwordPath, null,null , "cartesian");
         //并列读取的账号密码字典
-        inputUserPassPairs = loadUserPassFile(usernamePath, passwordPath, true, null,null , false);
+        loadUserPassFile(usernamePath, passwordPath, null,null , "pitchfork");
 
         //直接读取账号密码对文件
         String userPassPath = "dict" + File.separator + "user_pass.txt";
-        inputUserPassPairs = loadUserPassFile(null, null, false, userPassPath, ":", true);
+        inputUserPassPairs = loadUserPassFile(null, null, userPassPath, ":", "pair_file");
 
         //排除历史记录中的文件
         String hisUserPassPath = "dict" + File.separator + "history.txt";

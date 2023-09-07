@@ -148,13 +148,13 @@ public class Utils {
         return file.lastModified();
     }
 
-    public static boolean isModifiedUserPassFile() {
-        if(UserPassMode){
+    public static boolean isModifiedAuthFile() {
+        if("pair_file".equals(DictCompoMode)){
             //检查密码对文件
             long fileTime = getFileModified(UserPassFile);
             //判断文件是否修改
-            if(UserPassFileLastModified != fileTime){
-                UserPassFileLastModified = fileTime;
+            if(PairFileLastModified != fileTime){
+                PairFileLastModified = fileTime;
                 return true;
             }
         } else {
@@ -178,6 +178,17 @@ public class Utils {
         } else{
             print_info(String.format("The login URL has been modified from [%s] to [%s]",DefaultLoginUrl, login_url));
             DefaultLoginUrl = login_url;
+            return true;
+        }
+    }
+
+    public static boolean isModifiedDictMode(String dict_mode){
+        //检查登录URL是否更新, 更新了就重新赋值
+        if(dict_mode.equals(DictCompoMode)) {
+            return false;
+        } else{
+            print_info(String.format("The dict mode has been modified from [%s] to [%s]",DictCompoMode, dict_mode));
+            DictCompoMode = dict_mode;
             return true;
         }
     }

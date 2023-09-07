@@ -1,7 +1,3 @@
-root:123456
-admin:123456
+admin:password
 manager:123456
 yaofp:123456
-xiejh:123456
-zouql:123456
-fengzh:123456

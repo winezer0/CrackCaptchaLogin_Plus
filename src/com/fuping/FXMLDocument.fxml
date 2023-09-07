@@ -147,7 +147,7 @@
                                           </FXCollections>
                                        </items>
                                     </ComboBox>
-                                    <ComboBox fx:id="bro_id_dict_mode_combo" prefHeight="23.0" prefWidth="108.0" promptText="字典组合方式">
+                                    <ComboBox fx:id="bro_id_dict_compo_mode_combo" prefHeight="23.0" prefWidth="108.0" promptText="字典组合方式">
                                        <value>
                                           <String fx:value="cartesian" />
                                        </value>
