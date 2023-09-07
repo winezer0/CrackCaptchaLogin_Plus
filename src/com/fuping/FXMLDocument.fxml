@@ -359,7 +359,7 @@
                   <TextField fx:id="ys_soft_id" prefHeight="30.0" prefWidth="110.0" text="1" />
                   <Label prefHeight="23.0" prefWidth="70.0" text="软件KEY" />
                   <TextField fx:id="ys_soft_key" prefHeight="30.0" prefWidth="538.0" text="b40ffbee5c1cf4e38028c197eb2fc751" HBox.hgrow="ALWAYS" />
-                  <ComboBox fx:id="ys_query_timeout" prefHeight="30.0" prefWidth="164.0" promptText="验证码查询超时">
+                  <ComboBox fx:id="yzm_query_timeout" prefHeight="30.0" prefWidth="164.0" promptText="验证码查询超时">
                      <value>
                         <Integer fx:value="50" />
                      </value>

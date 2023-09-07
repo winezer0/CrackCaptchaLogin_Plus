@@ -45,15 +45,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import static com.fuping.BrowserUtils.BrowserUitls.*;
 import static com.fuping.CommonUtils.Utils.*;
-import static com.fuping.CommonUtils.Utils.urlRemoveQuery;
 import static com.fuping.LoadConfig.MyConst.*;
 import static com.fuping.LoadDict.LoadDictUtils.loadUserPassFile;
 import static com.fuping.PrintLog.PrintLog.print_error;
 import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class FXMLDocumentController implements Initializable {
-
-
     //操作模式选择
     @FXML
     private Tab id_browser_op_mode;
@@ -80,7 +77,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextField ys_soft_key;
     @FXML
-    private ComboBox<Integer> ys_query_timeout;
+    private ComboBox<Integer> yzm_query_timeout;
     @FXML
     private TextField ys_username;
     @FXML
@@ -177,7 +174,6 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //初始化窗口1的内容设置
@@ -263,6 +259,7 @@ public class FXMLDocumentController implements Initializable {
         return action_string;
     }
 
+
     @FXML
     private void startCrack(ActionEvent event) {
         //读取登录 URL
@@ -272,10 +269,9 @@ public class FXMLDocumentController implements Initializable {
             new Alert(Alert.AlertType.NONE, "请输入完整的登录页面URL", new ButtonType[]{ButtonType.CLOSE}).show();
             return;
         }
-
         //基于登录URL初始化|URL更新|日志文件配置
         initBaseOnLoginUrl(login_url);
-
+        //加载字典配置
         if(!login_url.equals(DefaultLoginUrl) || UserPassFileIsModified()){ //当登录URL或账号密码文件修改后,就需要重新更新
             printlnInfoOnUIAndConsole(String.format("加载账号密码文件开始..."));
             //点击登录后加载字典文件
@@ -283,7 +279,6 @@ public class FXMLDocumentController implements Initializable {
             //过滤历史字典记录,并转换为Array格式
             UserPassPairsArray = processedUserPassHashSet(UserPassPairsHashSet, HistoryFilePath, ExcludeHistory, UserMarkInPass);
         }
-
         //判断字典列表数量是否大于0
         if(UserPassPairsArray.length <= 0){
             printlnErrorOnUIAndConsole(String.format("加载账号密码文件完成 当前账号:密码数量[%s], 跳过爆破操作...", UserPassPairsArray.length));
@@ -292,19 +287,18 @@ public class FXMLDocumentController implements Initializable {
             printlnInfoOnUIAndConsole(String.format("加载账号密码文件完成 当前账号:密码数量[%s], 开始爆破操作...", UserPassPairsArray.length));
         }
 
-        //验证码输入URL
-        String captcha_url_input = this.bro_id_captcha_url_input.getText().trim();
-
         //获取云速认证信息//可以删除,慢慢来
         String ys_username = this.ys_username.getText().trim();
         String ys_password = this.ys_password.getText().trim();
         String ys_soft_id = this.ys_soft_id.getText().trim();
         String ys_soft_key = this.ys_soft_key.getText().trim();
         String ys_type_id = this.ys_type_id.getText().trim();
-        Integer ys_query_timeout = this.ys_query_timeout.getValue();
-        String ys_query_timeout2;
-        if (ys_query_timeout == null)  ys_query_timeout2 = "60";  else { ys_query_timeout2 = ys_query_timeout.toString(); }
-        YunSuConfig yunSuConfig = new YunSuConfig(ys_username, ys_password, ys_soft_id, ys_soft_key, ys_type_id, ys_query_timeout2);
+        Integer yzm_query_timeout = this.yzm_query_timeout.getValue();
+        YunSuConfig yunSuConfig = new YunSuConfig(ys_username, ys_password, ys_soft_id, ys_soft_key, ys_type_id, yzm_query_timeout.toString());
+
+
+        //验证码输入URL
+        String captcha_url_input = this.bro_id_captcha_url_input.getText().trim();
 
         //浏览器操作模式模式
         if (this.id_browser_op_mode.isSelected()) {
@@ -378,11 +372,6 @@ public class FXMLDocumentController implements Initializable {
                         //请求间隔设置
                         Integer req_interval = FXMLDocumentController.this.bro_id_load_time_sleep.getValue();
 
-                        //设置默认的请求间隔
-                        if (FXMLDocumentController.this.bro_id_load_time_sleep.getValue() == null) {
-                            req_interval = Integer.valueOf(1500);
-                        }
-
                         //遍历账号密码字典
                         for (int index = 0; index < UserPassPairsArray.length; index++) {
                             UserPassPair userPassPair = UserPassPairsArray[index];
@@ -452,7 +441,7 @@ public class FXMLDocumentController implements Initializable {
 
                                 //验证码识别 //云打码识别
                                 if (bro_id_yzm_remote_identify.isSelected()) {
-                                    String result = YunSu.createByPost(ys_username, ys_password, ys_type_id, ys_query_timeout2, ys_soft_id, ys_soft_key, FXMLDocumentController.this.captcha_data);
+                                    String result = YunSu.createByPost(ys_username, ys_password, ys_type_id, yzm_query_timeout.toString(), ys_soft_id, ys_soft_key, FXMLDocumentController.this.captcha_data);
                                     // int k = result.indexOf("|");
                                     if (result.contains("Error_Code")) {
                                         printlnErrorOnUIAndConsole(String.format("获取验证码失败 (查询结果%s)", result));
