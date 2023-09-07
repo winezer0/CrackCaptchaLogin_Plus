@@ -481,8 +481,10 @@ public class FXMLDocumentController implements Initializable {
                             }
 
                             browser.executeCommand(EditorCommand.INSERT_NEW_LINE);
-                            if (req_interval.intValue() != 0) {
-                                Thread.sleep(req_interval.intValue());
+
+                            //进行线程延迟
+                            if (req_interval.intValue() > 0) {
+                                Thread.sleep(req_interval / 2);
                             }
 
                             String cur_url = browser.getURL();
@@ -495,10 +497,7 @@ public class FXMLDocumentController implements Initializable {
                             writeTitleToFile(LogRecodeFilePath, title);
                             String content = String.format("%s,%s,%s,%s,%s,%s", login_url, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length);
                             writeLineToFile(LogRecodeFilePath, content);
-                            printlnInfoOnUIAndConsole(
-                                    String.format("登录URL%s,账号%s,密码%s,跳转URL%s,网页标题%s,内容长度%s",
-                                            login_url, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length)
-                            );
+                            printlnInfoOnUIAndConsole(String.format("登录URL%s,\n账号%s,\n密码%s,\n跳转URL%s,\n网页标题%s,\n内容长度%s\n", login_url, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -797,7 +796,7 @@ public class FXMLDocumentController implements Initializable {
                     stage.setTitle("请输入用户名密码");
                     stage.sizeToScene();
                     user_field.requestFocus();
-                    EventHandler okaction = new EventHandler<ActionEvent>() {
+                    EventHandler okAction = new EventHandler<ActionEvent>() {
                         public void handle(ActionEvent arg0) {
                             paramAuthRequiredParams.setUsername(user_field.getText());
                             paramAuthRequiredParams.setPassword(pass_field.getText());
@@ -806,7 +805,7 @@ public class FXMLDocumentController implements Initializable {
                             stage.close();
                         }
                     };
-                    EventHandler cancelaction = new EventHandler<ActionEvent>() {
+                    EventHandler cancelAction = new EventHandler<ActionEvent>() {
                         public void handle(ActionEvent arg0) {
                             MyNetworkDelegate.this.isCancelAuth = true;
                             MyNetworkDelegate.this.isCompleteAuth = true;
@@ -824,10 +823,10 @@ public class FXMLDocumentController implements Initializable {
                         }
                     });
 
-                    ok_button.setOnAction(okaction);
-                    user_field.setOnAction(okaction);
-                    pass_field.setOnAction(okaction);
-                    cancel_button.setOnAction(cancelaction);
+                    ok_button.setOnAction(okAction);
+                    user_field.setOnAction(okAction);
+                    pass_field.setOnAction(okAction);
+                    cancel_button.setOnAction(cancelAction);
                     stage.showAndWait();
                 }
             });
