@@ -599,11 +599,11 @@ public class FXMLDocumentController implements Initializable {
         //基于登录URL初始化|URL更新|日志文件配置
         initBaseOnLoginUrl(login_url);
 
-        //检查是否存在关键按钮信息修改,修改了的需要更新到全局变量,并且重新更新加载字典
-        boolean isModifiedAuthFile = isModifiedAuthFile();
-        boolean isModifiedLoginUrl = isModifiedLoginUrl(login_url);
-        boolean isModifiedDictMode = isModifiedDictMode(this.bro_id_dict_compo_mode_combo.getValue());
-        boolean isModifiedExcludeHistory = isModifiedExcludeHistory(this.bro_id_exclude_history_check.isSelected());
+        //检查是否存在关键按钮信息修改,(都需要更新到全局变量做记录),并且重新更新加载字典
+        boolean isModifiedAuthFile = isModifiedAuthFile(); //字典文件是否修改
+        boolean isModifiedLoginUrl = isModifiedLoginUrl(login_url); //登录URL是否修改
+        boolean isModifiedDictMode = isModifiedDictMode(this.bro_id_dict_compo_mode_combo.getValue()); //字典模式是否修改
+        boolean isModifiedExcludeHistory = isModifiedExcludeHistory(this.bro_id_exclude_history_check.isSelected());//排除历史状态是否修改
         if(isModifiedAuthFile||isModifiedLoginUrl||isModifiedDictMode||isModifiedExcludeHistory){
             //当登录URL或账号密码文件修改后,就需要重新更新
             printlnInfoOnUIAndConsole(String.format("加载账号密码文件开始..."));
