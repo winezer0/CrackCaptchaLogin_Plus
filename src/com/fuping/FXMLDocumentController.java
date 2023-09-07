@@ -83,13 +83,13 @@ public class FXMLDocumentController implements Initializable {
 
 
     //浏览器设置相关
+
+    @FXML
+    private ComboBox<Integer> bro_id_load_sleep_combo;
     @FXML
     private CheckBox bro_id_show_browser_check;
     @FXML
     private CheckBox bro_id_exclude_history_check;
-    @FXML
-    private ComboBox<Integer> bro_id_load_sleep_combo;
-
 
     //验证码元素相关
     @FXML
@@ -102,7 +102,6 @@ public class FXMLDocumentController implements Initializable {
     private ComboBox<String> bro_id_captcha_ele_type_combo;
     @FXML
     private TextField bro_id_captcha_ele_text;
-
     @FXML
     private RadioButton bro_id_yzm_remote_ident_radio;
     @FXML
