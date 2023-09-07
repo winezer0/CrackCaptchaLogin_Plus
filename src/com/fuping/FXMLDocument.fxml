@@ -226,7 +226,7 @@
                                     </VBox.margin>
                                  </HBox>
                               </VBox>
-                              <Separator prefHeight="0.0" />
+                              <Separator prefWidth="200.0" />
                               <VBox fx:id="bro_id_output_vbox" spacing="2.0" VBox.vgrow="ALWAYS">
                                  <children>
                                     <TextArea fx:id="bro_id_output_text_area" prefHeight="200.0" prefWidth="841.0" VBox.vgrow="ALWAYS" />
