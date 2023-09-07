@@ -102,8 +102,6 @@ public class Utils {
     }
 
 
-
-
     public static void initBaseOnLoginUrl(String login_url) {
         //根据当前登录URL生成 history 文件名称
         HistoryFilePath = genFileNameByUrl(login_url, "dict/history.txt", ".history.txt", true);
@@ -149,24 +147,15 @@ public class Utils {
     }
 
     public static boolean isModifiedAuthFile() {
-        if("pair_file".equals(DictCompoMode)){
-            //检查密码对文件
-            long fileTime = getFileModified(UserPassFile);
-            //判断文件是否修改
-            if(PairFileLastModified != fileTime){
-                PairFileLastModified = fileTime;
-                return true;
-            }
-        } else {
-            //检查账号密码文件
-            long nameFileTime = getFileModified(UserNameFile);
-            long passFileTime = getFileModified(PassWordFile);
-            //判断文件是否修改
-            if(nameFileTime != UserFileLastModified || passFileTime != PassFileLastModified ){
-                UserFileLastModified = nameFileTime;
-                PassFileLastModified = passFileTime;
-                return true;
-            }
+        long pairFileTime = getFileModified(UserPassFile);
+        long nameFileTime = getFileModified(UserNameFile);
+        long passFileTime = getFileModified(PassWordFile);
+
+        if(nameFileTime != UserFileLastModified || passFileTime != PassFileLastModified || pairFileTime != PairFileLastModified){
+            PairFileLastModified = pairFileTime;
+            UserFileLastModified = nameFileTime;
+            PassFileLastModified = passFileTime;
+            return true;
         }
         return false;
     }

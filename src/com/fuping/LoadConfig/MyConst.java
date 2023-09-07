@@ -8,6 +8,11 @@ public class MyConst {
 
     public static UserPassPair[] UserPassPairsArray = null;
 
+    //常量
+    public static String str_pair_file = "pair_file";
+    public static String str_pitchfork = "pitchfork";
+    public static String str_cartesian = "cartesian"; //默认
+
     //存储默认历史记录文件
     public static String HistoryFilePath = null ;
     public static String LogRecodeFilePath = null ;
@@ -78,7 +83,7 @@ public class MyConst {
         UserPassFile = configReader.getString("user_pass_file", null);
         PairSeparator = configReader.getString("pair_separator", ":");
         //字典模式选择
-        DictCompoMode = configReader.getString("dict_compo_mode", "cartesian");
+        DictCompoMode = configReader.getString("dict_compo_mode", str_cartesian);
 
         UserMarkInPass = configReader.getString("user_mark_in_pass", "%USER%");
         ExcludeHistory = configReader.isTrue("exclude_history", false);
