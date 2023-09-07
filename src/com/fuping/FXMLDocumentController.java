@@ -643,39 +643,39 @@ public class FXMLDocumentController implements Initializable {
             }
 
             //获取用户名框框的内容
-            String bro_user_input = this.bro_id_user_ele_text.getText().trim();
-            String bro_user_option = this.bro_id_user_ele_type_combo.getValue();
-            if (bro_user_input.equals("")) {
+            String bro_user_ele_text = this.bro_id_user_ele_text.getText().trim();
+            String bro_user_ele_type = this.bro_id_user_ele_type_combo.getValue();
+            if (bro_user_ele_text.equals("")) {
                 this.bro_id_user_ele_text.requestFocus();
                 return;
             }
 
             //获取密码框元素的内容
-            String bro_pass_input = this.bro_id_pass_ele_text.getText().trim();
-            String bro_pass_option = this.bro_id_pass_ele_type_combo.getValue();
-            if (bro_pass_input.equals("")) {
+            String bro_pass_ele_text = this.bro_id_pass_ele_text.getText().trim();
+            String bro_pass_ele_type = this.bro_id_pass_ele_type_combo.getValue();
+            if (bro_pass_ele_text.equals("")) {
                 this.bro_id_pass_ele_text.requestFocus();
                 return;
             }
 
             //获取验证码框元素的内容
-            String bro_captcha_input = this.bro_id_captcha_ele_text.getText().trim();
-            String bro_captcha_option = this.bro_id_captcha_ele_type_combo.getValue();
-            if (bro_captcha_input.equals("")) {
+            String bro_captcha_ele_text = this.bro_id_captcha_ele_text.getText().trim();
+            String bro_captcha_ele_type = this.bro_id_captcha_ele_type_combo.getValue();
+            if (bro_captcha_ele_text.equals("")) {
                 this.bro_id_user_ele_text.requestFocus();
                 return;
             }
 
             //获取验证码输入URL的内容
-            String bro_captcha_url_input = this.bro_id_captcha_url_text.getText().trim();
-            if (bro_captcha_url_input.equals("")) {
+            String bro_captcha_url_text = this.bro_id_captcha_url_text.getText().trim();
+            if (bro_captcha_url_text.equals("")) {
                 this.bro_id_captcha_url_text.requestFocus();
                 return;
             }
 
             //登录按钮内容
-            String bro_submit_input = this.bro_id_submit_ele_text.getText().trim();
-            String bro_submit_option = this.bro_id_submit_ele_type_combo.getValue();
+            String bro_submit_ele_text = this.bro_id_submit_ele_text.getText().trim();
+            String bro_id_submit_ele_type = this.bro_id_submit_ele_type_combo.getValue();
 
             //初始化浏览器
             Browser browser = initJxBrowserInstance();
@@ -738,20 +738,20 @@ public class FXMLDocumentController implements Initializable {
 
                             String result_action = null;
                             //输入用户名
-                            result_action = findElementAndInput(document, bro_user_input, bro_user_option, userPassPair.getUsername());
+                            result_action = findElementAndInput(document, bro_user_ele_text, bro_user_ele_type, userPassPair.getUsername());
 
                             //处理资源寻找状态
                             if(!"success".equals(result_action)){
-                                printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_pass_input, result_action));
+                                printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_pass_ele_text, result_action));
                                 if("break".equals(result_action)) break; else if("continue".equals(result_action)) continue;
                             }
 
-                            result_action = findElementAndInput(document,bro_pass_input, bro_pass_option, userPassPair.getPassword()
+                            result_action = findElementAndInput(document,bro_pass_ele_text, bro_pass_ele_type, userPassPair.getPassword()
                             );
 
                             //处理资源寻找状态
                             if(!"success".equals(result_action)){
-                                printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_pass_input, result_action));
+                                printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_pass_ele_text, result_action));
                                 if("break".equals(result_action)) break; else if("continue".equals(result_action)) continue;
                             }
 
@@ -782,18 +782,18 @@ public class FXMLDocumentController implements Initializable {
                                 printlnInfoOnUIAndConsole(String.format("已识别验证码为:%s", captchaText));
 
                                 //定位验证码输入框并填写验证码
-                                String action_captcha = findElementAndInput(document,bro_captcha_input, bro_captcha_option, captchaText);
+                                String action_captcha = findElementAndInput(document,bro_captcha_ele_text, bro_captcha_ele_type, captchaText);
                             }
 
                             //处理资源寻找状态
                             if(!"success".equals(result_action)){
-                                printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_pass_input, result_action));
+                                printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_pass_ele_text, result_action));
                                 if("break".equals(result_action)) break; else if("continue".equals(result_action)) continue;
                             }
 
                             //定位提交按钮, 并填写按钮
                             try {
-                                InputElement submitElement = findElementByOption(document, bro_submit_input, bro_submit_option);
+                                InputElement submitElement = findElementByOption(document, bro_submit_ele_text, bro_id_submit_ele_type);
                                 submitElement.click();
                             } catch (Exception e) {
                                 try {
