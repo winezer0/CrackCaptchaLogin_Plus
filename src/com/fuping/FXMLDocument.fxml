@@ -34,7 +34,7 @@
                                  <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                     <children>
                                        <Label prefHeight="23.0" prefWidth="108.0" text="识别账号输入框" />
-                                       <ComboBox fx:id="bro_id_user_ele_type_box" prefHeight="30.0" prefWidth="108.0" promptText="选择定位方式">
+                                       <ComboBox fx:id="bro_id_user_ele_type_combo" prefHeight="30.0" prefWidth="108.0" promptText="选择定位方式">
                                           <items>
                                              <FXCollections fx:factory="observableArrayList">
                                                 <String fx:value="id" />
@@ -57,7 +57,7 @@
                                  <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                     <children>
                                        <Label prefHeight="23.0" prefWidth="108.0" text="识别密码输入框" />
-                                       <ComboBox fx:id="bro_id_pass_ele_type_box" prefHeight="30.0" prefWidth="108.0" promptText="选择定位方式">
+                                       <ComboBox fx:id="bro_id_pass_ele_type_combo" prefHeight="30.0" prefWidth="108.0" promptText="选择定位方式">
                                           <items>
                                              <FXCollections fx:factory="observableArrayList">
                                                 <String fx:value="id" />
@@ -80,7 +80,7 @@
                                  <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                     <children>
                                        <Label prefHeight="23.0" prefWidth="108.0" text="识别登录按钮" />
-                                       <ComboBox fx:id="bro_id_submit_ele_type_box" prefHeight="30.0" prefWidth="108.0" promptText="选择定位方式">
+                                       <ComboBox fx:id="bro_id_submit_ele_type_combo" prefHeight="30.0" prefWidth="108.0" promptText="选择定位方式">
                                           <items>
                                              <FXCollections fx:factory="observableArrayList">
                                                 <String fx:value="id" />
@@ -193,7 +193,7 @@
                                  <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                     <children>
                                        <Label prefHeight="30.0" prefWidth="108.0" text="验证码输入框" />
-                                       <ComboBox fx:id="bro_id_captcha_ele_type_box" prefHeight="30.0" prefWidth="108.0" promptText="选择定位方式">
+                                       <ComboBox fx:id="bro_id_captcha_ele_type_combo" prefHeight="30.0" prefWidth="108.0" promptText="选择定位方式">
                                           <items>
                                              <FXCollections fx:factory="observableArrayList">
                                                 <String fx:value="id" />
@@ -213,7 +213,7 @@
                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                     </VBox.margin>
                                  </HBox>
-                                 <HBox fx:id="bro_id_captcha_regex_hbox" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
+                                 <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                     <children>
                                        <Label prefHeight="23.0" prefWidth="108" text="验证码错误匹配" />
                                        <TextField fx:id="bro_id_captcha_regex_text" prefHeight="23.0" prefWidth="79.0" promptText="验证码错误正则匹配" text="" HBox.hgrow="ALWAYS" />

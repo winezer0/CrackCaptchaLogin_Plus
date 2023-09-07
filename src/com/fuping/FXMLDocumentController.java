@@ -60,13 +60,8 @@ public class FXMLDocumentController implements Initializable {
 
 
     //第1页元素选择
-    @FXML
-    public VBox bro_id_all_captcha_set_vbox;
 
-    @FXML
-    private RadioButton bro_id_yzm_remote_ident_radio;
-    @FXML
-    private RadioButton bro_id_yzm_local_ident_radio;
+    //登录相关元素
     @FXML
     private TextField id_login_url_text;
     @FXML
@@ -74,14 +69,56 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextField bro_id_pass_ele_text;
     @FXML
-    private TextField bro_id_captcha_ele_text;
+    private TextField bro_id_submit_ele_text;
+    @FXML
+    private ComboBox<String> bro_id_user_ele_type_combo;
+    @FXML
+    private ComboBox<String> bro_id_pass_ele_type_combo;
+    @FXML
+    private ComboBox<String> bro_id_submit_ele_type_combo;
+    @FXML
+    private TextField bro_id_success_regex_text;
+    @FXML
+    private TextField bro_id_failure_regex_text;
+
+
+    //浏览器设置相关
+    @FXML
+    private CheckBox bro_id_show_browser_check;
+    @FXML
+    private CheckBox bro_id_exclude_history_check;
+    @FXML
+    private ComboBox<Integer> bro_id_load_sleep_combo;
+
+
+    //验证码元素相关
+    @FXML
+    public VBox bro_id_all_captcha_set_vbox;
+    @FXML
+    private CheckBox bro_id_captcha_switch_check;
     @FXML
     private TextField bro_id_captcha_url_text;
     @FXML
-    private ComboBox<Integer> yzm_query_timeout_combo;
+    private ComboBox<String> bro_id_captcha_ele_type_combo;
+    @FXML
+    private TextField bro_id_captcha_ele_text;
 
+    @FXML
+    private RadioButton bro_id_yzm_remote_ident_radio;
+    @FXML
+    private RadioButton bro_id_yzm_local_ident_radio;
+    @FXML
+    private TextField bro_id_captcha_regex_text;
+
+    //输出相关
+    @FXML
+    private TextArea bro_id_output_text_area;
+
+    //云速账号相关
     @FXML  //YS整体设置,待删除
     public VBox ys_id_all_yunsu_set_vbox;
+    @FXML
+    private ComboBox<Integer> yzm_query_timeout_combo;
     @FXML  //YS账号设置,待删除
     private TextField ys_soft_id_text;
     @FXML  //YS账号设置,待删除
@@ -93,34 +130,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML  //YS账号设置,待删除
     private TextField ys_type_id_text;
 
-    @FXML
-    private TextArea bro_id_output_text_area;
-    @FXML
-    private TextField bro_id_submit_ele_text;
-    @FXML
-    private TextField bro_id_success_regex_text;
-    @FXML
-    private TextField bro_id_failure_regex_text;
-    @FXML
-    public HBox bro_id_captcha_regex_hbox;
-    @FXML
-    private TextField bro_id_captcha_regex_text;
-    @FXML
-    private ComboBox<Integer> bro_id_load_sleep_combo;
-    @FXML
-    private CheckBox bro_id_captcha_switch_check;
-    @FXML
-    private ComboBox<String> bro_id_user_ele_type_box;
-    @FXML
-    private ComboBox<String> bro_id_pass_ele_type_box;
-    @FXML
-    private ComboBox<String> bro_id_submit_ele_type_box;
-    @FXML
-    private ComboBox<String> bro_id_captcha_ele_type_box;
-    @FXML
-    private CheckBox bro_id_show_browser_check;
-    @FXML
-    private CheckBox bro_id_exclude_history_check;
+
 
 
     //第2页的元素
@@ -482,13 +492,13 @@ public class FXMLDocumentController implements Initializable {
         setWithCheck(this.id_login_url_text, DefaultLoginUrl);
         //设置登录框
         setWithCheck(this.bro_id_user_ele_text, DefaultNameEleValue);
-        setWithCheck(this.bro_id_user_ele_type_box, DefaultNameEleType);
+        setWithCheck(this.bro_id_user_ele_type_combo, DefaultNameEleType);
         //设置密码框
         setWithCheck(this.bro_id_pass_ele_text, DefaultPassEleValue);
-        setWithCheck(this.bro_id_pass_ele_type_box, DefaultPassEleType);
+        setWithCheck(this.bro_id_pass_ele_type_combo, DefaultPassEleType);
         //设置提交按钮
         setWithCheck(this.bro_id_submit_ele_text, DefaultSubmitEleValue);
-        setWithCheck(this.bro_id_submit_ele_type_box, DefaultSubmitEleType);
+        setWithCheck(this.bro_id_submit_ele_type_combo, DefaultSubmitEleType);
         //设置浏览器选项
         setWithCheck(this.bro_id_show_browser_check, DefaultShowBrowser);
         setWithCheck(this.bro_id_exclude_history_check, ExcludeHistory);
@@ -504,7 +514,7 @@ public class FXMLDocumentController implements Initializable {
         //设置验证码属性
         setWithCheck(this.bro_id_captcha_url_text, DefaultCaptchaUrl);
         setWithCheck(this.bro_id_captcha_ele_text, DefaultCaptchaEleValue);
-        setWithCheck(this.bro_id_captcha_ele_type_box, DefaultCaptchaEleType);
+        setWithCheck(this.bro_id_captcha_ele_type_combo, DefaultCaptchaEleType);
 
         //模拟禁用动作
         this.bro_id_captcha_identify_action(null);
@@ -628,7 +638,7 @@ public class FXMLDocumentController implements Initializable {
 
             //获取用户名框框的内容
             String bro_user_input = this.bro_id_user_ele_text.getText().trim();
-            String bro_user_option = this.bro_id_user_ele_type_box.getValue();
+            String bro_user_option = this.bro_id_user_ele_type_combo.getValue();
             if (bro_user_input.equals("")) {
                 this.bro_id_user_ele_text.requestFocus();
                 return;
@@ -636,7 +646,7 @@ public class FXMLDocumentController implements Initializable {
 
             //获取密码框元素的内容
             String bro_pass_input = this.bro_id_pass_ele_text.getText().trim();
-            String bro_pass_option = this.bro_id_pass_ele_type_box.getValue();
+            String bro_pass_option = this.bro_id_pass_ele_type_combo.getValue();
             if (bro_pass_input.equals("")) {
                 this.bro_id_pass_ele_text.requestFocus();
                 return;
@@ -644,7 +654,7 @@ public class FXMLDocumentController implements Initializable {
 
             //获取验证码框元素的内容
             String bro_captcha_input = this.bro_id_captcha_ele_text.getText().trim();
-            String bro_captcha_option = this.bro_id_captcha_ele_type_box.getValue();
+            String bro_captcha_option = this.bro_id_captcha_ele_type_combo.getValue();
             if (bro_captcha_input.equals("")) {
                 this.bro_id_user_ele_text.requestFocus();
                 return;
@@ -659,7 +669,7 @@ public class FXMLDocumentController implements Initializable {
 
             //登录按钮内容
             String bro_submit_input = this.bro_id_submit_ele_text.getText().trim();
-            String bro_submit_option = this.bro_id_submit_ele_type_box.getValue();
+            String bro_submit_option = this.bro_id_submit_ele_type_combo.getValue();
 
             //初始化浏览器
             Browser browser = initJxBrowserInstance();
