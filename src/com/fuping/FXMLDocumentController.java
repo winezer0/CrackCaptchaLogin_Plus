@@ -152,24 +152,27 @@ public class FXMLDocumentController implements Initializable {
     private String captchaText = null;
     private List<Cookie> cookies = null;
 
-    public void setWithCheck(Object element_obj, String default_value) {
-        if (default_value != null && !default_value.isEmpty()) {
-            if (element_obj instanceof TextField) {
-                TextField textField = (TextField) element_obj;
-                textField.setText(default_value);
+    public void setWithCheck(Object eleObj, Object Value) {
+        if (Value != null) {
+            if (eleObj instanceof TextField) {
+                //输入文本框的类型
+                TextField textField = (TextField) eleObj;
+                textField.setText((String) Value);
+            } else if (eleObj instanceof CheckBox){
+                //勾选框的类型
+                CheckBox checkBox = (CheckBox) eleObj;
+                checkBox.setSelected((Boolean) Value);
+            }  else if (eleObj instanceof ComboBox) {
+                // 组合框 下拉列表框的类型
+                ComboBox comboBox = (ComboBox) eleObj;
+                comboBox.setValue(Value);
+            } else if (eleObj instanceof RadioButton) {
+                //单选按钮
+                RadioButton radioButton = (RadioButton) eleObj;
+                radioButton.setSelected((Boolean) Value);
+            } else {
+                print_error(String.format("The element type is not supported yet [%s] -> [%s]",eleObj,Value));
             }
-
-            else if (element_obj instanceof ComboBox) {
-                ComboBox comboBox = (ComboBox) element_obj;
-                comboBox.setValue(default_value);
-            }
-
-            else if (element_obj instanceof CheckBox){
-                CheckBox checkBox = (CheckBox) element_obj;
-                checkBox.setSelected(DefaultShowBrowser);
-            }
-        }else {
-            print_error(String.format("The element type is not supported yet [%s] -> [%s]",element_obj,default_value));
         }
     }
 
@@ -179,29 +182,32 @@ public class FXMLDocumentController implements Initializable {
         //初始化窗口1的内容设置
 
         //设置登录URL
-        this.id_login_url_input.setText(DefaultLoginUrl);
+        setWithCheck(this.id_login_url_input, DefaultLoginUrl);
         //设置登录框
-        this.bro_id_user_ele_input.setText(DefaultNameEleValue);
-        this.bro_id_user_ele_type.setValue(DefaultNameEleType);
+        setWithCheck(this.bro_id_user_ele_input, DefaultNameEleValue);
+        setWithCheck(this.bro_id_user_ele_type, DefaultNameEleType);
         //设置密码框
-        this.bro_id_pass_ele_input.setText(DefaultPassEleValue);
-        this.bro_id_pass_ele_type.setValue(DefaultPassEleType);
+        setWithCheck(this.bro_id_pass_ele_input, DefaultPassEleValue);
+        setWithCheck(this.bro_id_pass_ele_type, DefaultPassEleType);
         //设置提交按钮
-        this.bro_id_submit_ele_input.setText(DefaultSubmitEleValue);
-        this.bro_id_submit_ele_type.setValue(DefaultSubmitEleType);
+        setWithCheck(this.bro_id_submit_ele_input, DefaultSubmitEleValue);
+        setWithCheck(this.bro_id_submit_ele_type, DefaultSubmitEleType);
         //设置浏览器选项
-        this.bro_id_show_browser.setSelected(DefaultShowBrowser);
-        this.bro_id_load_time_sleep.setValue(DefaultLoadTimeSleep);
+        setWithCheck(this.bro_id_show_browser, DefaultShowBrowser);
+        setWithCheck(this.bro_id_load_time_sleep, DefaultLoadTimeSleep);
         //设置关键字匹配
-        this.bro_id_success_regex.setText(DefaultSuccessRegex);
-        this.bro_id_failure_regex.setText(DefaultFailureRegex);
-        this.bro_id_captcha_regex.setText(DefaultCaptchaRegex);
+        setWithCheck(this.bro_id_success_regex, DefaultSuccessRegex);
+        setWithCheck(this.bro_id_failure_regex, DefaultFailureRegex);
+        setWithCheck(this.bro_id_captcha_regex, DefaultCaptchaRegex);
+        //设置验证码识别开关
+        setWithCheck(this.bro_id_captcha_switch, DefaultCaptchaSwitch);
         //设置验证码识别方式
-        this.bro_id_captcha_switch.setSelected(DefaultCaptchaSwitch);
-        if (DefaultLocalIdentify) {bro_id_yzm_local_identify.setSelected(true);} else { bro_id_yzm_remote_identify.setSelected(true);}
-        this.bro_id_captcha_url_input.setText(DefaultCaptchaUrl);
-        this.bro_id_captcha_ele_input.setText(DefaultCaptchaEleValue);
-        this.bro_id_captcha_ele_type.setValue(DefaultCaptchaEleType);
+        setWithCheck(DefaultLocalIdentify ? this.bro_id_yzm_local_identify : this.bro_id_yzm_remote_identify, true);
+        //设置验证码属性
+        setWithCheck(this.bro_id_captcha_url_input, DefaultCaptchaUrl);
+        setWithCheck(this.bro_id_captcha_ele_input, DefaultCaptchaEleValue);
+        setWithCheck(this.bro_id_captcha_ele_type, DefaultCaptchaEleType);
+
 
         //云速超时时间时间的配置 修改到FXML文件里面配置
         //ObservableList to = FXCollections.observableArrayList(new Integer[]{Integer.valueOf(30), Integer.valueOf(50), Integer.valueOf(60), Integer.valueOf(70), Integer.valueOf(80), Integer.valueOf(90), Integer.valueOf(100)});
@@ -291,7 +297,7 @@ public class FXMLDocumentController implements Initializable {
         //浏览器操作模式模式
         if (this.id_browser_op_mode.isSelected()) {
             //存在验证码时监测云速账号密码是否为空//后续需要修改删除
-           if(this.bro_id_captcha_switch.isSelected()) {
+            if(this.bro_id_captcha_switch.isSelected()) {
                 if ((ys_username.equals("")) || (ys_password.equals(""))) {
                     new Alert(Alert.AlertType.NONE, "云速账号密码不能为空", new ButtonType[]{ButtonType.CLOSE});
                     return;
@@ -491,7 +497,7 @@ public class FXMLDocumentController implements Initializable {
                             writeLineToFile(LogRecodeFilePath, content);
                             printlnInfoOnUIAndConsole(
                                     String.format("登录URL%s,账号%s,密码%s,跳转URL%s,网页标题%s,内容长度%s",
-                                    login_url, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length)
+                                            login_url, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length)
                             );
                         }
                     } catch (Exception e) {
@@ -861,10 +867,8 @@ public class FXMLDocumentController implements Initializable {
         //设置了主舞台的标题，标题将显示在窗口的标题栏上。
         this.primaryStage.setTitle("请勿操作浏览器页面");
 
-        //显示浏览器框
-        if (this.bro_id_show_browser.isSelected()) {
-            this.primaryStage.show();
-        }
+        //是否显示浏览器框
+        if (this.bro_id_show_browser.isSelected()) { this.primaryStage.show(); }
 
         //添加监听事件
         browser.addLoadListener(new LoadAdapter() {
@@ -879,10 +883,11 @@ public class FXMLDocumentController implements Initializable {
 
             public void onStartLoadingFrame(StartLoadingEvent paramStartLoadingEvent) {
                 if (paramStartLoadingEvent.isMainFrame()){
-                    printlnInfoOnUIAndConsole(String.format("Loading:[%s] Proxy:[%s]", paramStartLoadingEvent.getValidatedURL(), BrowserProxySetting));
                     Platform.runLater(new Runnable() {
                         public void run() {
                             progressIndicator.setProgress(-1.0D);
+                            //输出加载中记录输出两次 UI重复 //暂时无法解决,不在UI输出
+                            print_info(String.format("Start Loading: [%s] Proxy:[%s]", paramStartLoadingEvent.getValidatedURL(), BrowserProxySetting));
                         }
                     });
                 }
@@ -894,6 +899,8 @@ public class FXMLDocumentController implements Initializable {
                     Platform.runLater(new Runnable() {
                         public void run() {
                             progressIndicator.setProgress(1.0D);
+                            //输出加载中记录输出两次 UI重复 //暂时无法解决,不在UI输出
+                            print_error(String.format("Fail Loading: [%s] Proxy:[%s]", paramFailLoadingEvent.getValidatedURL(), BrowserProxySetting));
                         }
                     });
                 super.onFailLoadingFrame(paramFailLoadingEvent);
@@ -904,6 +911,8 @@ public class FXMLDocumentController implements Initializable {
                     Platform.runLater(new Runnable() {
                         public void run() {
                             progressIndicator.setProgress(1.0D);
+                            //输出加载中记录输出两次 UI重复 //暂时无法解决,不在UI输出
+                            print_info(String.format("Finish Loading: [%s] Proxy:[%s]", paramFinishLoadingEvent.getValidatedURL(), BrowserProxySetting));
                         }
                     });
                 }

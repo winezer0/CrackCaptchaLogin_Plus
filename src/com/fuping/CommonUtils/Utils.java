@@ -55,7 +55,7 @@ public class Utils {
         if (!isEmptyIfStr(urlString)){
             filename = urlString.split("[\\\\\"*?<>|%'#]")[0]; // 按照 # 或 ? 进行切割
             filename = filename.replaceAll("[/:]", "_"); // 对URL的特殊字符进行替换
-            filename = String.format("%s.%s", filename,suffix);
+            filename = String.format("%s%s", filename, suffix);
         }
 
         return  useAbsolutePath ? getFileStrAbsolutePath(filename): filename;
