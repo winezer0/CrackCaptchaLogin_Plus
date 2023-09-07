@@ -126,9 +126,8 @@ public class Utils {
 
     public static boolean containsMatchingSubString(String receive, String keyRegex) {
         if(isEmptyIfStr(keyRegex)){return false;}
-
-        // 编译正则表达式
-        Pattern pattern = Pattern.compile(keyRegex);
+        // 编译正则表达式 //忽略大小写
+        Pattern pattern = Pattern.compile(keyRegex, Pattern.CASE_INSENSITIVE);
         // 创建匹配器对象
         Matcher matcher = pattern.matcher(receive);
         // 查找匹配的子字符串
