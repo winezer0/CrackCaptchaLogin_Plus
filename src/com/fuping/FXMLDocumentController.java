@@ -86,6 +86,8 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private ComboBox<Integer> bro_id_load_sleep_combo;
+    @FXML //设置字典组合模式
+    private ComboBox<String> bro_id_dict_mode_combo;
     @FXML
     private CheckBox bro_id_show_browser_check;
     @FXML

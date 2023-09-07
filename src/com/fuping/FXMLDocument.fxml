@@ -132,7 +132,7 @@
                                     <Label prefHeight="23.0" prefWidth="108.0" text="浏览器设置" />
                                     <ComboBox fx:id="bro_id_load_sleep_combo" prefHeight="23.0" prefWidth="108.0" promptText="请求间隔毫秒">
                                        <value>
-                                          <Integer fx:value="1500" />
+                                          <Integer fx:value="2000" />
                                        </value>
                                        <items>
                                           <FXCollections fx:factory="observableArrayList">
@@ -144,6 +144,18 @@
                                              <Integer fx:value="5000" />
                                              <Integer fx:value="8000" />
                                              <Integer fx:value="10000" />
+                                          </FXCollections>
+                                       </items>
+                                    </ComboBox>
+                                    <ComboBox fx:id="bro_id_dict_mode_combo" prefHeight="23.0" prefWidth="108.0" promptText="字典组合方式">
+                                       <value>
+                                          <String fx:value="cartesian" />
+                                       </value>
+                                       <items>
+                                          <FXCollections fx:factory="observableArrayList">
+                                             <String fx:value="cartesian" />
+                                             <String fx:value="pitchfork" />
+                                             <String fx:value="pair_file" />
                                           </FXCollections>
                                        </items>
                                     </ComboBox>
