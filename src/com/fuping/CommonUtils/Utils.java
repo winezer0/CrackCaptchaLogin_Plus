@@ -101,12 +101,10 @@ public class Utils {
         }
     }
 
+
+
+
     public static void initBaseOnLoginUrl(String login_url) {
-        //检查登录URL是否更新, 更新了就重新赋值
-        if(!login_url.equals(DefaultLoginUrl)){
-            DefaultLoginUrl = login_url;
-            print_info(String.format("The login URL has been modified from [%s] to [%s]",DefaultLoginUrl, login_url));
-        }
         //根据当前登录URL生成 history 文件名称
         HistoryFilePath = genFileNameByUrl(login_url, "dict/history.txt", ".history.txt", true);
         LogRecodeFilePath = genFileNameByUrl(login_url, "dict/history.log", ".history.log", true);
@@ -120,7 +118,7 @@ public class Utils {
         }
 
         //替换密码中的用户名变量
-        pairsHashSet = replaceUserMarkInPass(pairsHashSet, userMarkInPass);
+        replaceUserMarkInPass(pairsHashSet, userMarkInPass);
         print_info(String.format("Pairs Count After Replace Mark Str [%s]", pairsHashSet.size()));
 
         //将账号密码字典格式从 HashSet 转为 数组,便于索引统计
@@ -138,13 +136,19 @@ public class Utils {
         return matcher.find();
     }
 
+    public static String urlRemoveQuery(String url) {
+        // 获取 URL 的无参数部分
+        int queryIndex = url.indexOf("?");
+        return (queryIndex != -1) ? url.substring(0, queryIndex) : url;
+    }
+
     public static long getFileModified(String filePath) {
         File file = new File(filePath);
         if (!file.exists()) {return -1;}
         return file.lastModified();
     }
 
-    public static boolean UserPassFileIsModified() {
+    public static boolean isModifiedUserPassFile() {
         if(UserPassMode){
             //检查密码对文件
             long fileTime = getFileModified(UserPassFile);
@@ -167,11 +171,28 @@ public class Utils {
         return false;
     }
 
-    public static String urlRemoveQuery(String url) {
-        // 获取 URL 的无参数部分
-        int queryIndex = url.indexOf("?");
-        return (queryIndex != -1) ? url.substring(0, queryIndex) : url;
+    public static boolean isModifiedLoginUrl(String login_url){
+        //检查登录URL是否更新, 更新了就重新赋值
+        if(login_url.equals(DefaultLoginUrl)) {
+            return false;
+        } else{
+            print_info(String.format("The login URL has been modified from [%s] to [%s]",DefaultLoginUrl, login_url));
+            DefaultLoginUrl = login_url;
+            return true;
+        }
     }
+
+    public static boolean isModifiedExcludeHistory(boolean exclude_history){
+        //检查登录URL是否更新, 更新了就重新赋值
+        if(exclude_history == ExcludeHistory){
+            return false;
+        } else {
+            print_info(String.format("The Exclude History has been modified from [%s] to [%s]",ExcludeHistory, exclude_history));
+            ExcludeHistory = exclude_history;
+            return true;
+        }
+    }
+
 
     public static void main(String[] args) {
         String urlString = "https://www.example.com/login.jsp?session=1";
