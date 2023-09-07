@@ -102,7 +102,7 @@ public class Utils {
     }
 
 
-    public static void initBaseOnLoginUrl(String login_url) {
+    public static void initBaseOnLoginUrlFile(String login_url) {
         //根据当前登录URL生成 history 文件名称
         HistoryFilePath = genFileNameByUrl(login_url, "dict/history.txt", ".history.txt", true);
         LogRecodeFilePath = genFileNameByUrl(login_url, "dict/history.log", ".history.log", true);

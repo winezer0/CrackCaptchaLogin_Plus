@@ -597,7 +597,7 @@ public class FXMLDocumentController implements Initializable {
             return;
         }
         //基于登录URL初始化|URL更新|日志文件配置
-        initBaseOnLoginUrl(login_url);
+        initBaseOnLoginUrlFile(login_url);
 
         //检查是否存在关键按钮信息修改,(都需要更新到全局变量做记录),并且重新更新加载字典
         boolean isModifiedAuthFile = isModifiedAuthFile(); //字典文件是否修改
