@@ -152,6 +152,28 @@ public class FXMLDocumentController implements Initializable {
     private String captchaText = null;
     private List<Cookie> cookies = null;
 
+    public void setWithCheck(Object element_obj, String default_value) {
+        if (default_value != null && !default_value.isEmpty()) {
+            if (element_obj instanceof TextField) {
+                TextField textField = (TextField) element_obj;
+                textField.setText(default_value);
+            }
+
+            else if (element_obj instanceof ComboBox) {
+                ComboBox comboBox = (ComboBox) element_obj;
+                comboBox.setValue(default_value);
+            }
+
+            else if (element_obj instanceof CheckBox){
+                CheckBox checkBox = (CheckBox) element_obj;
+                checkBox.setSelected(DefaultShowBrowser);
+            }
+        }else {
+            print_error(String.format("The element type is not supported yet [%s] -> [%s]",element_obj,default_value));
+        }
+    }
+
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //初始化窗口1的内容设置
