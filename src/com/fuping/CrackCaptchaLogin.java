@@ -15,9 +15,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 
-import static com.fuping.LoadConfig.MyConst.*;
-import static com.fuping.LoadDict.LoadDictUtils.loadUserPassFile;
-import static com.fuping.LoadDict.LoadDictUtils.userPassPairsHashSet;
+import static com.fuping.LoadConfig.MyConst.ProgramVersion;
 import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class CrackCaptchaLogin extends Application {
@@ -56,9 +54,7 @@ public class CrackCaptchaLogin extends Application {
         print_info("Inner JxBrowser Version: " + ProductInfo.getVersion());
         //初始化配置文件读取
         MyConst.initialize();
-        //预加载字典文件
-        userPassPairsHashSet  = loadUserPassFile(UserNameFile, PassWordFile, PitchforkMode, UserPassFile, PairSeparator, UserPassMode, UserMarkInPass);
-        //开始进行爆破操作
+        //启动UI
         launch(args);
     }
 }

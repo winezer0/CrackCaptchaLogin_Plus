@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import static cn.hutool.core.io.CharsetDetector.detect;
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.LoadConfig.MyConst.*;
-import static com.fuping.LoadDict.LoadDictUtils.excludeHistoryUserPassPairs;
+import static com.fuping.LoadDict.LoadDictUtils.excludeHistoryPairs;
 import static com.fuping.LoadDict.LoadDictUtils.replaceUserMarkInPass;
 import static com.fuping.PrintLog.PrintLog.print_info;
 
@@ -101,26 +101,30 @@ public class Utils {
         }
     }
 
-    public static void initDynamicFileBaseOnLoginUrl(String login_url) {
+    public static void initBaseOnLoginUrl(String login_url) {
+        //检查登录URL是否更新, 更新了就重新赋值
+        if(!login_url.equals(DefaultLoginUrl)){
+            DefaultLoginUrl = login_url;
+            print_info(String.format("The login URL has been modified from [%s] to [%s]",DefaultLoginUrl, login_url));
+        }
         //根据当前登录URL生成 history 文件名称
-        HistoryFilePath = null;
         HistoryFilePath = genFileNameByUrl(login_url, "dict/history.txt", ".history.txt", true);
-
-        LogRecodeFilePath = null;
         LogRecodeFilePath = genFileNameByUrl(login_url, "dict/history.log", ".history.log", true);
     }
 
-    public static UserPassPair[] processedUserPassHashSet(HashSet<UserPassPair> userPassPairsHashSet){
+    public static UserPassPair[] processedUserPassHashSet(HashSet<UserPassPair> pairsHashSet, String historyFile, boolean exclude_history, String userMarkInPass){
         //读取 history 文件,排除历史扫描记录 ，
-        userPassPairsHashSet = excludeHistoryUserPassPairs(userPassPairsHashSet,  HistoryFilePath, ":");
-        print_info(String.format("Pairs Count After Exclude History [%s] From [%s]", userPassPairsHashSet.size(), HistoryFilePath));
+        if (exclude_history) {
+            pairsHashSet = excludeHistoryPairs(pairsHashSet,  historyFile, ":");
+            print_info(String.format("Pairs Count After Exclude History [%s] From [%s]", pairsHashSet.size(), historyFile));
+        }
 
         //替换密码中的用户名变量
-        userPassPairsHashSet = replaceUserMarkInPass(userPassPairsHashSet, UserMarkInPass);
-        print_info(String.format("Pairs Count After Replace Mark Str [%s]", userPassPairsHashSet.size()));
+        pairsHashSet = replaceUserMarkInPass(pairsHashSet, userMarkInPass);
+        print_info(String.format("Pairs Count After Replace Mark Str [%s]", pairsHashSet.size()));
 
         //将账号密码字典格式从 HashSet 转为 数组,便于索引统计
-        UserPassPair[] userPassPairsArray = userPassPairsHashSet.toArray(new UserPassPair[0]);
+        UserPassPair[] userPassPairsArray = pairsHashSet.toArray(new UserPassPair[0]);
         return userPassPairsArray;
     }
 
@@ -134,6 +138,40 @@ public class Utils {
         return matcher.find();
     }
 
+    public static long getFileModified(String filePath) {
+        File file = new File(filePath);
+        if (!file.exists()) {return -1;}
+        return file.lastModified();
+    }
+
+    public static boolean UserPassFileIsModified() {
+        if(UserPassMode){
+            //检查密码对文件
+            long fileTime = getFileModified(UserPassFile);
+            //判断文件是否修改
+            if(UserPassFileLastModified != fileTime){
+                UserPassFileLastModified = fileTime;
+                return true;
+            }
+        } else {
+            //检查账号密码文件
+            long nameFileTime = getFileModified(UserNameFile);
+            long passFileTime = getFileModified(PassWordFile);
+            //判断文件是否修改
+            if(nameFileTime != UserFileLastModified || passFileTime != PassFileLastModified ){
+                UserFileLastModified = nameFileTime;
+                PassFileLastModified = passFileTime;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String urlRemoveQuery(String url) {
+        // 获取 URL 的无参数部分
+        int queryIndex = url.indexOf("?");
+        return (queryIndex != -1) ? url.substring(0, queryIndex) : url;
+    }
 
     public static void main(String[] args) {
         String urlString = "https://www.example.com/login.jsp?session=1";

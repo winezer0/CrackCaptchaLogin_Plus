@@ -1,8 +1,12 @@
 package com.fuping.LoadConfig;
 
+import com.fuping.LoadDict.UserPassPair;
+
 public class MyConst {
     // 私有静态成员变量，用于保存单例实例
     private static MyConst MyConstInstance;
+
+    public static UserPassPair[] UserPassPairsArray = null;
 
     //存储默认历史记录文件
     public static String HistoryFilePath = null ;
@@ -22,8 +26,13 @@ public class MyConst {
 
     public static String UserPassFile = null;
     public static String PairSeparator = null;
-    public static boolean UserPassMode = false;
-    public static String UserMarkInPass = "%USER%";
+    public static boolean UserPassMode = false;      //使用用户名密码对字典
+    public static String UserMarkInPass = "%USER%";  //密码内的用户名变量
+    public static boolean ExcludeHistory = false;    //是否排除历史爆破记录
+
+    public static long UserFileLastModified = 0;  //记录账号密码文件是否修改过,如果没有修改的话,就不重新读取
+    public static long PassFileLastModified = 0;
+    public static long UserPassFileLastModified = 0;
 
     //登录配置参数
     public static String DefaultLoginUrl = null;
@@ -69,6 +78,8 @@ public class MyConst {
         UserPassMode = configReader.isTrue("user_pass_mode", false);
 
         UserMarkInPass = configReader.getString("user_mark_in_pass", "%USER%");
+
+        ExcludeHistory = configReader.isTrue("exclude_history", false);
 
         //加载默认的登录框配置
         DefaultLoginUrl = configReader.getString("login_url", "http://127.0.0.1/demo/index.php/Home/Login/login.html");

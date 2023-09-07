@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
@@ -44,9 +45,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import static com.fuping.BrowserUtils.BrowserUitls.*;
 import static com.fuping.CommonUtils.Utils.*;
+import static com.fuping.CommonUtils.Utils.urlRemoveQuery;
 import static com.fuping.LoadConfig.MyConst.*;
-import static com.fuping.LoadConfig.MyConst.DefaultPassEleType;
-import static com.fuping.LoadDict.LoadDictUtils.userPassPairsHashSet;
+import static com.fuping.LoadDict.LoadDictUtils.loadUserPassFile;
 import static com.fuping.PrintLog.PrintLog.print_error;
 import static com.fuping.PrintLog.PrintLog.print_info;
 
@@ -264,7 +265,6 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void startCrack(ActionEvent event) {
-
         //读取登录 URL
         String login_url = this.id_login_url_input.getText().trim();
         //登陆 URL 检查
@@ -273,15 +273,29 @@ public class FXMLDocumentController implements Initializable {
             return;
         }
 
-        //基于登录URL初始化日志文件配置
-        //过滤历史字典记录,并转换为Array格式
-        initDynamicFileBaseOnLoginUrl(login_url);
-        UserPassPair[] userPassPairsArray = processedUserPassHashSet(userPassPairsHashSet);
+        //基于登录URL初始化|URL更新|日志文件配置
+        initBaseOnLoginUrl(login_url);
+
+        if(!login_url.equals(DefaultLoginUrl) || UserPassFileIsModified()){ //当登录URL或账号密码文件修改后,就需要重新更新
+            printlnInfoOnUIAndConsole(String.format("加载账号密码文件开始..."));
+            //点击登录后加载字典文件
+            HashSet<UserPassPair> UserPassPairsHashSet = loadUserPassFile(UserNameFile, PassWordFile, PitchforkMode, UserPassFile, PairSeparator, UserPassMode);
+            //过滤历史字典记录,并转换为Array格式
+            UserPassPairsArray = processedUserPassHashSet(UserPassPairsHashSet, HistoryFilePath, ExcludeHistory, UserMarkInPass);
+        }
+
+        //判断字典列表数量是否大于0
+        if(UserPassPairsArray.length <= 0){
+            printlnErrorOnUIAndConsole(String.format("加载账号密码文件完成 当前账号:密码数量[%s], 跳过爆破操作...", UserPassPairsArray.length));
+            return;
+        } else {
+            printlnInfoOnUIAndConsole(String.format("加载账号密码文件完成 当前账号:密码数量[%s], 开始爆破操作...", UserPassPairsArray.length));
+        }
 
         //验证码输入URL
         String captcha_url_input = this.bro_id_captcha_url_input.getText().trim();
 
-        //获取云速认证信息
+        //获取云速认证信息//可以删除,慢慢来
         String ys_username = this.ys_username.getText().trim();
         String ys_password = this.ys_password.getText().trim();
         String ys_soft_id = this.ys_soft_id.getText().trim();
@@ -289,9 +303,7 @@ public class FXMLDocumentController implements Initializable {
         String ys_type_id = this.ys_type_id.getText().trim();
         Integer ys_query_timeout = this.ys_query_timeout.getValue();
         String ys_query_timeout2;
-
         if (ys_query_timeout == null)  ys_query_timeout2 = "60";  else { ys_query_timeout2 = ys_query_timeout.toString(); }
-
         YunSuConfig yunSuConfig = new YunSuConfig(ys_username, ys_password, ys_soft_id, ys_soft_key, ys_type_id, ys_query_timeout2);
 
         //浏览器操作模式模式
@@ -372,9 +384,9 @@ public class FXMLDocumentController implements Initializable {
                         }
 
                         //遍历账号密码字典
-                        for (int index = 0; index < userPassPairsArray.length; index++) {
-                            UserPassPair userPassPair = userPassPairsArray[index];
-                            print_info(String.format("Task Progress [%s/%s] <--> [%s]", index + 1, userPassPairsArray.length, userPassPair));
+                        for (int index = 0; index < UserPassPairsArray.length; index++) {
+                            UserPassPair userPassPair = UserPassPairsArray[index];
+                            print_info(String.format("Task Progress [%s/%s] <--> [%s]", index + 1, UserPassPairsArray.length, userPassPair));
 
                             //清理所有Cookie //可能存在问题,比如验证码, 没有Cookie会怎么样呢?
                             AutoClearAllCookies(browser);
@@ -383,7 +395,7 @@ public class FXMLDocumentController implements Initializable {
                             FXMLDocumentController.this.captcha_data = null;
 
                             //输出当前即将测试的数据
-                            printlnInfoOnUIAndConsole(String.format("当前进度 [%s/%s] <--> [%s] [%s]", index+1, userPassPairsArray.length, userPassPair, login_url));
+                            printlnInfoOnUIAndConsole(String.format("当前进度 [%s/%s] <--> [%s] [%s]", index+1, UserPassPairsArray.length, userPassPair, login_url));
 
                             try {
                                 Browser.invokeAndWaitFinishLoadingMainFrame(browser, new Callback<Browser>() {
@@ -406,9 +418,7 @@ public class FXMLDocumentController implements Initializable {
                             }
 
                             //进行线程延迟
-                            if (req_interval.intValue() > 0) {
-                                Thread.sleep(req_interval / 2);
-                            }
+                            if (req_interval.intValue() > 0) {Thread.sleep(req_interval / 2); }
 
                             //加载URl文档
                             DOMDocument document = browser.getDocument();
@@ -483,32 +493,32 @@ public class FXMLDocumentController implements Initializable {
                             browser.executeCommand(EditorCommand.INSERT_NEW_LINE);
 
                             //进行线程延迟
-                            if (req_interval.intValue() > 0) {
-                                Thread.sleep(req_interval / 2);
-                            }
+                            if (req_interval.intValue() > 0) {Thread.sleep(req_interval / 2); }
 
                             String cur_url = browser.getURL();
                             String cur_title = browser.getTitle();
                             int cur_length = browser.getHTML().length();
 
+                            //判断是否跳转
+                            boolean isPageForward = !urlRemoveQuery(login_url).equals(urlRemoveQuery(cur_url));
                             //进行历史记录
                             writeUserPassPairToFile(HistoryFilePath, ":", userPassPair);
-                            String title = "登录URL,账号,密码,跳转URL,网页标题,内容长度";
+                            String title = "是否跳转,登录URL,测试账号,测试密码,跳转URL,网页标题,内容长度";
                             writeTitleToFile(LogRecodeFilePath, title);
-                            String content = String.format("%s,%s,%s,%s,%s,%s", login_url, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length);
+                            String content = String.format("%s,%s,%s,%s,%s,%s,%s", isPageForward, login_url, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length);
                             writeLineToFile(LogRecodeFilePath, content);
-                            printlnInfoOnUIAndConsole(String.format("登录URL%s,\n账号%s,\n密码%s,\n跳转URL%s,\n网页标题%s,\n内容长度%s\n", login_url, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
+                            printlnInfoOnUIAndConsole(String.format("登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n",
+                                    login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
                         browser.dispose();
-                        printlnInfoOnUIAndConsole("所有任务爆破完成");
+                        printlnInfoOnUIAndConsole("所有任务爆破结束");
                     }
                 }
             }).start();
         }
-
         //普通爆破模式
         else if (this.id_normal_op_mode.isSelected()) {
             if ((this.nor_id_captcha_identify.isSelected()) && ((ys_username.equals("")) || (ys_password.equals("")))) {
@@ -551,9 +561,9 @@ public class FXMLDocumentController implements Initializable {
                                 .start();
                     }
                     try {
-                        for (int index = 0; index < userPassPairsArray.length; index++) {
-                            UserPassPair userPassPair = userPassPairsArray[index];
-                            print_info(String.format("Current Progress %s/%s <--> %s", index, userPassPairsArray.length, userPassPair.toString()));
+                        for (int index = 0; index < UserPassPairsArray.length; index++) {
+                            UserPassPair userPassPair = UserPassPairsArray[index];
+                            print_info(String.format("Current Progress %s/%s <--> %s", index, UserPassPairsArray.length, userPassPair.toString()));
 
                             if (FXMLDocumentController.this.is_stop_send_crack.booleanValue()) {
                                 FXMLDocumentController.this.queue.clear();
@@ -886,7 +896,7 @@ public class FXMLDocumentController implements Initializable {
                         public void run() {
                             progressIndicator.setProgress(-1.0D);
                             //输出加载中记录输出两次 UI重复 //暂时无法解决,不在UI输出
-                            print_info(String.format("Start Loading: [%s] Proxy:[%s]", paramStartLoadingEvent.getValidatedURL(), BrowserProxySetting));
+                            print_info(String.format("Start Loading: [%s] Proxy: [%s]", paramStartLoadingEvent.getValidatedURL(), BrowserProxySetting));
                         }
                     });
                 }
@@ -899,12 +909,11 @@ public class FXMLDocumentController implements Initializable {
                         public void run() {
                             progressIndicator.setProgress(1.0D);
                             //输出加载中记录输出两次 UI重复 //暂时无法解决,不在UI输出
-                            print_error(String.format("Fail Loading: [%s] Proxy:[%s]", paramFailLoadingEvent.getValidatedURL(), BrowserProxySetting));
+                            print_error(String.format("Fail Loading: [%s] Proxy: [%s]", paramFailLoadingEvent.getValidatedURL(), BrowserProxySetting));
                         }
                     });
                 super.onFailLoadingFrame(paramFailLoadingEvent);
             }
-
             public void onFinishLoadingFrame(FinishLoadingEvent paramFinishLoadingEvent) {
                 if (paramFinishLoadingEvent.isMainFrame()) {
                     Platform.runLater(new Runnable() {

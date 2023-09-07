@@ -14,9 +14,6 @@ import static com.fuping.PrintLog.PrintLog.print_error;
 import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class LoadDictUtils {
-    //存储字典列表
-    public static HashSet<UserPassPair> userPassPairsHashSet = null;
-
     public static List<String> readDictFile(String filePath) {
         // 读取文件内容到列表
         String absolutePath = getFileStrAbsolutePath(filePath);
@@ -45,7 +42,6 @@ public class LoadDictUtils {
         print_info(String.format("Read Lines [%s] From File [%s]", newLines.size(), absolutePath));
         return newLines;
     }
-
 
     public static HashSet<UserPassPair> createPitchforkUserPassPairs(List<String> usernames, List<String> passwords) {
         //创建 pitchfork 模式的用户密码对
@@ -89,11 +85,8 @@ public class LoadDictUtils {
         return userPassPairs;
     }
 
-    public static HashSet<UserPassPair> loadUserPassFile(String userNameFile, String passWordFile,
-                                                               boolean pitchforkMode,
-                                                               String userPassFile, String pair_separator,
-                                                               boolean userPassMode,
-                                                               String userMarkInPass
+    public static HashSet<UserPassPair> loadUserPassFile(String userNameFile, String passWordFile, boolean pitchforkMode,
+                                                         String userPassFile, String pair_separator, boolean userPassMode
     ){
         //判断是加载账号密码对字典还是加载账号字典
         HashSet<UserPassPair> userPassPairs = new HashSet<>();
@@ -121,13 +114,13 @@ public class LoadDictUtils {
         return userPassPairs;
     }
 
-    public static HashSet<UserPassPair> excludeHistoryUserPassPairs(HashSet<UserPassPair> inputUserPassPairs, String historyFile, String separator) {
-        HashSet<UserPassPair> userPassPairs = inputUserPassPairs;
+    public static HashSet<UserPassPair> excludeHistoryPairs(HashSet<UserPassPair> rawPairs, String historyFile, String separator) {
+        HashSet<UserPassPair> userPassPairs = rawPairs;
         //处理历史账号密码对文件
         if (isNotEmptyFile(historyFile)){
             List<String> hisUserPassPairList =  readDictFile(historyFile);
             HashSet<UserPassPair> hisUserPassPairs = splitAndCreatUserPassPairs(hisUserPassPairList, separator);
-            userPassPairs = subtractHashSet(inputUserPassPairs, hisUserPassPairs);
+            userPassPairs = subtractHashSet(rawPairs, hisUserPassPairs);
         }
         return userPassPairs;
     }
@@ -150,7 +143,6 @@ public class LoadDictUtils {
         System.out.println(Arrays.toString(userPassArray));
     }
 
-
     public static HashSet<UserPassPair> replaceUserMarkInPass(HashSet<UserPassPair> userPassPairs, String userMark) {
         //仅处理存在的情况
         if(isEmptyIfStr(userMark) || userPassPairs.size()< 1){
@@ -167,28 +159,27 @@ public class LoadDictUtils {
 
 
     public static void main(String[] args) {
-        HashSet<UserPassPair> inputUserPassPairs = null;
+        HashSet<UserPassPair> inputUserPassPairs;
 
         String usernamePath = "dict" + File.separator + "username.txt";
         String passwordPath = "dict" + File.separator + "password.txt";
         //笛卡尔积读取的账号密码字典
-        inputUserPassPairs = loadUserPassFile(usernamePath, passwordPath, false, null,null , false, "%USER%");
+        inputUserPassPairs = loadUserPassFile(usernamePath, passwordPath, false, null,null , false);
         //并列读取的账号密码字典
-        inputUserPassPairs = loadUserPassFile(usernamePath, passwordPath, true, null,null , false, "%USER%");
+        inputUserPassPairs = loadUserPassFile(usernamePath, passwordPath, true, null,null , false);
 
         //直接读取账号密码对文件
         String userPassPath = "dict" + File.separator + "user_pass.txt";
-        inputUserPassPairs = loadUserPassFile(null, null, false, userPassPath, ":", true, "%USER%");
-
+        inputUserPassPairs = loadUserPassFile(null, null, false, userPassPath, ":", true);
 
         //排除历史记录中的文件
         String hisUserPassPath = "dict" + File.separator + "history.txt";
-        HashSet<UserPassPair> userPassPairs = excludeHistoryUserPassPairs(inputUserPassPairs, hisUserPassPath, ":");
+        HashSet<UserPassPair> userPassPairs = excludeHistoryPairs(inputUserPassPairs, hisUserPassPath, ":");
         showUserPassPairs(userPassPairs);
 
         //遍历
         for (UserPassPair userPassPair: userPassPairs){
-            print_info(String.format("writed %s", userPassPair.toString(":")));
+            print_info(String.format("write %s", userPassPair.toString(":")));
         }
     }
 
