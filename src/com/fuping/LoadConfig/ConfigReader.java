@@ -55,7 +55,7 @@ public class ConfigReader {
     }
 
     public static ConfigReader getInstance( ) {
-        String configFile = "config.properties";
+        String configFile = System.getProperty("config","config.properties");
         return getInstance(configFile);
     }
 
