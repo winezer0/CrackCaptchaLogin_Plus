@@ -80,7 +80,7 @@ public class ConfigReader {
 
         //再从配置文件中获取
         ParamValue = getPropString(paramString);
-        if (!isEmptyIfStr(ParamValue)){
+        if (!isEmptyIfStr(ParamValue) && !"null".equalsIgnoreCase(ParamValue)){
             print_info(String.format("Get Param Value From [Config Property]: %s=%s", paramString, ParamValue));
             return ParamValue;
         }
