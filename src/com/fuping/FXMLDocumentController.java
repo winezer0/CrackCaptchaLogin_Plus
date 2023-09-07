@@ -58,7 +58,11 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Tab id_normal_op_mode_tab;
 
+
     //第1页元素选择
+    @FXML
+    public VBox bro_id_all_captcha_set_vbox;
+
     @FXML
     private RadioButton bro_id_yzm_remote_ident_radio;
     @FXML
@@ -77,7 +81,7 @@ public class FXMLDocumentController implements Initializable {
     private ComboBox<Integer> yzm_query_timeout_combo;
 
     @FXML  //YS整体设置,待删除
-    public VBox ys_id_all_set_vbox;
+    public VBox ys_id_all_yunsu_set_vbox;
     @FXML  //YS账号设置,待删除
     private TextField ys_soft_id_text;
     @FXML  //YS账号设置,待删除
@@ -105,10 +109,6 @@ public class FXMLDocumentController implements Initializable {
     private ComboBox<Integer> bro_id_load_sleep_combo;
     @FXML
     private CheckBox bro_id_captcha_switch_check;
-    @FXML
-    private HBox id_bro_id_captcha_ele_hbox;
-    @FXML
-    private HBox id_bro_id_captcha_url_hbox;
     @FXML
     private ComboBox<String> bro_id_user_ele_type_box;
     @FXML
@@ -541,24 +541,14 @@ public class FXMLDocumentController implements Initializable {
     @FXML  //点击 验证码识别开关需要 禁用|开启 的按钮
     private void bro_id_captcha_identify_action(ActionEvent event) {
         if (this.bro_id_captcha_switch_check.isSelected()) {
-            this.bro_id_yzm_local_ident_radio.setDisable(false);
-            this.bro_id_yzm_remote_ident_radio.setDisable(false);
 
-            this.id_bro_id_captcha_ele_hbox.setDisable(false);
-            this.id_bro_id_captcha_url_hbox.setDisable(false);
-            this.bro_id_captcha_regex_hbox.setDisable(false);
-
-            this.ys_id_all_set_vbox.setDisable(false);
+            this.bro_id_all_captcha_set_vbox.setDisable(false);
+            this.ys_id_all_yunsu_set_vbox.setDisable(false);
         }
         else {
-            this.bro_id_yzm_local_ident_radio.setDisable(true);
-            this.bro_id_yzm_remote_ident_radio.setDisable(true);
+            this.bro_id_all_captcha_set_vbox.setDisable(true);
 
-            this.id_bro_id_captcha_ele_hbox.setDisable(true);
-            this.id_bro_id_captcha_url_hbox.setDisable(true);
-            this.bro_id_captcha_regex_hbox.setDisable(true);
-
-            this.ys_id_all_set_vbox.setDisable(true);
+            this.ys_id_all_yunsu_set_vbox.setDisable(true);
         }
     }
 

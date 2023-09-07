@@ -30,9 +30,10 @@
                      <content>
                         <VBox prefHeight="135.0" prefWidth="847.0">
                            <children>
-                              <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
-                                 <children>
-                                    <Label prefHeight="23.0" prefWidth="108.0" text="识别账号输入框" />
+                              <VBox spacing="2.0" VBox.vgrow="ALWAYS">
+                                 <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
+                                    <children>
+                                       <Label prefHeight="23.0" prefWidth="108.0" text="识别账号输入框" />
                                        <ComboBox fx:id="bro_id_user_ele_type_box" prefHeight="30.0" prefWidth="108.0" promptText="选择定位方式">
                                           <items>
                                              <FXCollections fx:factory="observableArrayList">
@@ -44,87 +45,89 @@
                                              </FXCollections>
                                           </items>
                                        </ComboBox>
-                                    <TextField fx:id="bro_id_user_ele_text" promptText="账号输入框定位信息" text="" HBox.hgrow="ALWAYS" />
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </VBox.margin>
-                                 <padding>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </padding>
-                              </HBox>
-                              <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
-                                 <children>
-                                    <Label prefHeight="23.0" prefWidth="108.0" text="识别密码输入框" />
-                                    <ComboBox fx:id="bro_id_pass_ele_type_box" prefHeight="30.0" prefWidth="108.0" promptText="选择定位方式">
-                                       <items>
-                                          <FXCollections fx:factory="observableArrayList">
-                                             <String fx:value="id" />
-                                             <String fx:value="name" />
-                                             <String fx:value="class" />
-                                             <String fx:value="css" />
-                                             <String fx:value="xpath" />
-                                          </FXCollections>
-                                       </items>
-                                    </ComboBox>
-                                    <TextField fx:id="bro_id_pass_ele_text" promptText="密码输入框定位信息" text="" HBox.hgrow="ALWAYS" />
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </padding>
-                                 <VBox.margin>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </VBox.margin>
-                              </HBox>
-                              <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
-                                 <children>
-                                    <Label prefHeight="23.0" prefWidth="108.0" text="识别登录按钮" />
-                                    <ComboBox fx:id="bro_id_submit_ele_type_box" prefHeight="30.0" prefWidth="108.0" promptText="选择定位方式">
-                                       <items>
-                                          <FXCollections fx:factory="observableArrayList">
-                                             <String fx:value="id" />
-                                             <String fx:value="name" />
-                                             <String fx:value="class" />
-                                             <String fx:value="css" />
-                                             <String fx:value="xpath" />
-                                          </FXCollections>
-                                       </items>
-                                    </ComboBox>
-                                    <TextField fx:id="bro_id_submit_ele_text" prefHeight="30.0" prefWidth="80.0" promptText="登录按钮定位信息" text="" HBox.hgrow="ALWAYS" />
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </padding>
-                                 <VBox.margin>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </VBox.margin>
-                              </HBox>
-                              <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
-                                 <children>
-                                    <Label prefHeight="34.0" prefWidth="108.0" text="登录成功匹配" />
-                                    <TextField fx:id="bro_id_success_regex_text" prefHeight="31.0" prefWidth="729.0" promptText="登录成功正则匹配关键字" text="" HBox.hgrow="ALWAYS" />
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </VBox.margin>
-                                 <padding>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </padding>
-                              </HBox>
-                              <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
-                                 <children>
-                                    <Label prefHeight="34.0" prefWidth="108.0" text="登录失败匹配" />
-                                    <TextField fx:id="bro_id_failure_regex_text" prefHeight="31.0" prefWidth="729.0" promptText="登录失败正则匹配关键字" text="" HBox.hgrow="ALWAYS" />
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </VBox.margin>
-                                 <padding>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </padding>
-                              </HBox>
+                                       <TextField fx:id="bro_id_user_ele_text" promptText="账号输入框定位信息" text="" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                    <VBox.margin>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </VBox.margin>
+                                    <padding>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                 </HBox>
+                                 <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
+                                    <children>
+                                       <Label prefHeight="23.0" prefWidth="108.0" text="识别密码输入框" />
+                                       <ComboBox fx:id="bro_id_pass_ele_type_box" prefHeight="30.0" prefWidth="108.0" promptText="选择定位方式">
+                                          <items>
+                                             <FXCollections fx:factory="observableArrayList">
+                                                <String fx:value="id" />
+                                                <String fx:value="name" />
+                                                <String fx:value="class" />
+                                                <String fx:value="css" />
+                                                <String fx:value="xpath" />
+                                             </FXCollections>
+                                          </items>
+                                       </ComboBox>
+                                       <TextField fx:id="bro_id_pass_ele_text" promptText="密码输入框定位信息" text="" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                    <padding>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                    <VBox.margin>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </VBox.margin>
+                                 </HBox>
+                                 <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
+                                    <children>
+                                       <Label prefHeight="23.0" prefWidth="108.0" text="识别登录按钮" />
+                                       <ComboBox fx:id="bro_id_submit_ele_type_box" prefHeight="30.0" prefWidth="108.0" promptText="选择定位方式">
+                                          <items>
+                                             <FXCollections fx:factory="observableArrayList">
+                                                <String fx:value="id" />
+                                                <String fx:value="name" />
+                                                <String fx:value="class" />
+                                                <String fx:value="css" />
+                                                <String fx:value="xpath" />
+                                             </FXCollections>
+                                          </items>
+                                       </ComboBox>
+                                       <TextField fx:id="bro_id_submit_ele_text" prefHeight="30.0" prefWidth="80.0" promptText="登录按钮定位信息" text="" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                    <padding>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                    <VBox.margin>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </VBox.margin>
+                                 </HBox>
+                                 <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
+                                    <children>
+                                       <Label prefHeight="34.0" prefWidth="108.0" text="登录成功匹配" />
+                                       <TextField fx:id="bro_id_success_regex_text" prefHeight="31.0" prefWidth="729.0" promptText="登录成功正则匹配关键字" text="" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                    <VBox.margin>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </VBox.margin>
+                                    <padding>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                 </HBox>
+                                 <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
+                                    <children>
+                                       <Label prefHeight="34.0" prefWidth="108.0" text="登录失败匹配" />
+                                       <TextField fx:id="bro_id_failure_regex_text" prefHeight="31.0" prefWidth="729.0" promptText="登录失败正则匹配关键字" text="" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                    <VBox.margin>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </VBox.margin>
+                                    <padding>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                 </HBox>
+                              </VBox>
                               <Separator prefWidth="200.0" />
-                              <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0" >
+                              <VBox spacing="2.0" VBox.vgrow="ALWAYS">
+                                 <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0" >
                                  <children>
                                     <Label prefHeight="23.0" prefWidth="108.0" text="浏览器设置" />
                                     <ComboBox fx:id="bro_id_load_sleep_combo" prefHeight="23.0" prefWidth="108.0" promptText="请求间隔毫秒">
@@ -155,76 +158,78 @@
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                  </VBox.margin>
                               </HBox>
+                              </VBox>
                               <Separator prefWidth="200.0" />
-                              <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="843.0" spacing="2.0" >
+                              <VBox fx:id="bro_id_all_captcha_set_vbox" spacing="2.0" VBox.vgrow="ALWAYS">
+                                 <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="843.0" spacing="2.0" >
+                                    <children>
+                                       <Label prefHeight="23.0" prefWidth="108.0" text="验证码设置" />
+                                       <RadioButton fx:id="bro_id_yzm_remote_ident_radio" mnemonicParsing="false" prefHeight="23.0" prefWidth="108.0" text="远程识别" selected="true" >
+                                          <toggleGroup>
+                                             <ToggleGroup fx:id="bro_yzm_group"/>
+                                          </toggleGroup>
+                                       </RadioButton>
+                                       <RadioButton fx:id="bro_id_yzm_local_ident_radio" mnemonicParsing="false" prefHeight="23.0" prefWidth="108.0" text="本地识别" toggleGroup="$bro_yzm_group" />
+                                    </children>
+                                    <VBox.margin>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </VBox.margin>
+                                    <padding>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                 </HBox>
+                                 <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
+                                    <children>
+                                       <Label prefHeight="23.0" prefWidth="108" text="验证码图片地址" />
+                                       <TextField fx:id="bro_id_captcha_url_text" prefHeight="23.0" prefWidth="79.0" promptText="请输入验证码图片URL" text="" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                    <padding>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                    <VBox.margin>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </VBox.margin>
+                                 </HBox>
+                                 <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
+                                    <children>
+                                       <Label prefHeight="30.0" prefWidth="108.0" text="验证码输入框" />
+                                       <ComboBox fx:id="bro_id_captcha_ele_type_box" prefHeight="30.0" prefWidth="108.0" promptText="选择定位方式">
+                                          <items>
+                                             <FXCollections fx:factory="observableArrayList">
+                                                <String fx:value="id" />
+                                                <String fx:value="name" />
+                                                <String fx:value="class" />
+                                                <String fx:value="css" />
+                                                <String fx:value="xpath" />
+                                             </FXCollections>
+                                          </items>
+                                       </ComboBox>
+                                       <TextField fx:id="bro_id_captcha_ele_text" promptText="验证码输入框定位信息" text="" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                    <padding>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                    <VBox.margin>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </VBox.margin>
+                                 </HBox>
+                                 <HBox fx:id="bro_id_captcha_regex_hbox" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
+                                    <children>
+                                       <Label prefHeight="23.0" prefWidth="108" text="验证码错误匹配" />
+                                       <TextField fx:id="bro_id_captcha_regex_text" prefHeight="23.0" prefWidth="79.0" promptText="验证码错误正则匹配" text="" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                    <padding>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                    <VBox.margin>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </VBox.margin>
+                                 </HBox>
+                              </VBox>
+                              <Separator prefHeight="0.0" />
+                              <VBox fx:id="bro_id_output_vbox" spacing="2.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Label prefHeight="23.0" prefWidth="108.0" text="验证码设置" />
-                                    <RadioButton fx:id="bro_id_yzm_remote_ident_radio" mnemonicParsing="false" prefHeight="23.0" prefWidth="108.0" text="远程识别" selected="true" >
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="bro_yzm_group"/>
-                                       </toggleGroup>
-                                    </RadioButton>
-                                    <RadioButton fx:id="bro_id_yzm_local_ident_radio" mnemonicParsing="false" prefHeight="23.0" prefWidth="108.0" text="本地识别" toggleGroup="$bro_yzm_group" />
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </VBox.margin>
-                                 <padding>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </padding>
-                              </HBox>
-                              <HBox fx:id="id_bro_id_captcha_url_hbox" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
-                                 <children>
-                                    <Label prefHeight="23.0" prefWidth="108" text="验证码图片地址" />
-                                    <TextField fx:id="bro_id_captcha_url_text" prefHeight="23.0" prefWidth="79.0" promptText="请输入验证码图片URL" text="" HBox.hgrow="ALWAYS" />
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </padding>
-                                 <VBox.margin>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </VBox.margin>
-                              </HBox>
-                              <HBox fx:id="id_bro_id_captcha_ele_hbox" alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
-                                 <children>
-                                    <Label prefHeight="30.0" prefWidth="108.0" text="验证码输入框" />
-                                    <ComboBox fx:id="bro_id_captcha_ele_type_box" prefHeight="30.0" prefWidth="108.0" promptText="选择定位方式">
-                                       <items>
-                                          <FXCollections fx:factory="observableArrayList">
-                                             <String fx:value="id" />
-                                             <String fx:value="name" />
-                                             <String fx:value="class" />
-                                             <String fx:value="css" />
-                                             <String fx:value="xpath" />
-                                          </FXCollections>
-                                       </items>
-                                    </ComboBox>
-                                    <TextField fx:id="bro_id_captcha_ele_text" promptText="验证码输入框定位信息" text="" HBox.hgrow="ALWAYS" />
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </padding>
-                                 <VBox.margin>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </VBox.margin>
-                              </HBox>
-                              <HBox alignment="CENTER_LEFT" fx:id="bro_id_captcha_regex_hbox" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
-                                 <children>
-                                    <Label prefHeight="23.0" prefWidth="108" text="验证码错误匹配" />
-                                    <TextField fx:id="bro_id_captcha_regex_text" prefHeight="23.0" prefWidth="79.0" promptText="验证码错误正则匹配" text="" HBox.hgrow="ALWAYS" />
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </padding>
-                                 <VBox.margin>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </VBox.margin>
-                              </HBox>
-
-                              <Separator prefHeight="0.0" prefWidth="638.0" />
-                              <VBox prefHeight="200.0" prefWidth="100.0" spacing="2.0" VBox.vgrow="ALWAYS">
-                                 <children>
-                                    <TextArea fx:id="bro_id_output_text_area" prefHeight="202.0" prefWidth="841.0" VBox.vgrow="ALWAYS" />
+                                    <TextArea fx:id="bro_id_output_text_area" prefHeight="200.0" prefWidth="841.0" VBox.vgrow="ALWAYS" />
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -343,7 +348,7 @@
       </VBox>
    </center>
    <bottom>
-      <VBox prefHeight="13.0" fx:id="ys_id_all_set_vbox" prefWidth="847.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="13.0" fx:id="ys_id_all_yunsu_set_vbox" prefWidth="847.0" BorderPane.alignment="CENTER">
          <children>
             <Separator prefWidth="200.0" />
             <HBox alignment="CENTER_LEFT" prefHeight="19.0" prefWidth="135.0" spacing="2.0">
