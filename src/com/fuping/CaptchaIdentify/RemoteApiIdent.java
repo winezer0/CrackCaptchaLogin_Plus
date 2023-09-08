@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.util.Base64;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
-import static com.fuping.CommonUtils.Utils.containsMatchingSubString;
+import static com.fuping.CommonUtils.Utils.*;
+import static com.fuping.PrintLog.PrintLog.print_error;
+import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class RemoteApiIdent {
     public static String imageToBase64(String imagePath) {
@@ -45,34 +47,64 @@ public class RemoteApiIdent {
 
             //当前 ExpectedStatus 不为空时, 判断响应状态码是否包含关键字正则
             if (!isEmptyIfStr(ExpectedStatus) && !containsMatchingSubString(String.valueOf(statusCode), ExpectedStatus)) {
-                System.err.println(String.format("非预期响应状态:[%s] 不包含 [%s]", statusCode, ExpectedStatus));
+                print_error(String.format("异常状态: [%s] <--> [%s]", ExpectedStatus, statusCode));
                 return null;
             }
             //当前 ExpectedKeywords 不为空时, 判断响应体是否包含关键字正则
             if (!isEmptyIfStr(ExpectedKeywords) && !containsMatchingSubString(responseBody, ExpectedKeywords)) {
-                System.err.println(String.format("非预期响应内容:[%s] 不包含 [%s]", responseBody, ExpectedKeywords));
+                print_error(String.format("异常内容: [%s] <--> [%s]", ExpectedKeywords, responseBody));
                 return null;
             }
-
-            System.out.println(String.format("response status:[%s] content: [%s]", statusCode, responseBody));
+            print_info(String.format("Status:[%s] Content: [%s]", statusCode, responseBody));
             return responseBody;
         } catch (Exception exception){
             exception.printStackTrace();
             return null;
         }
     }
+    public static String IndentCaptcha(String imagePath, String remoteApi,
+                                       String expectedStatus, String expectedKeywords,
+                                       String extractRegex, String expectedLength){
+
+        //从绝地路径提取
+        imagePath = getFileStrAbsolutePath(imagePath);
+
+        //转base64处理
+        String base64Image = imageToBase64(imagePath);
+        if (isEmptyIfStr(base64Image)) {
+            print_error(String.format("转换失败: 图片[%s] <--> Base64格式失败!!!",  imagePath));
+            return null;
+        }
+
+        //开始进行识别
+        String remoteIdentData = remoteIdentCommon(remoteApi, base64Image, expectedStatus,  expectedKeywords);
+        if (isEmptyIfStr(remoteIdentData)) {
+            print_error(String.format("接口错误: 接口[%s] <--> 图片[%s]!!!", imagePath, remoteApi));
+            return null;
+        }
+
+        //提取响应中的验证码
+        String captchaResult = regexExtract(remoteIdentData, extractRegex);
+        if (isEmptyIfStr(captchaResult)) {
+            print_error(String.format("提取错误: 结果[%s] <--> 正则[%s]", remoteIdentData, extractRegex));
+            return null;
+        }
+
+        //当前 captchaResult 不为空时, 判断验证码长度是否正确
+        if (isNumber(expectedLength) && Integer.parseInt(expectedLength) !=  captchaResult.length()) {
+            print_error(String.format("识别错误: 结果[%s] <--> 长度[%s] <--> 期望长度:[%s]",captchaResult, captchaResult.length(), expectedLength));
+            return null;
+        }
+
+        //全部排除过后,验证码格式正确
+        return captchaResult;
+    }
 
     public static void main(String[] args) {
         //输入图片地址 图片格式转换
         String imagePath = "tmp/yzm2.jpg";
-        String base64Image = imageToBase64(imagePath);
-        if (base64Image == null) {return;  }
-        //System.out.println(String.format("Base64编码:%s", base64Image));
-
-        //WEB请求测试
-        String url = "http://127.0.0.1:5000/base64ocr"; // POST 请求的 URL
-        //期望的状体码
-        String captcha = remoteIdentCommon(url, base64Image, "200", null);
-        System.out.println(String.format("识别结果: %s", captcha));
+        String remoteApi = "http://127.0.0.1:5000/base64ocr"; // POST 请求的 URL
+        String result = IndentCaptcha(imagePath, remoteApi, "200", null, null, "4");
+        print_info(String.format("result:%s", result));
     }
 }

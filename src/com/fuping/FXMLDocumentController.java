@@ -35,9 +35,7 @@ import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.BrowserUtils.BrowserUtils.*;
@@ -52,11 +50,6 @@ public class FXMLDocumentController implements Initializable {
     //操作模式选择
     @FXML
     private Tab id_browser_op_mode_tab;
-    @FXML
-    private Tab id_normal_op_mode_tab;
-
-
-    //第1页元素选择
 
     //登录相关元素
     @FXML
@@ -115,50 +108,13 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextArea bro_id_output_text_area;
 
-    //云速账号相关
-    @FXML  //YS整体设置,待删除
+    //远程验证码识别功能相关
+    @FXML
     public VBox bro_id_remote_index_set_vbox;
-    @FXML
-    private ComboBox<Integer> yzm_query_timeout_combo;
-    @FXML  //YS账号设置,待删除
-    private TextField ys_soft_id_text;
-    @FXML  //YS账号设置,待删除
-    private TextField ys_soft_key_text;
-    @FXML  //YS账号设置,待删除
-    private TextField ys_username_text;
-    @FXML  //YS账号设置,待删除
-    private PasswordField ys_password_text;
-    @FXML  //YS账号设置,待删除
-    private TextField ys_type_id_text;
-
-
-
-
-    //第2页的元素
-    @FXML
-    private TextArea nor_id_request_text_area;
-    @FXML
-    private TextField nor_id_captcha_url_text;
-    @FXML
-    private TextField nor_id_success_keys_text;
-
-    @FXML
-    private CheckBox nor_id_captcha_ident_check;
-
-    @FXML
-    private ComboBox<Integer> nor_id_threads_combo;
-    @FXML
-    private ComboBox<Integer> nor_id_timeout_combo;
-    @FXML
-    private TextArea nor_id_output_text_area;
-
 
     private Stage primaryStage;
     private byte[] captcha_data;
-    private LinkedBlockingQueue<UserPassPair> queue;
-    private Boolean is_stop_send_crack;
     private String captchaText = null;
-    private List<Cookie> cookies = null;
 
     //记录当前页面加载状态
     private String loading_status;
@@ -575,13 +531,6 @@ public class FXMLDocumentController implements Initializable {
         //模拟禁用动作
         this.bro_id_captcha_identify_action(null);
 
-
-        //初始化窗口2的内容设置
-        this.nor_id_request_text_area.setPromptText("POST /login.do\r\n" +
-                "Host: 192.168.0.123:8080\r\n" +
-                "User-Agent: User-Agent:Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36\r\n\r\n" +
-                "username=$username$&passwd=$$password&captcha=$captcha$"
-        );
     }
     @FXML  //程序帮助文档
     private void program_help(ActionEvent event) {
@@ -612,27 +561,6 @@ public class FXMLDocumentController implements Initializable {
 
             this.bro_id_remote_index_set_vbox.setDisable(true);
         }
-    }
-
-    //第二页的图标设置
-    @FXML
-    private void nor_id_set_username_pos_action(ActionEvent event) {
-        IndexRange selection = this.nor_id_request_text_area.getSelection();
-        this.nor_id_request_text_area.replaceText(selection, "$username$");
-    }
-    @FXML
-    private void nor_id_set_password_pos_action(ActionEvent event) {
-        IndexRange selection = this.nor_id_request_text_area.getSelection();
-        this.nor_id_request_text_area.replaceText(selection, "$password$");
-    }
-    @FXML
-    private void nor_id_set_captcha_pos_action(ActionEvent event) {
-        IndexRange selection = this.nor_id_request_text_area.getSelection();
-        this.nor_id_request_text_area.replaceText(selection, "$captcha$");
-    }
-    @FXML
-    private void nor_stop_send_crack(ActionEvent event) {
-        this.is_stop_send_crack = Boolean.valueOf(true);
     }
 
 
@@ -669,14 +597,6 @@ public class FXMLDocumentController implements Initializable {
         } else {
             printlnInfoOnUIAndConsole(String.format("加载账号密码文件完成 当前账号:密码数量[%s], 开始爆破操作...", UserPassPairsArray.length));
         }
-
-        //获取云速认证信息//可以删除,慢慢来
-        String ys_username = this.ys_username_text.getText().trim();
-        String ys_password = this.ys_password_text.getText().trim();
-        String ys_soft_id = this.ys_soft_id_text.getText().trim();
-        String ys_soft_key = this.ys_soft_key_text.getText().trim();
-        String ys_type_id = this.ys_type_id_text.getText().trim();
-        Integer yzm_query_timeout = this.yzm_query_timeout_combo.getValue();
 
         //浏览器操作模式模式
         if (this.id_browser_op_mode_tab.isSelected()) {
@@ -759,17 +679,17 @@ public class FXMLDocumentController implements Initializable {
                             action_status = findElementAndInput(document, bro_user_ele_text, bro_user_ele_type, userPassPair.getUsername());
 
                             //处理资源寻找状态
-                            if(!"success".equals(action_status)){
+                            if(!"success".equalsIgnoreCase(action_status)){
                                 printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_pass_ele_text, action_status));
-                                if("break".equals(action_status)) break; else if("continue".equals(action_status)) continue;
+                                if("break".equalsIgnoreCase(action_status)) break; else if("continue".equalsIgnoreCase(action_status)) continue;
                             }
 
                             //查找密码输入框
                             action_status = findElementAndInput(document,bro_pass_ele_text, bro_pass_ele_type, userPassPair.getPassword());
                             //处理资源寻找状态
-                            if(!"success".equals(action_status)){
+                            if(!"success".equalsIgnoreCase(action_status)){
                                 printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_pass_ele_text, action_status));
-                                if("break".equals(action_status)) break; else if("continue".equals(action_status)) continue;
+                                if("break".equalsIgnoreCase(action_status)) break; else if("continue".equalsIgnoreCase(action_status)) continue;
                             }
 
                             //获取验证码并进行识别
@@ -797,9 +717,9 @@ public class FXMLDocumentController implements Initializable {
                                 //定位验证码输入框并填写验证码
                                 action_status = findElementAndInput(document,bro_captcha_ele_text, bro_captcha_ele_type, captchaText);
                                 //处理资源寻找状态
-                                if(!"success".equals(action_status)){
+                                if(!"success".equalsIgnoreCase(action_status)){
                                     printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_pass_ele_text, action_status));
-                                    if("break".equals(action_status)) break; else if("continue".equals(action_status)) continue;
+                                    if("break".equalsIgnoreCase(action_status)) break; else if("continue".equalsIgnoreCase(action_status)) continue;
                                 }
                             }
 
@@ -844,7 +764,7 @@ public class FXMLDocumentController implements Initializable {
                             int cur_length = browser.getHTML().length();
 
                             //判断是否跳转
-                            boolean isPageForward = !urlRemoveQuery(login_url).equals(urlRemoveQuery(cur_url));
+                            boolean isPageForward = !urlRemoveQuery(login_url).equalsIgnoreCase(urlRemoveQuery(cur_url));
                             //进行日志记录
                             String title = "是否跳转,登录URL,测试账号,测试密码,跳转URL,网页标题,内容长度";
                             writeTitleToFile(LogRecodeFilePath, title);
@@ -874,82 +794,5 @@ public class FXMLDocumentController implements Initializable {
                 }
             }).start();
         }
-//        //普通爆破模式
-//        else if (this.id_normal_op_mode_tab.isSelected()) {
-//            if ((this.nor_id_captcha_ident_check.isSelected()) && ((ys_username.equals("")) || (ys_password.equals("")))) {
-//                new Alert(Alert.AlertType.NONE, "云速账号密码不能为空", new ButtonType[]{ButtonType.CLOSE});
-//                return;
-//            }
-//            new Thread(new Runnable() {
-//                public void run() {
-//                    FXMLDocumentController.this.is_stop_send_crack = Boolean.valueOf(false);
-//
-//                    if (FXMLDocumentController.this.queue == null)
-//                        FXMLDocumentController.this.queue = new LinkedBlockingQueue(8100);
-//                    else {
-//                        FXMLDocumentController.this.queue.clear();
-//                    }
-//
-//                    Integer thread = FXMLDocumentController.this.nor_id_threads_combo.getValue();
-//                    if (thread == null) {
-//                        thread = Integer.valueOf(1);
-//                    }
-//                    Integer timeout2 = (Integer) FXMLDocumentController.this.nor_id_timeout_combo.getValue();
-//                    if (timeout2 == null) {
-//                        timeout2 = Integer.valueOf(3000);
-//                    }
-//                    CountDownLatch cdl = new CountDownLatch(thread.intValue());
-//
-//                    String request = FXMLDocumentController.this.nor_id_request_text_area.getText();
-//                    if (request.equals("")) {
-//                        return;
-//                    }
-//
-//                    String nor_schema = login_url.startsWith("http") ? "http" : "https";
-//                    String nor_success_keys_text = FXMLDocumentController.this.nor_id_success_keys_text.getText();
-//                    String nor_captcha_url_text = FXMLDocumentController.this.nor_id_captcha_url_text.getText();
-//
-//                    for (int i = 0; i < thread.intValue(); i++) {
-//                        new Thread(
-//                                new SendCrackThread(cdl, FXMLDocumentController.this.queue, request, nor_schema, FXMLDocumentController.this.nor_id_output_text_area, nor_success_keys_text,
-//                                        nor_captcha_url_text, timeout2, Boolean.valueOf(FXMLDocumentController.this.nor_id_captcha_ident_check.isSelected()), yunSuConfig, login_url))
-//                                .start();
-//                    }
-//                    try {
-//                        for (int index = 0; index < UserPassPairsArray.length; index++) {
-//                            UserPassPair userPassPair = UserPassPairsArray[index];
-//                            print_info(String.format("Current Progress %s/%s <--> %s", index, UserPassPairsArray.length, userPassPair.toString()));
-//
-//                            if (FXMLDocumentController.this.is_stop_send_crack.booleanValue()) {
-//                                FXMLDocumentController.this.queue.clear();
-//                                cdl.await();
-//                                return;
-//                            }
-//                            do
-//                                Thread.sleep(300L);
-//                            while (FXMLDocumentController.this.queue.size() > 8000);
-//
-//                            FXMLDocumentController.this.queue.add(userPassPair);
-//                        }
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                    try {
-//                        while (cdl.getCount() > 0L) {
-//                            if (FXMLDocumentController.this.is_stop_send_crack.booleanValue()) {
-//                                FXMLDocumentController.this.queue.clear();
-//                                break;
-//                            }
-//                            Thread.sleep(3000L);
-//                        }
-//                        cdl.await();
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    printlnInfoOnUIAndConsole("所有任务爆破结束");
-//                }
-//            }).start();
-//        }
     }
-
 }

@@ -11,8 +11,7 @@
       <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="634.0" spacing="2.0" BorderPane.alignment="CENTER">
          <children>
             <TextField fx:id="id_login_url_text" promptText="请输入登录页面的URL" text="" HBox.hgrow="ALWAYS" />
-            <Button mnemonicParsing="false" onAction="#startCrack" text="开始" />
-            <Hyperlink onAction="#program_help" prefHeight="28.0" prefWidth="56.0" text="帮助" />
+            <Button mnemonicParsing="false" onAction="#startCrack" text="开始爆破" />
          </children>
          <BorderPane.margin>
             <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -27,7 +26,7 @@
          <children>
             <TabPane prefHeight="87.0" prefWidth="847.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                <tabs>
-                  <Tab fx:id="id_browser_op_mode_tab" text="浏览器模拟方式">
+                  <Tab fx:id="id_browser_op_mode_tab" text="浏览器模拟操作">
                      <content>
                         <VBox prefHeight="135.0" prefWidth="847.0">
                            <children>
@@ -271,106 +270,6 @@
                               </VBox>
                            </children>
                         </VBox>
-                     </content>
-                  </Tab>
-                  <Tab fx:id="id_normal_op_mode_tab" text="普通发包方式">
-                     <content>
-                        <SplitPane dividerPositions="0.5229540918163673" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
-                           <items>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="243.0" prefWidth="864.0">
-                                 <children>
-                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="2.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <children>
-                                          <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
-                                             <children>
-                                                <Label prefHeight="15.0" prefWidth="90.0" text="请输入请求：" />
-                                                <TextArea fx:id="nor_id_request_text_area" prefHeight="200.0" prefWidth="200.0" promptText="这里设置请求头" VBox.vgrow="ALWAYS" />
-                                                <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
-                                                   <children>
-                                                      <Label prefHeight="23.0" prefWidth="112.0" text="图片验证码URL地址" />
-                                                      <TextField fx:id="nor_id_captcha_url_text" prefHeight="23.0" prefWidth="591.0" text="http://luckyuat.watsonsestore.com.cn/CodeImg.aspx?type=2&amp;t=0.9500656142342141" HBox.hgrow="ALWAYS" />
-                                                   </children>
-                                                   <padding>
-                                                      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                   </padding>
-                                                </HBox>
-                                                <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
-                                                   <children>
-                                                      <Label prefHeight="23.0" prefWidth="111.0" text="匹配响应内容关键字" />
-                                                      <TextField fx:id="nor_id_success_keys_text" prefHeight="23.0" prefWidth="627.0" promptText="请输入关键字" text="" HBox.hgrow="ALWAYS" />
-                                                   </children>
-                                                   <padding>
-                                                      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                   </padding>
-                                                </HBox>
-                                             </children>
-                                             <padding>
-                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                             </padding>
-                                          </VBox>
-                                          <VBox prefHeight="180.0" prefWidth="115.0" spacing="5.0">
-                                             <children>
-                                                <Button mnemonicParsing="false" onAction="#nor_id_set_username_pos_action" prefHeight="23.0" prefWidth="146.0" text="设置用户名位置" />
-                                                <Button mnemonicParsing="false" onAction="#nor_id_set_password_pos_action" prefHeight="23.0" prefWidth="132.0" text="设置密码的位置" />
-                                                <Separator prefWidth="200.0" />
-                                                <CheckBox fx:id="nor_id_captcha_ident_check" mnemonicParsing="false" prefHeight="0.0" prefWidth="108.0" text="是否识别验证码" />
-                                                <Button mnemonicParsing="false" onAction="#nor_id_set_captcha_pos_action" prefHeight="23.0" prefWidth="127.0" text="设置验证码位置" />
-                                                <Separator prefHeight="0.0" prefWidth="103.0" />
-                                                <ComboBox fx:id="nor_id_threads_combo" prefWidth="150.0" promptText="线程数" >
-                                                   <value>
-                                                      <Integer fx:value="10" />
-                                                   </value>
-                                                   <items>
-                                                      <FXCollections fx:factory="observableArrayList">
-                                                         <Integer fx:value="1" />
-                                                         <Integer fx:value="3" />
-                                                         <Integer fx:value="5" />
-                                                         <Integer fx:value="10" />
-                                                         <Integer fx:value="20" />
-                                                         <Integer fx:value="30" />
-                                                         <Integer fx:value="50" />
-                                                         <Integer fx:value="100" />
-                                                      </FXCollections>
-                                                   </items>
-                                                </ComboBox>
-                                                <ComboBox fx:id="nor_id_timeout_combo" prefWidth="150.0" promptText="请求超时">
-                                                   <value>
-                                                      <Integer fx:value="1000" />
-                                                   </value>
-                                                   <items>
-                                                      <FXCollections fx:factory="observableArrayList">
-                                                         <Integer fx:value="1000" />
-                                                         <Integer fx:value="2000" />
-                                                         <Integer fx:value="3000" />
-                                                         <Integer fx:value="5000" />
-                                                         <Integer fx:value="8000" />
-                                                         <Integer fx:value="10000" />
-                                                      </FXCollections>
-                                                   </items>
-                                                </ComboBox>
-                                                <Button mnemonicParsing="false" onAction="#nor_stop_send_crack" prefHeight="23.0" prefWidth="145.0" text="停止" />
-                                             </children>
-                                             <HBox.margin>
-                                                <Insets bottom="2.0" left="2.0" right="2.0" top="20.0" />
-                                             </HBox.margin>
-                                             <padding>
-                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                             </padding>
-                                          </VBox>
-                                       </children>
-                                       <padding>
-                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                       </padding>
-                                    </HBox>
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
-                                 <children>
-                                    <TextArea fx:id="nor_id_output_text_area" layoutX="142.0" layoutY="6.0" prefHeight="230.0" prefWidth="847.0" promptText="这里是输出窗口" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="6.0" />
-                                 </children>
-                              </AnchorPane>
-                           </items>
-                        </SplitPane>
                      </content>
                   </Tab>
                </tabs>

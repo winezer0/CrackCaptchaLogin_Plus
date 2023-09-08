@@ -93,7 +93,7 @@ public class LoadDictUtils {
         HashSet<UserPassPair> userPassPairs = new HashSet<>();
 
         //根据不同的模式生成账号密码对文件
-        if(str_pair_file.equals(DictCompoMode)){
+        if(str_pair_file.equalsIgnoreCase(DictCompoMode)){
             if (userPassFile != null){
                 //处理账号密码对文件
                 List<String> userPassPairList =  readDictFile(userPassFile);
@@ -105,7 +105,7 @@ public class LoadDictUtils {
                 List<String> userNameList =  readDictFile(userNameFile);
                 List<String> passWordList =  readDictFile(passWordFile);
                 //判断是否使用 pitchfork 模式
-                if(str_pitchfork.equals(DictCompoMode)){
+                if(str_pitchfork.equalsIgnoreCase(DictCompoMode)){
                     userPassPairs = createPitchforkUserPassPairs(userNameList, passWordList);
                 }else {
                     userPassPairs = createCartesianUserPassPairs(userNameList, passWordList);

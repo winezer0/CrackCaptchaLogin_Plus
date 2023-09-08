@@ -8,6 +8,7 @@ import com.teamdev.jxbrowser.chromium.dom.internal.InputElement;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Locale;
 
 import static com.fuping.LoadConfig.MyConst.ClearCookiesSetting;
 
@@ -44,7 +45,7 @@ public class BrowserUtils {
     public static InputElement findElementByOption(DOMDocument doc, String elementValue, String selectOption ) {
         //输入用户名元素 //需要添加输入XPath|css元素
         InputElement inputElement;
-        switch (selectOption) {
+        switch (selectOption.toLowerCase()) {
             case "id":
                 inputElement = (InputElement) doc.findElement(By.id(elementValue));
                 break;

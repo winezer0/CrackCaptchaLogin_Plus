@@ -134,6 +134,34 @@ public class Utils {
         return matcher.find();
     }
 
+    public static String regexExtract(String string, String regex) {
+        //忽略匹配空值
+        if(isEmptyIfStr(string)) return null;
+        if(isEmptyIfStr(regex)) return string;
+
+        // 编译正则表达式
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(string);
+        // 查找匹配项
+        if (matcher.find()) {
+            // 返回匹配到的结果
+            return matcher.group(0);
+        } else {
+            return null; // 没有匹配项
+        }
+    }
+
+
+    public static boolean isNumber(String string){
+        try {
+            Integer.parseInt(string);
+            return true;
+        } catch (NumberFormatException e) {
+            //e.printStackTrace();
+            return false;
+        }
+    }
+
     public static String urlRemoveQuery(String url) {
         // 获取 URL 的无参数部分
         int queryIndex = url.indexOf("?");
@@ -162,7 +190,7 @@ public class Utils {
 
     public static boolean isModifiedLoginUrl(String login_url){
         //检查登录URL是否更新, 更新了就重新赋值
-        if(login_url.equals(DefaultLoginUrl)) {
+        if(login_url.equalsIgnoreCase(DefaultLoginUrl)) {
             return false;
         } else{
             print_info(String.format("The login URL has been modified from [%s] to [%s]",DefaultLoginUrl, login_url));
@@ -173,7 +201,7 @@ public class Utils {
 
     public static boolean isModifiedDictMode(String dict_mode){
         //检查登录URL是否更新, 更新了就重新赋值
-        if(dict_mode.equals(DictCompoMode)) {
+        if(dict_mode.equalsIgnoreCase(DictCompoMode)) {
             return false;
         } else{
             print_info(String.format("The dict mode has been modified from [%s] to [%s]",DictCompoMode, dict_mode));
