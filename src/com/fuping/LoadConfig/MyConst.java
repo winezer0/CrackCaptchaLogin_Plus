@@ -23,6 +23,7 @@ public class MyConst {
     //JxBrowser相关配置参数
     public static String BrowserProxySetting = null;
     public static boolean ClearCookiesSetting = false;
+    public static String BrowserUserAgent = null;
 
     //字典文件相关参数
     public static String UserNameFile = null;
@@ -73,9 +74,10 @@ public class MyConst {
 
         //读取代理配置参数
         BrowserProxySetting = configReader.getString("browser_proxy", null);
+        //浏览器UA设置
+        BrowserUserAgent = configReader.getString("browser_ua", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36");
         //是否清理Cookie
         ClearCookiesSetting = configReader.isTrue("clear_cookies", false);
-
         //加载账号密码、文件路径
         UserNameFile = configReader.getString("user_name_file", null);
         PassWordFile = configReader.getString("pass_word_file", null);

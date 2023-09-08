@@ -230,10 +230,27 @@ public class FXMLDocumentController implements Initializable {
         //创建窗口对象 JavaFX的Stage类是JavaFX应用程序创建窗口的基础
         this.primaryStage = new Stage();
 
+        //在创建任何浏览器实例之前，只能修改一次用户代理字符串。
+        // 可以使用BrowserPreferences.setUserAgent（String userAgent）方法
+        // 或通过 jxbrowser.chromium.user-agent Java System属性提供用户代理字符串：
+        BrowserPreferences.setUserAgent(BrowserUserAgent);
+
+        // 创建一个自定义的 BrowserContextParams 对象来设置 Cookie 和请求头
+        BrowserContextParams contextParams = new BrowserContextParams("path_to_user_data_directory");
+
+        // 创建 BrowserContext 时传入自定义的参数
+        BrowserContext browserContext = new BrowserContext(contextParams);
         //创建浏览器对象 轻量级对象 BrowserType.LIGHTWEIGHT 轻量级渲染模式， BrowserType.HEAVYWEIGHT重量级渲染模式。
         //轻量级渲染模式是通过CPU来加速渲染的，速度更快，占用更少的内存。在轻量级渲染模式下，Chromium引擎会在后台使用CPU渲染网页，然后将网页的图像保存在共享内存中。
         //重量级渲染模式则使用GPU加速渲染，相对于轻量级模式来说，它需要占用更多的内存，但在某些场景下可能会有更好的性能和更高的渲染质量。
         Browser browser = new Browser(BrowserType.LIGHTWEIGHT);
+
+        ////浏览器首选项设置
+        //BrowserPreferences preferences = browser.getPreferences();
+        //preferences.setImagesEnabled(false);
+        //preferences.setJavaScriptEnabled(false);
+        //browser.setPreferences(preferences);
+
         //着浏览器视图将占据布局容器的中心区域，并自动适应大小。
         BrowserView view = new BrowserView(browser); //将 JxBrowser 的浏览器引擎 browser 嵌入到 JavaFX 中
         BorderPane borderPane = new BorderPane(view); //着浏览器视图将占据布局容器的中心区域，并自动适应大小。
@@ -274,7 +291,6 @@ public class FXMLDocumentController implements Initializable {
                         }
                     });
             }
-
             public void onStartLoadingFrame(StartLoadingEvent paramStartLoadingEvent) {
                 if (paramStartLoadingEvent.isMainFrame()){
                     Platform.runLater(new Runnable() {
@@ -287,7 +303,6 @@ public class FXMLDocumentController implements Initializable {
                 }
                 super.onStartLoadingFrame(paramStartLoadingEvent);
             }
-
             public void onFailLoadingFrame(FailLoadingEvent paramFailLoadingEvent) {
                 if (paramFailLoadingEvent.isMainFrame())
                     Platform.runLater(new Runnable() {
@@ -332,6 +347,7 @@ public class FXMLDocumentController implements Initializable {
 
         return browser;
     }
+
     public class MyNetworkDelegate extends DefaultNetworkDelegate {
         private boolean isCompleteAuth;
         private boolean isCancelAuth;
