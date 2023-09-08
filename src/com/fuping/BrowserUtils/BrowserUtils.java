@@ -8,13 +8,11 @@ import com.teamdev.jxbrowser.chromium.dom.internal.InputElement;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Locale;
+
 
 import static com.fuping.LoadConfig.MyConst.ClearCookiesSetting;
 
 public class BrowserUtils {
-
-
     public static void AutoClearAllCookies(Browser browser) {
         //清除cookie
         //参考 JxBrowser之五：清除cache和cookie以及SSL证书处理 https://www.yii666.com/article/677652.html

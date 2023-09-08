@@ -46,7 +46,8 @@ import static com.fuping.PrintLog.PrintLog.print_error;
 import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class FXMLDocumentController implements Initializable {
-
+    @FXML //远程识别接口地址
+    public TextField bro_id_remote_ident_url_text;
     //操作模式选择
     @FXML
     private Tab id_browser_op_mode_tab;
@@ -564,12 +565,16 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML //测试验证码识别功能是否正则
     public void bro_id_remote_ident_test_run(ActionEvent event) {
-        //获取验证码URL
-        //获取接口URL
+        //获取验证码输入URL的内容
+        String bro_captcha_url_text = this.bro_id_captcha_url_text.getText().trim();
+        if (isEmptyIfStr(bro_captcha_url_text)) {this.bro_id_captcha_url_text.requestFocus(); return;}
+        //获取接口 URL
+        String remote_ident_url_text = this.bro_id_remote_ident_url_text.getText().trim();
+        if (isEmptyIfStr(remote_ident_url_text)){this.bro_id_remote_ident_url_text.requestFocus(); return;}
         //获取一个验证码图片
+
         //保存图片到本地
         //识别图片内容
-
     }
 
     //主要爆破函数的修改

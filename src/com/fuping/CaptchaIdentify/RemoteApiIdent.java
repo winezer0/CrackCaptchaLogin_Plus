@@ -4,31 +4,13 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Base64;
-
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
+import static com.fuping.CaptchaIdentify.CaptchaUtils.imageToBase64;
 import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.PrintLog.PrintLog.print_error;
 import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class RemoteApiIdent {
-    public static String imageToBase64(String imagePath) {
-        try {
-            File imageFile = new File(imagePath);
-            FileInputStream imageInputStream = new FileInputStream(imageFile);
-            byte[] imageBytes = new byte[(int) imageFile.length()];
-            imageInputStream.read(imageBytes);
-            imageInputStream.close();
-
-            return Base64.getEncoder().encodeToString(imageBytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null; // 处理异常，返回null或其他错误信息
-        }
-    }
 
     public static String remoteIdentCommon(String Url, String base64Image,  String ExpectedStatus, String ExpectedKeywords){
         // 创建 HTTP 请求对象
