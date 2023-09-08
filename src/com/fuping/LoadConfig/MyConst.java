@@ -53,7 +53,13 @@ public class MyConst {
     public static String DefaultSubmitEleType = null;
 
     public static boolean DefaultShowBrowser = false;
-    public static int DefaultLoadTimeSleep = 1500;
+
+    public static int LoginPageWaitTime = 1000;  //登录页面加载后的等待时间
+    //登录按钮点击后的等待时间
+    public static boolean SubmitAutoWait = true; //是否自动等待模式常量
+    public static int SubmitFixedWaitTime = 2000; //常规模式下点击提交按钮后的 固定的等待时间
+    public static long SubmitAutoWaitLimit = 5000; //自动等待模式下的 超时等待时间设置
+    public static long SubmitAutoWaitInterval = 500; //自动等待模式下的 每次等待时间
 
     public static String DefaultSuccessRegex = null;
     public static String DefaultFailureRegex = null;
@@ -102,7 +108,12 @@ public class MyConst {
         DefaultSubmitEleType = configReader.getString("submit_ele_type", null);
 
         DefaultShowBrowser = configReader.isTrue("browser_show", false);
-        DefaultLoadTimeSleep = Integer.parseInt(configReader.getString("browser_sleep", "1500"));
+
+        LoginPageWaitTime = Integer.parseInt(configReader.getString("login_page_wait_time", "1000"));
+        SubmitAutoWait = configReader.isTrue("submit_auto_wait", true);
+        SubmitFixedWaitTime = Integer.parseInt(configReader.getString("submit_fixed_wait_limit", "2000"));
+        SubmitAutoWaitLimit = Integer.parseInt(configReader.getString("submit_auto_wait_limit", "5000"));
+        SubmitAutoWaitInterval = Integer.parseInt(configReader.getString("submit_auto_wait_interval", "500"));
 
         DefaultSuccessRegex = configReader.getString("success_regex", "welcome");
         DefaultFailureRegex = configReader.getString("failure_regex", "登录失败");

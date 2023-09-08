@@ -79,11 +79,14 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextField bro_id_failure_regex_text;
 
-
     //浏览器设置相关
-
     @FXML
-    private ComboBox<Integer> bro_id_load_sleep_combo;
+    private ComboBox<Integer> bro_id_login_page_wait_time_combo;
+    @FXML
+    private ComboBox<Integer> bro_id_submit_fixed_wait_time_combo;
+    @FXML
+    public CheckBox bro_id_submit_auto_wait_check;
+
     @FXML //设置字典组合模式
     private ComboBox<String> bro_id_dict_compo_mode_combo;
     @FXML
@@ -159,7 +162,10 @@ public class FXMLDocumentController implements Initializable {
     private List<Cookie> cookies = null;
 
     //记录当前页面加载状态
-    private Stage loading_status;
+    private String loading_status;
+    private final String LOADING_START = "loading_start";
+    private final String LOADING_FINISH = "loading_finish";
+    private final String LOADING_FAILED = "loading_failed";
 
     //一些工具类方法
     public void setWithCheck(Object eleObj, Object Value) {
@@ -297,6 +303,7 @@ public class FXMLDocumentController implements Initializable {
 
         //添加页面加载监听事件
         browser.addLoadListener(new LoadAdapter() {
+            @Override
             public void onProvisionalLoadingFrame(ProvisionalLoadingEvent event) {
                 if (event.isMainFrame())
                     Platform.runLater(new Runnable() {
@@ -305,39 +312,56 @@ public class FXMLDocumentController implements Initializable {
                         }
                     });
             }
-            public void onStartLoadingFrame(StartLoadingEvent paramStartLoadingEvent) {
-                if (paramStartLoadingEvent.isMainFrame()){
+            @Override
+            public void onStartLoadingFrame(StartLoadingEvent event) {
+                if (event.isMainFrame()){
                     Platform.runLater(new Runnable() {
                         public void run() {
                             //输出加载中记录输出两次 UI重复,不是错误,是浏览器实际进行了主页和登录请求两次
-                            printlnInfoOnUIAndConsole(String.format("Start Loading: [%s] Proxy: [%s]", paramStartLoadingEvent.getValidatedURL(), BrowserProxySetting));
+                            String validatedURL = event.getValidatedURL();
+                            loading_status= String.format("%s<->%s", LOADING_START, validatedURL);
+                            printlnInfoOnUIAndConsole(String.format("%s: [%s]", LOADING_START, validatedURL));
                             progressIndicator.setProgress(-1.0D);
                         }
                     });
                 }
-                super.onStartLoadingFrame(paramStartLoadingEvent);
+                super.onStartLoadingFrame(event);
             }
-            public void onFailLoadingFrame(FailLoadingEvent paramFailLoadingEvent) {
-                if (paramFailLoadingEvent.isMainFrame())
+            @Override
+            public void onFailLoadingFrame(FailLoadingEvent event) {
+                if (event.isMainFrame())
                     Platform.runLater(new Runnable() {
                         public void run() {
-                            printlnErrorOnUIAndConsole(String.format("Fail Loading: [%s] Proxy: [%s]", paramFailLoadingEvent.getValidatedURL(), BrowserProxySetting));
+                            String validatedURL = event.getValidatedURL();
+                            loading_status= String.format("%s<->%s", LOADING_FAILED, validatedURL);
+                            printlnInfoOnUIAndConsole(String.format("%s: [%s]", LOADING_FAILED, validatedURL));
                             progressIndicator.setProgress(1.0D);
                         }
                     });
-                super.onFailLoadingFrame(paramFailLoadingEvent);
+                super.onFailLoadingFrame(event);
             }
-            public void onFinishLoadingFrame(FinishLoadingEvent paramFinishLoadingEvent) {
-                if (paramFinishLoadingEvent.isMainFrame()) {
+            @Override
+            public void onFinishLoadingFrame(FinishLoadingEvent event) {
+                if (event.isMainFrame()) {
                     Platform.runLater(new Runnable() {
                         public void run() {
-                            printlnInfoOnUIAndConsole(String.format("Finish Loading: [%s] Proxy: [%s]", paramFinishLoadingEvent.getValidatedURL(), BrowserProxySetting));
+                            String validatedURL = event.getValidatedURL();
+                            loading_status= String.format("%s<->%s", LOADING_FINISH, validatedURL);
+                            printlnInfoOnUIAndConsole(String.format("%s: [%s]", LOADING_FINISH, validatedURL));
                             progressIndicator.setProgress(1.0D);
                         }
                     });
                 }
-                super.onFinishLoadingFrame(paramFinishLoadingEvent);
+                super.onFinishLoadingFrame(event);
             }
+//            @Override
+//            public void onDocumentLoadedInFrame(FrameLoadEvent event) {
+//                printlnInfoOnUIAndConsole("Frame document is loaded.");
+//            }
+//            @Override
+//            public void onDocumentLoadedInMainFrame(LoadEvent event) {
+//                printlnInfoOnUIAndConsole("Main frame document is loaded.");
+//            }
         });
        //添加响应这状态码监听事件 //addStatusListener 没有获取到任何数据 //放弃使用
 
@@ -531,7 +555,11 @@ public class FXMLDocumentController implements Initializable {
         //设置浏览器选项
         setWithCheck(this.bro_id_show_browser_check, DefaultShowBrowser);
         setWithCheck(this.bro_id_exclude_history_check, ExcludeHistory);
-        setWithCheck(this.bro_id_load_sleep_combo, DefaultLoadTimeSleep);
+
+        setWithCheck(this.bro_id_login_page_wait_time_combo, LoginPageWaitTime);
+        setWithCheck(this.bro_id_submit_fixed_wait_time_combo, SubmitFixedWaitTime);
+        setWithCheck(this.bro_id_submit_auto_wait_check, SubmitAutoWait);
+
         setWithCheck(this.bro_id_dict_compo_mode_combo, DictCompoMode);
         //设置关键字匹配
         setWithCheck(this.bro_id_success_regex_text, DefaultSuccessRegex);
@@ -712,7 +740,8 @@ public class FXMLDocumentController implements Initializable {
                 public void run() {
                     try {
                         //请求间隔设置
-                        Integer req_interval = FXMLDocumentController.this.bro_id_load_sleep_combo.getValue();
+                        Integer login_page_wait_time = FXMLDocumentController.this.bro_id_login_page_wait_time_combo.getValue();
+                        Integer submit_fixed_wait_time = FXMLDocumentController.this.bro_id_submit_fixed_wait_time_combo.getValue();
 
                         //遍历账号密码字典
                         for (int index = 0; index < UserPassPairsArray.length; index++) {
@@ -746,8 +775,8 @@ public class FXMLDocumentController implements Initializable {
                                 continue;
                             }
 
-                            //进行线程延迟
-                            if (req_interval.intValue() > 0) {Thread.sleep(req_interval / 2); }
+                            //进行线程延迟 //等待页面加载完毕//原则上是可以不需要的
+                            Thread.sleep((login_page_wait_time>0)?login_page_wait_time:0);
 
                             //加载URl文档
                             DOMDocument document = browser.getDocument();
@@ -811,6 +840,8 @@ public class FXMLDocumentController implements Initializable {
 
 
                             //定位提交按钮, 并填写按钮
+
+                            //点击按钮前先重置页面加载状态
                             try {
                                 InputElement submitElement = findElementByOption(document, bro_submit_ele_text, bro_id_submit_ele_type);
                                 submitElement.click();
@@ -826,27 +857,49 @@ public class FXMLDocumentController implements Initializable {
                             browser.executeCommand(EditorCommand.INSERT_NEW_LINE);
 
                             //需要等待页面加载完毕
-                            //进行线程延迟 等待,不合适,容易出错
-                             if (req_interval.intValue() > 0) {Thread.sleep(req_interval / 2);}
-                            String loading_status = "FinishLoading"; // StartLoading FinishLoading FailLoading
-                            if(true){
-                                String cur_url = browser.getURL();
-                                String cur_title = browser.getTitle();
-                                int cur_length = browser.getHTML().length();
+                            if (bro_id_submit_auto_wait_check.isSelected()){
+                                loading_status= LOADING_START;
+                                Thread.sleep(SubmitAutoWaitInterval);
+                                long wait_start_time = System.currentTimeMillis();
+                                while (isEmptyIfStr(loading_status) || loading_status.contains(LOADING_START)) {
+                                    //输出检查状态
+                                    printlnInfoOnUIAndConsole(String.format("checking status: [%s]", loading_status));
+                                    // 检查是否超时
+                                    if (System.currentTimeMillis() - wait_start_time > SubmitAutoWaitLimit) {
+                                        printlnInfoOnUIAndConsole("等待超时，退出循环");
+                                        break;
+                                    }
+                                    //继续等待
+                                    Thread.sleep(SubmitAutoWaitInterval);
+                                }
+                            } else {Thread.sleep((submit_fixed_wait_time>0)?submit_fixed_wait_time:2000);}
 
-                                //判断是否跳转
-                                boolean isPageForward = !urlRemoveQuery(login_url).equals(urlRemoveQuery(cur_url));
-                                //进行历史记录
+                            //输出加载状态
+                            String cur_url = browser.getURL();
+                            String cur_title = browser.getTitle();
+                            int cur_length = browser.getHTML().length();
+
+                            //判断是否跳转
+                            boolean isPageForward = !urlRemoveQuery(login_url).equals(urlRemoveQuery(cur_url));
+                            //进行日志记录
+                            String title = "是否跳转,登录URL,测试账号,测试密码,跳转URL,网页标题,内容长度";
+                            writeTitleToFile(LogRecodeFilePath, title);
+                            String content = String.format("%s,%s,%s,%s,%s,%s,%s", isPageForward, login_url, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length);
+                            writeLineToFile(LogRecodeFilePath, content);
+
+                            if(loading_status.contains(LOADING_FINISH)){
+                                //进行爆破历史记录
                                 writeUserPassPairToFile(HistoryFilePath, ":", userPassPair);
-                                String title = "是否跳转,登录URL,测试账号,测试密码,跳转URL,网页标题,内容长度";
-                                writeTitleToFile(LogRecodeFilePath, title);
-                                String content = String.format("%s,%s,%s,%s,%s,%s,%s", isPageForward, login_url, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length);
-                                writeLineToFile(LogRecodeFilePath, content);
-                                printlnInfoOnUIAndConsole(String.format("登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n",
-                                        login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
+                                printlnInfoOnUIAndConsole(String.format("加载成功|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
                             }else {
-                                printlnErrorOnUIAndConsole("页面加载未完成");
+                                printlnInfoOnUIAndConsole(String.format("加载失败|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
+                                //判断当前是不是固定加载模式,是的话就自动添加一点加载时间
+                                if(!bro_id_submit_auto_wait_check.isSelected() && submit_fixed_wait_time < SubmitAutoWaitLimit) {
+                                    submit_fixed_wait_time += 1000;
+                                    printlnInfoOnUIAndConsole(String.format("等待超时|||自动更新等待时间至[%s]", submit_fixed_wait_time));
+                                }
                             }
+                            //停止所有请求,防止影响到下一次的使用 //6.15版本没有办法处理
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
