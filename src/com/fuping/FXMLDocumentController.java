@@ -88,7 +88,7 @@ public class FXMLDocumentController implements Initializable {
 
     //验证码元素相关
     @FXML
-    public VBox bro_id_all_captcha_set_vbox;
+    public VBox bro_id_captcha_set_vbox;
     @FXML
     private CheckBox bro_id_captcha_switch_check;
     @FXML
@@ -333,6 +333,7 @@ public class FXMLDocumentController implements Initializable {
         return browser;
     }
 
+
     public class MyNetworkDelegate extends DefaultNetworkDelegate {
         private boolean isCompleteAuth;
         private boolean isCancelAuth;
@@ -532,11 +533,13 @@ public class FXMLDocumentController implements Initializable {
         this.bro_id_captcha_identify_action(null);
 
     }
+
     @FXML  //程序帮助文档
     private void program_help(ActionEvent event) {
         String url = "http://www.cnblogs.com/SEC-fsq/p/5712792.html";
         OpenUrlWithLocalBrowser(url);
     }
+
     @FXML  //浏览器窗口显示设置,不需要管理
     private void bro_id_show_browser_action(ActionEvent event) {
         if (this.primaryStage == null) {
@@ -548,21 +551,26 @@ public class FXMLDocumentController implements Initializable {
             this.primaryStage.hide();
     }
 
-
     @FXML  //点击 验证码识别开关需要 禁用|开启 的按钮
     private void bro_id_captcha_identify_action(ActionEvent event) {
         if (this.bro_id_captcha_switch_check.isSelected()) {
-
-            this.bro_id_all_captcha_set_vbox.setDisable(false);
+            this.bro_id_captcha_set_vbox.setDisable(false);
             this.bro_id_remote_index_set_vbox.setDisable(false);
-        }
-        else {
-            this.bro_id_all_captcha_set_vbox.setDisable(true);
-
+        } else {
+            this.bro_id_captcha_set_vbox.setDisable(true);
             this.bro_id_remote_index_set_vbox.setDisable(true);
         }
     }
 
+    @FXML //测试验证码识别功能是否正则
+    public void bro_id_remote_ident_test_run(ActionEvent event) {
+        //获取验证码URL
+        //获取接口URL
+        //获取一个验证码图片
+        //保存图片到本地
+        //识别图片内容
+
+    }
 
     //主要爆破函数的修改
     @FXML

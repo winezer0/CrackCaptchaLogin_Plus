@@ -190,7 +190,19 @@
                               </HBox>
                               </VBox>
                               <Separator prefWidth="200.0" />
-                              <VBox fx:id="bro_id_all_captcha_set_vbox" spacing="2.0" VBox.vgrow="ALWAYS">
+                              <VBox fx:id="bro_id_output_vbox" spacing="2.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <TextArea fx:id="bro_id_output_text_area" prefHeight="200.0" prefWidth="841.0" VBox.vgrow="ALWAYS" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </VBox.margin>
+                                 <padding>
+                                    <Insets right="2.0" top="2.0" />
+                                 </padding>
+                              </VBox>
+                              <Separator prefWidth="200.0" />
+                              <VBox fx:id="bro_id_captcha_set_vbox" spacing="2.0" VBox.vgrow="ALWAYS">
                                  <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="843.0" spacing="2.0" >
                                     <children>
                                        <Label prefHeight="23.0" prefWidth="108.0" text="验证码设置" />
@@ -200,6 +212,19 @@
                                           </toggleGroup>
                                        </RadioButton>
                                        <RadioButton fx:id="bro_id_yzm_local_ident_radio" mnemonicParsing="false" prefHeight="23.0" prefWidth="108.0" text="本地识别" toggleGroup="$bro_yzm_group" />
+                                       <ComboBox fx:id="bro_id_remote_ident_time_out_combo" prefWidth="108.0" promptText="识别超时">
+                                          <items>
+                                             <FXCollections fx:factory="observableArrayList">
+                                                <Integer fx:value="1" />
+                                                <Integer fx:value="2" />
+                                                <Integer fx:value="3" />
+                                                <Integer fx:value="5" />
+                                                <Integer fx:value="8" />
+                                                <Integer fx:value="10" />
+                                             </FXCollections>
+                                          </items>
+                                       </ComboBox>
+                                       <Button fx:id="bro_id_remote_ident_test_run_button" onAction="#bro_id_remote_ident_test_run" prefWidth="108.0" text="识别测试" />
                                     </children>
                                     <VBox.margin>
                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -256,18 +281,6 @@
                                     </VBox.margin>
                                  </HBox>
                               </VBox>
-                              <Separator prefWidth="200.0" />
-                              <VBox fx:id="bro_id_output_vbox" spacing="2.0" VBox.vgrow="ALWAYS">
-                                 <children>
-                                    <TextArea fx:id="bro_id_output_text_area" prefHeight="200.0" prefWidth="841.0" VBox.vgrow="ALWAYS" />
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </VBox.margin>
-                                 <padding>
-                                    <Insets right="2.0" top="2.0" />
-                                 </padding>
-                              </VBox>
                            </children>
                         </VBox>
                      </content>
@@ -285,19 +298,6 @@
                <children>
                   <Label prefHeight="34.0" prefWidth="108.0" text="远程识别接口" />
                   <TextField fx:id="bro_id_remote_ident_url_text" prefHeight="31.0" prefWidth="729.0" promptText="远程识别接口URL地址" text="http://127.0.0.1:5000/ddddocr" HBox.hgrow="ALWAYS" />
-                  <ComboBox fx:id="bro_id_remote_ident_time_out_combo" prefWidth="108.0" promptText="识别超时">
-                     <items>
-                        <FXCollections fx:factory="observableArrayList">
-                           <Integer fx:value="1" />
-                           <Integer fx:value="2" />
-                           <Integer fx:value="3" />
-                           <Integer fx:value="5" />
-                           <Integer fx:value="8" />
-                           <Integer fx:value="10" />
-                        </FXCollections>
-                     </items>
-                  </ComboBox>
-                  <Button fx:id="bro_id_remote_ident_test_run_button" prefWidth="108.0" text="识别测试" />
                </children>
                <VBox.margin>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
