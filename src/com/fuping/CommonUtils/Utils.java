@@ -190,33 +190,33 @@ public class Utils {
 
     public static boolean isModifiedLoginUrl(String login_url){
         //检查登录URL是否更新, 更新了就重新赋值
-        if(login_url.equalsIgnoreCase(DefaultLoginUrl)) {
+        if(login_url.equalsIgnoreCase(default_login_url)) {
             return false;
         } else{
-            print_info(String.format("The login URL has been modified from [%s] to [%s]",DefaultLoginUrl, login_url));
-            DefaultLoginUrl = login_url;
+            print_info(String.format("The login URL has been modified from [%s] to [%s]", default_login_url, login_url));
+            default_login_url = login_url;
             return true;
         }
     }
 
     public static boolean isModifiedDictMode(String dict_mode){
         //检查登录URL是否更新, 更新了就重新赋值
-        if(dict_mode.equalsIgnoreCase(DictCompoMode)) {
+        if(dict_mode.equalsIgnoreCase(dict_compo_mode)) {
             return false;
         } else{
-            print_info(String.format("The dict mode has been modified from [%s] to [%s]",DictCompoMode, dict_mode));
-            DictCompoMode = dict_mode;
+            print_info(String.format("The dict mode has been modified from [%s] to [%s]", dict_compo_mode, dict_mode));
+            dict_compo_mode = dict_mode;
             return true;
         }
     }
 
     public static boolean isModifiedExcludeHistory(boolean exclude_history){
         //检查登录URL是否更新, 更新了就重新赋值
-        if(exclude_history == ExcludeHistory){
+        if(exclude_history == default_exclude_history){
             return false;
         } else {
-            print_info(String.format("The Exclude History has been modified from [%s] to [%s]",ExcludeHistory, exclude_history));
-            ExcludeHistory = exclude_history;
+            print_info(String.format("The Exclude History has been modified from [%s] to [%s]", default_exclude_history, exclude_history));
+            default_exclude_history = exclude_history;
             return true;
         }
     }

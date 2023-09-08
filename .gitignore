@@ -18,7 +18,7 @@
 /.settings/
 *.jpg
 *.png
-*.txt
 *.log
+*.history.*
 *.bak
 *.properties

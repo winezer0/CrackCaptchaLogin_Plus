@@ -396,7 +396,6 @@ public class FXMLDocumentController implements Initializable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
 
             //检查登录关键字匹配状态
@@ -506,37 +505,46 @@ public class FXMLDocumentController implements Initializable {
 
         //初始化窗口1的内容设置
         //设置登录URL
-        setWithCheck(this.id_login_url_text, DefaultLoginUrl);
+        setWithCheck(this.id_login_url_text, default_login_url);
         //设置登录框
-        setWithCheck(this.bro_id_user_ele_text, DefaultNameEleValue);
-        setWithCheck(this.bro_id_user_ele_type_combo, DefaultNameEleType);
+        setWithCheck(this.bro_id_user_ele_text, default_name_ele_value);
+        setWithCheck(this.bro_id_user_ele_type_combo, default_name_ele_type);
         //设置密码框
-        setWithCheck(this.bro_id_pass_ele_text, DefaultPassEleValue);
-        setWithCheck(this.bro_id_pass_ele_type_combo, DefaultPassEleType);
+        setWithCheck(this.bro_id_pass_ele_text, default_pass_ele_value);
+        setWithCheck(this.bro_id_pass_ele_type_combo, default_pass_ele_type);
         //设置提交按钮
-        setWithCheck(this.bro_id_submit_ele_text, DefaultSubmitEleValue);
-        setWithCheck(this.bro_id_submit_ele_type_combo, DefaultSubmitEleType);
+        setWithCheck(this.bro_id_submit_ele_text, default_submit_ele_value);
+        setWithCheck(this.bro_id_submit_ele_type_combo, default_submit_ele_type);
         //设置浏览器选项
-        setWithCheck(this.bro_id_show_browser_check, DefaultShowBrowser);
-        setWithCheck(this.bro_id_exclude_history_check, ExcludeHistory);
+        setWithCheck(this.bro_id_show_browser_check, default_show_browser);
+        setWithCheck(this.bro_id_exclude_history_check, default_exclude_history);
 
-        setWithCheck(this.bro_id_login_page_wait_time_combo, LoginPageWaitTime);
-        setWithCheck(this.bro_id_submit_fixed_wait_time_combo, SubmitFixedWaitTime);
-        setWithCheck(this.bro_id_submit_auto_wait_check, SubmitAutoWait);
+        setWithCheck(this.bro_id_login_page_wait_time_combo, login_page_wait_time);
+        setWithCheck(this.bro_id_submit_fixed_wait_time_combo, submit_fixed_wait_time);
+        setWithCheck(this.bro_id_submit_auto_wait_check, submit_auto_wait);
 
-        setWithCheck(this.bro_id_dict_compo_mode_combo, DictCompoMode);
+        setWithCheck(this.bro_id_dict_compo_mode_combo, dict_compo_mode);
         //设置关键字匹配
-        setWithCheck(this.bro_id_success_regex_text, DefaultSuccessRegex);
-        setWithCheck(this.bro_id_failure_regex_text, DefaultFailureRegex);
-        setWithCheck(this.bro_id_captcha_regex_text, DefaultCaptchaRegex);
+        setWithCheck(this.bro_id_success_regex_text, default_success_regex);
+        setWithCheck(this.bro_id_failure_regex_text, default_failure_regex);
+        setWithCheck(this.bro_id_captcha_regex_text, default_captcha_regex);
         //设置验证码识别开关
-        setWithCheck(this.bro_id_captcha_switch_check, DefaultCaptchaSwitch);
+        setWithCheck(this.bro_id_captcha_switch_check, default_captcha_switch);
         //设置验证码识别方式
-        setWithCheck(DefaultLocalIdentify ? this.bro_id_local_ident_flag_radio : this.bro_id_yzm_remote_ident_radio, true);
+        setWithCheck(default_local_identify ? this.bro_id_local_ident_flag_radio : this.bro_id_yzm_remote_ident_radio, true);
         //设置验证码属性
-        setWithCheck(this.bro_id_captcha_url_text, DefaultCaptchaUrl);
-        setWithCheck(this.bro_id_captcha_ele_text, DefaultCaptchaEleValue);
-        setWithCheck(this.bro_id_captcha_ele_type_combo, DefaultCaptchaEleType);
+        setWithCheck(this.bro_id_captcha_url_text, default_captcha_url);
+        setWithCheck(this.bro_id_captcha_ele_text, default_captcha_ele_value);
+        setWithCheck(this.bro_id_captcha_ele_type_combo, default_captcha_ele_type);
+
+        //设置验证码配置细节
+        setWithCheck(this.bro_id_ident_time_out_combo, Integer.parseInt(default_ident_time_out));
+        setWithCheck(this.bro_id_ident_format_regex_text, default_ident_format_regex);
+        setWithCheck(this.bro_id_ident_format_length_text, default_ident_format_length);
+        setWithCheck(this.bro_id_remote_ident_url_text, default_remote_ident_url);
+        setWithCheck(this.bro_id_remote_extract_regex_text, default_remote_extract_regex);
+        setWithCheck(this.bro_id_remote_expected_status_text, default_remote_expected_status);
+        setWithCheck(this.bro_id_remote_expected_keywords_text, default_remote_expected_keywords);
 
         //模拟禁用动作
         this.bro_id_captcha_identify_action(null);
@@ -584,7 +592,6 @@ public class FXMLDocumentController implements Initializable {
 
         //远程识别模式
         if(this.bro_id_yzm_remote_ident_radio.isSelected()){
-            printlnInfoOnUIAndConsole(String.format("验证码识别测试开始 ..."));
             //获取接口 URL
             String remote_ident_url_text = this.bro_id_remote_ident_url_text.getText().trim();
             if (isEmptyIfStr(remote_ident_url_text)){this.bro_id_remote_ident_url_text.requestFocus(); return;}
@@ -597,6 +604,8 @@ public class FXMLDocumentController implements Initializable {
 
             new Thread(new Runnable() {
                 public void run() {
+                    printlnInfoOnUIAndConsole(String.format("远程识别测试开始 ..."));
+
                     //获取一个验证码图片 //保存图片到本地
                     String imagePath = LoadImageToFile(bro_captcha_url_text, "TestRemote.jpg");
                     printlnInfoOnUIAndConsole(String.format("保存图片到本地文件%s", imagePath));
@@ -615,10 +624,11 @@ public class FXMLDocumentController implements Initializable {
                 }
             }).start();
         }
-
-        if (this.bro_id_local_ident_flag_radio.isSelected()){
+        else if (this.bro_id_local_ident_flag_radio.isSelected()){
             new Thread(new Runnable() {
                 public void run() {
+                    printlnInfoOnUIAndConsole(String.format("本地识别测试开始 ..."));
+
                     try {
                         String imagePath = LoadImageToFile(bro_captcha_url_text, "TestLocale.jpg");
                         printlnInfoOnUIAndConsole(String.format("保存图片到本地文件%s", imagePath));
@@ -655,9 +665,9 @@ public class FXMLDocumentController implements Initializable {
             //当登录URL或账号密码文件修改后,就需要重新更新
             printlnInfoOnUIAndConsole(String.format("加载账号密码文件开始..."));
             //点击登录后加载字典文件
-            HashSet<UserPassPair> UserPassPairsHashSet = loadUserPassFile(UserNameFile, PassWordFile, UserPassFile, PairSeparator, DictCompoMode);
+            HashSet<UserPassPair> UserPassPairsHashSet = loadUserPassFile(UserNameFile, PassWordFile, UserPassFile, PairSeparator, dict_compo_mode);
             //过滤历史字典记录,并转换为Array格式
-            UserPassPairsArray = processedUserPassHashSet(UserPassPairsHashSet, HistoryFilePath, ExcludeHistory, UserMarkInPass);
+            UserPassPairsArray = processedUserPassHashSet(UserPassPairsHashSet, HistoryFilePath, default_exclude_history, UserMarkInPass);
         }
         //判断字典列表数量是否大于0
         if(UserPassPairsArray.length <= 0){

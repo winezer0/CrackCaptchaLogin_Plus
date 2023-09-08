@@ -301,7 +301,7 @@
                <children>
                   <Label prefHeight="34.0" prefWidth="108.0" text="通用识别设置" />
                   <TextField fx:id="bro_id_ident_format_regex_text" prefWidth="300.0" promptText="验证码格式正则校验" text="" HBox.hgrow="ALWAYS" />
-                  <TextField fx:id="bro_id_ident_format_length_text" prefHeight="31.0" prefWidth="300" promptText="识别成功验证码长度匹配" text="" HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="bro_id_ident_format_length_text" prefHeight="31.0" prefWidth="300" promptText="验证码格式长度校验" text="" HBox.hgrow="ALWAYS" />
                </children>
                <VBox.margin>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -314,7 +314,7 @@
             <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
                <children>
                   <Label prefWidth="108.0" text="远程识别设置" />
-                  <TextField fx:id="bro_id_remote_ident_url_text" prefWidth="300.0" promptText="远程识别API" text="http://127.0.0.1:5000/base64ocr" HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="bro_id_remote_ident_url_text" prefWidth="300.0" promptText="远程识别API" text="" HBox.hgrow="ALWAYS" />
                   <TextField fx:id="bro_id_remote_extract_regex_text" prefWidth="300.0" promptText="响应内容验证码正则提取" text="" HBox.hgrow="ALWAYS" />
                </children>
                <VBox.margin>
