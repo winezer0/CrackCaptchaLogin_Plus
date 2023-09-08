@@ -740,8 +740,8 @@ public class FXMLDocumentController implements Initializable {
                 public void run() {
                     try {
                         //请求间隔设置
-                        Integer login_page_wait_time = FXMLDocumentController.this.bro_id_login_page_wait_time_combo.getValue();
-                        Integer submit_fixed_wait_time = FXMLDocumentController.this.bro_id_submit_fixed_wait_time_combo.getValue();
+                        Integer bro_login_page_wait_time = FXMLDocumentController.this.bro_id_login_page_wait_time_combo.getValue();
+                        Integer bro_submit_fixed_wait_time = FXMLDocumentController.this.bro_id_submit_fixed_wait_time_combo.getValue();
 
                         //遍历账号密码字典
                         for (int index = 0; index < UserPassPairsArray.length; index++) {
@@ -776,7 +776,7 @@ public class FXMLDocumentController implements Initializable {
                             }
 
                             //进行线程延迟 //等待页面加载完毕//原则上是可以不需要的
-                            Thread.sleep((login_page_wait_time>0)?login_page_wait_time:0);
+                            Thread.sleep((bro_login_page_wait_time>0)?bro_login_page_wait_time:0);
 
                             //加载URl文档
                             DOMDocument document = browser.getDocument();
@@ -868,7 +868,7 @@ public class FXMLDocumentController implements Initializable {
                                     //继续等待
                                     Thread.sleep(SubmitAutoWaitInterval);
                                 }
-                            } else {Thread.sleep((submit_fixed_wait_time>0)?submit_fixed_wait_time:2000);}
+                            } else {Thread.sleep((bro_submit_fixed_wait_time>0)?bro_submit_fixed_wait_time:2000);}
 
                             //输出加载状态
                             String cur_url = browser.getURL();
@@ -890,9 +890,9 @@ public class FXMLDocumentController implements Initializable {
                             }else {
                                 printlnInfoOnUIAndConsole(String.format("加载失败|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
                                 //判断当前是不是固定加载模式,是的话就自动添加一点加载时间
-                                if(!bro_id_submit_auto_wait_check.isSelected() && submit_fixed_wait_time < SubmitAutoWaitLimit) {
-                                    submit_fixed_wait_time += 1000;
-                                    printlnInfoOnUIAndConsole(String.format("等待超时|||自动更新等待时间至[%s]", submit_fixed_wait_time));
+                                if(!bro_id_submit_auto_wait_check.isSelected() && bro_submit_fixed_wait_time < SubmitAutoWaitLimit) {
+                                    bro_submit_fixed_wait_time += 1000;
+                                    printlnInfoOnUIAndConsole(String.format("等待超时|||自动更新等待时间至[%s]", bro_submit_fixed_wait_time));
                                 }
                             }
                             //停止所有请求,防止影响到下一次的使用 //6.15版本没有办法处理
