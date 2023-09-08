@@ -11,3 +11,13 @@
 /tessdata/
 /tmp/
 /META-INF/
+.git
+.idea
+.gitignore
+/target/
+/.settings/
+*.jpg
+*.png
+*.txt
+*.log
+*.bak
