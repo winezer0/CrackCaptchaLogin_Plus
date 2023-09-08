@@ -1,8 +1,6 @@
 package com.fuping.BrowserUtils;
 
 import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.Cookie;
-import com.teamdev.jxbrowser.chromium.CustomProxyConfig;
 import com.teamdev.jxbrowser.chromium.dom.By;
 import com.teamdev.jxbrowser.chromium.dom.DOMDocument;
 import com.teamdev.jxbrowser.chromium.dom.internal.InputElement;
@@ -10,27 +8,18 @@ import com.teamdev.jxbrowser.chromium.dom.internal.InputElement;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 
-import static com.fuping.LoadConfig.MyConst.BrowserProxySetting;
 import static com.fuping.LoadConfig.MyConst.ClearCookiesSetting;
-import static com.fuping.PrintLog.PrintLog.print_info;
 
-public class BrowserUitls {
+public class BrowserUtils {
 
-    public static CustomProxyConfig getBrowserProxy(){
-        //转换输入的代理格式
-        BrowserProxySetting = BrowserProxySetting.replace("://","=");
-        print_info(String.format("Proxy Will Setting [%s]", BrowserProxySetting));
-        return new CustomProxyConfig(BrowserProxySetting);
-    }
 
     public static void AutoClearAllCookies(Browser browser) {
         //清除cookie
         //参考 JxBrowser之五：清除cache和cookie以及SSL证书处理 https://www.yii666.com/article/677652.html
         if (ClearCookiesSetting){
             browser.getCookieStorage().deleteAll();
-            List<Cookie> cookies = browser.getCookieStorage().getAllCookies();
+            //List<Cookie> cookies = browser.getCookieStorage().getAllCookies();
             //print_info(String.format("Auto Clear Browser All Cookies ... %s", cookies.toString()));
         }
     }
