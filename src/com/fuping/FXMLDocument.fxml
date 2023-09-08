@@ -5,6 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.lang.*?>
+<?import com.sun.javafx.scene.control.skin.TabPaneSkin.TabControlButtons?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="652.0" prefWidth="1069.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fuping.FXMLDocumentController">
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="634.0" spacing="2.0" BorderPane.alignment="CENTER">
@@ -385,10 +386,7 @@
                <children>
                   <Label prefHeight="34.0" prefWidth="108.0" text="远程识别接口" />
                   <TextField fx:id="bro_id_remote_ident_url_text" prefHeight="31.0" prefWidth="729.0" promptText="远程识别接口URL地址" text="http://127.0.0.1:5000/ddddocr" HBox.hgrow="ALWAYS" />
-                  <ComboBox fx:id="bro_id_remote_ident_time_out_combo" prefHeight="31.0" prefWidth="108.0" promptText="请求超时时间">
-                     <value>
-                        <Integer fx:value="5" />
-                     </value>
+                  <ComboBox fx:id="bro_id_remote_ident_time_out_combo" prefWidth="108.0" promptText="识别超时">
                      <items>
                         <FXCollections fx:factory="observableArrayList">
                            <Integer fx:value="1" />
@@ -400,6 +398,7 @@
                         </FXCollections>
                      </items>
                   </ComboBox>
+                  <Button fx:id="bro_id_remote_ident_test_run_button" prefWidth="108.0" text="识别测试" />
                </children>
                <VBox.margin>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
