@@ -1,9 +1,17 @@
 package com.fuping.CaptchaIdentify;
 
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
+import cn.hutool.http.HttpUtil;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
+
+import static com.fuping.CommonUtils.Utils.getFileStrAbsolutePath;
+import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class CaptchaUtils {
 
@@ -23,10 +31,31 @@ public class CaptchaUtils {
     }
 
     public static String LoadImageToFile(String imageUrl, String imagePath) {
+        imagePath = getFileStrAbsolutePath(imagePath);
+
         //从网页加载 验证码 内容，并保存到文件
-
-
+        HttpRequest request = HttpUtil.createGet(imageUrl);
+        request.timeout(5000); //超时，毫秒
+        HttpResponse response = request.execute();
+        // 获取响应状态码
+        int statusCode = response.getStatus();
+        byte[] responseBodyBytes = response.bodyBytes();
+        imagePath = writeBytesToFile(imagePath, responseBodyBytes);
+        print_info(String.format("imageUrl:%s  statusCode:%s  imagePath:%s ", imageUrl, statusCode, imagePath));
         return imagePath;
     }
 
+
+    public static String writeBytesToFile(String filePath, byte[] bytes) {
+        try  {
+            FileOutputStream fos = new FileOutputStream(filePath);
+            fos.write(bytes);
+            fos.close();
+        } catch (IOException e) {
+            System.err.println(String.format("写入文件时出错： %s", e.getMessage()));
+            e.printStackTrace();
+            return null;
+        }
+        return filePath;
+    }
 }

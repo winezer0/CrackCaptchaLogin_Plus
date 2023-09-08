@@ -1,7 +1,6 @@
 package com.fuping;
 
 import com.fuping.BrowserUtils.MyDialogHandler;
-import com.fuping.CaptchaIdentify.TesseractsLocalIdent;
 import com.fuping.LoadDict.UserPassPair;
 import com.teamdev.jxbrowser.chromium.Callback;
 import com.teamdev.jxbrowser.chromium.*;
@@ -39,6 +38,9 @@ import java.util.ResourceBundle;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.BrowserUtils.BrowserUtils.*;
+import static com.fuping.CaptchaIdentify.CaptchaUtils.LoadImageToFile;
+import static com.fuping.CaptchaIdentify.RemoteApiIdent.IndentCaptcha;
+import static com.fuping.CaptchaIdentify.TesseractsLocalIdent.localIdentCaptcha;
 import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.LoadConfig.MyConst.*;
 import static com.fuping.LoadDict.LoadDictUtils.loadUserPassFile;
@@ -46,12 +48,26 @@ import static com.fuping.PrintLog.PrintLog.print_error;
 import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class FXMLDocumentController implements Initializable {
+    @FXML  //识别结果判断条件
+    public TextField bro_id_ident_format_length_text;
+    @FXML  //识别结果格式筛选
+    public TextField bro_id_ident_format_regex_text;
+    @FXML  //识别超时配置
+    public ComboBox<Integer> bro_id_ident_time_out_combo;
+
+
     @FXML //远程识别接口地址
     public TextField bro_id_remote_ident_url_text;
+    @FXML  //识别结果判断条件
+    public TextField bro_id_remote_expected_status_text;
+    @FXML  //识别结果判断条件
+    public TextField bro_id_remote_expected_keywords_text;
+    @FXML  //识别结果内容提取
+    public TextField bro_id_remote_extract_regex_text;
+
     //操作模式选择
     @FXML
     private Tab id_browser_op_mode_tab;
-
     //登录相关元素
     @FXML
     private TextField id_login_url_text;
@@ -101,7 +117,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private RadioButton bro_id_yzm_remote_ident_radio;
     @FXML
-    private RadioButton bro_id_yzm_local_ident_radio;
+    private RadioButton bro_id_local_ident_flag_radio;
     @FXML
     private TextField bro_id_captcha_regex_text;
 
@@ -524,7 +540,7 @@ public class FXMLDocumentController implements Initializable {
         //设置验证码识别开关
         setWithCheck(this.bro_id_captcha_switch_check, DefaultCaptchaSwitch);
         //设置验证码识别方式
-        setWithCheck(DefaultLocalIdentify ? this.bro_id_yzm_local_ident_radio : this.bro_id_yzm_remote_ident_radio, true);
+        setWithCheck(DefaultLocalIdentify ? this.bro_id_local_ident_flag_radio : this.bro_id_yzm_remote_ident_radio, true);
         //设置验证码属性
         setWithCheck(this.bro_id_captcha_url_text, DefaultCaptchaUrl);
         setWithCheck(this.bro_id_captcha_ele_text, DefaultCaptchaEleValue);
@@ -563,18 +579,66 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    @FXML //测试验证码识别功能是否正则
+    @FXML //测试验证码识别功能是否正常
     public void bro_id_remote_ident_test_run(ActionEvent event) {
         //获取验证码输入URL的内容
         String bro_captcha_url_text = this.bro_id_captcha_url_text.getText().trim();
         if (isEmptyIfStr(bro_captcha_url_text)) {this.bro_id_captcha_url_text.requestFocus(); return;}
-        //获取接口 URL
-        String remote_ident_url_text = this.bro_id_remote_ident_url_text.getText().trim();
-        if (isEmptyIfStr(remote_ident_url_text)){this.bro_id_remote_ident_url_text.requestFocus(); return;}
-        //获取一个验证码图片
 
-        //保存图片到本地
-        //识别图片内容
+        //获取验证码筛选条件
+        String ident_format_length = this.bro_id_ident_format_length_text.getText(); //期望长度
+        String ident_format_regex = this.bro_id_ident_format_regex_text.getText(); //期望格式
+        Integer ident_time_out = bro_id_ident_time_out_combo.getValue();
+
+        //远程识别模式
+        if(this.bro_id_yzm_remote_ident_radio.isSelected()){
+            printlnInfoOnUIAndConsole(String.format("验证码识别测试开始 ..."));
+            //获取接口 URL
+            String remote_ident_url_text = this.bro_id_remote_ident_url_text.getText().trim();
+            if (isEmptyIfStr(remote_ident_url_text)){this.bro_id_remote_ident_url_text.requestFocus(); return;}
+
+            //获取响应判断条件
+            String ident_expected_status = this.bro_id_remote_expected_status_text.getText(); //期望状态码
+            String ident_expected_keywords = this.bro_id_remote_expected_keywords_text.getText(); //期望响应
+            //响应结果正则提取
+            String ident_extract_regex = bro_id_remote_extract_regex_text.getText(); //提取数据
+
+            new Thread(new Runnable() {
+                public void run() {
+                    //获取一个验证码图片 //保存图片到本地
+                    String imagePath = LoadImageToFile(bro_captcha_url_text, "TestRemote.jpg");
+                    printlnInfoOnUIAndConsole(String.format("保存图片到本地文件%s", imagePath));
+
+                    try {
+                        String result = IndentCaptcha(imagePath,
+                                remote_ident_url_text,
+                                ident_expected_status, ident_expected_keywords, ident_extract_regex,
+                                ident_format_length, ident_time_out
+                        );
+                        printlnInfoOnUIAndConsole(String.format("远程验证码识别结果:%s", result));
+                    }catch (Exception e){
+                        printlnErrorOnUIAndConsole(String.format("远程验证码识别出错:%s",e.getMessage()));
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
+
+        if (this.bro_id_local_ident_flag_radio.isSelected()){
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        String imagePath = LoadImageToFile(bro_captcha_url_text, "TestLocale.jpg");
+                        printlnInfoOnUIAndConsole(String.format("保存图片到本地文件%s", imagePath));
+                        String result = localIdentCaptcha(imagePath, ident_format_regex, ident_format_length);
+                        printlnInfoOnUIAndConsole(String.format("本地验证码识别结果:%s", result));
+                    } catch (Exception e) {
+                        printlnErrorOnUIAndConsole(String.format("本地验证码识别出错:%s", e.getMessage()));
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
     }
 
     //主要爆破函数的修改
@@ -715,14 +779,14 @@ public class FXMLDocumentController implements Initializable {
 
                                 //验证码识别 //云打码识别
                                 if (bro_id_yzm_remote_ident_radio.isSelected()) {
-                                    captchaText = TesseractsLocalIdent.getCode();
+                                    captchaText = localIdentCaptcha("","");
                                     //输出已经识别的验证码记录
                                     printlnInfoOnUIAndConsole(String.format("远程 已识别验证码为:%s", captchaText));
                                 }
 
                                 //验证码识别//本地识别
-                                if (bro_id_yzm_local_ident_radio.isSelected()) {
-                                    captchaText = TesseractsLocalIdent.getCode();
+                                if (bro_id_local_ident_flag_radio.isSelected()) {
+                                    captchaText = localIdentCaptcha("","");
                                     //输出已经识别的验证码记录
                                     printlnInfoOnUIAndConsole(String.format("本地 已识别验证码为:%s", captchaText));
                                 }

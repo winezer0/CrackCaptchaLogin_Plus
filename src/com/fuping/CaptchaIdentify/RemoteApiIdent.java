@@ -12,13 +12,13 @@ import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class RemoteApiIdent {
 
-    public static String remoteIdentCommon(String Url, String base64Image,  String ExpectedStatus, String ExpectedKeywords){
+    public static String remoteIdentCommon(String Url, String base64Image, String ExpectedStatus, String ExpectedKeywords, Integer ident_time_out){
         // 创建 HTTP 请求对象
         HttpRequest request = HttpUtil.createPost(Url);
         // 设置请求体，这里将 Base64 图片数据作为请求体
         request.body(base64Image);
         //设置超市时间等参数
-        request.timeout(5000);//超时，毫秒
+        request.timeout(ident_time_out);//超时，毫秒
 
         try{
             // 发送 POST 请求并获取响应
@@ -46,7 +46,7 @@ public class RemoteApiIdent {
     }
     public static String IndentCaptcha(String imagePath, String remoteApi,
                                        String expectedStatus, String expectedKeywords,
-                                       String extractRegex, String expectedLength){
+                                       String extractRegex, String expectedLength, Integer ident_time_out){
 
         //从绝地路径提取
         imagePath = getFileStrAbsolutePath(imagePath);
@@ -59,7 +59,7 @@ public class RemoteApiIdent {
         }
 
         //开始进行识别
-        String remoteIdentData = remoteIdentCommon(remoteApi, base64Image, expectedStatus,  expectedKeywords);
+        String remoteIdentData = remoteIdentCommon(remoteApi, base64Image, expectedStatus,  expectedKeywords, ident_time_out);
         if (isEmptyIfStr(remoteIdentData)) {
             print_error(String.format("接口错误: 接口[%s] <--> 图片[%s]!!!", imagePath, remoteApi));
             return null;
@@ -86,7 +86,7 @@ public class RemoteApiIdent {
         //输入图片地址 图片格式转换
         String imagePath = "tmp/yzm2.jpg";
         String remoteApi = "http://127.0.0.1:5000/base64ocr"; // POST 请求的 URL
-        String result = IndentCaptcha(imagePath, remoteApi, "200", null, null, "4");
+        String result = IndentCaptcha(imagePath, remoteApi, "200", null, null, "4", 5000);
         print_info(String.format("result:%s", result));
     }
 }

@@ -2,55 +2,70 @@ package com.fuping.CaptchaIdentify;
 
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.TesseractException;
 
 import javax.imageio.ImageIO;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.IOException;
+
+import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
+import static com.fuping.CaptchaIdentify.CaptchaUtils.writeBytesToFile;
+import static com.fuping.CommonUtils.Utils.*;
+import static com.fuping.PrintLog.PrintLog.print_error;
 
 public class TesseractsLocalIdent {
 
-    public static String getCode() {
-        String result = "";
-        BufferedImage img;
+    public static String localIdentCaptcha(String expectedRegex, String expectedLength) {
+        return localIdentCaptcha(getFileStrAbsolutePath("tmp\\yzm.jpg"),expectedRegex, expectedLength);
+    }
+
+    public static String localIdentCaptcha(byte[] captcha_data, String expectedRegex, String expectedLength) {
+        String imagePath = getFileStrAbsolutePath("captcha.png");
+        imagePath = writeBytesToFile(imagePath, captcha_data);
+        return localIdentCaptcha(imagePath, expectedRegex, expectedLength);
+    }
+
+    public static String localIdentCaptcha(String pngImagePath, String expectedRegex, String expectedLength) {
+        pngImagePath = getFileStrAbsolutePath(pngImagePath);
+        //将保存的图片转换为jpg
         try {
-            //固定的识别路径,需要优化
-            img = ImageIO.read(new File("tmp\\yzm.jpg"));
-            ImageIO.write(img, "JPG", new File("tmp\\yzm2.jpg"));
-            img = ImageIO.read(new File("tmp\\yzm2.jpg"));
+            BufferedImage img = ImageIO.read(new File(pngImagePath));
+
+            String jpgImagePath = getFileStrAbsolutePath("captcha.jpg");
+            ImageIO.write(img, "JPG", new File(jpgImagePath));
+            img = ImageIO.read(new File(jpgImagePath));
             //创建 TesseractsOcr 实例
-            ITesseract instance = new Tesseract();
-            instance.setLanguage("num");
-            result = instance.doOCR(img).replace(" ", "").replace("\n", "");
-            System.out.println(result);
-        } catch (Exception e) {
+            ITesseract tesseracts = new Tesseract();
+            //instance.setLanguage("num");
+            String captchaResult = tesseracts.doOCR(img).replace(" ", "").replace("\n", "");
+
+            //当前 ExpectedRegex 不为空时, 判断验证码是否符合正则
+            if (!isEmptyIfStr(expectedRegex) && !containsMatchingSubString(captchaResult, expectedRegex)) {
+                print_error(String.format("格式错误: [%s] <--> [%s]", expectedRegex, captchaResult));
+                return null;
+            }
+
+            //当前 captchaResult 不为空时, 判断验证码长度是否正确
+            if (isNumber(expectedLength) && Integer.parseInt(expectedLength) !=  captchaResult.length()) {
+                print_error(String.format("识别错误: 结果[%s] <--> 长度[%s] <--> 期望长度:[%s]",captchaResult, captchaResult.length(), expectedLength));
+                return null;
+            }
+            return captchaResult;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TesseractException e) {
+            e.printStackTrace();
         }
-        return result;
+        return null;
     }
 
-    public static String getCode(byte[] captcha_data) {
-        String result = "";
-        BufferedImage img;
-        try {
-            FileOutputStream yzm_fos = new FileOutputStream(new File("tmp\\yzm.jpg"));
-            yzm_fos.write(captcha_data);
-            //ImageIO.write(ImageIO.read(new File("tmp\\yzm.jpg")),"JPG",new File("tmp\\yzm2.jpg"));
-            yzm_fos.flush();
-            yzm_fos.close();
-            return getCode();
-        } catch (Exception e) {
-        }
-        return result;
-    }
-
-    public static BufferedImage gray(BufferedImage srcImage) {
-        ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-        ColorConvertOp op = new ColorConvertOp(cs, null);
-        srcImage = op.filter(srcImage, null);
-        return srcImage;
-    }
+//    public static BufferedImage gray(BufferedImage srcImage) {
+//        ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+//        ColorConvertOp op = new ColorConvertOp(cs, null);
+//        srcImage = op.filter(srcImage, null);
+//        return srcImage;
+//    }
 
 //    public static String getOcr(BufferedImage img2) throws Exception {
 //        BufferedImage img = gray(img2);
@@ -164,7 +179,7 @@ public class TesseractsLocalIdent {
 //    }
 
     public static void main(String args[]) {
-        System.out.println(getCode());
+        System.out.println(localIdentCaptcha("", ""));
     }
 
 }
