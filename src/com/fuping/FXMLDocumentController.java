@@ -29,7 +29,6 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.http.util.ByteArrayBuffer;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -393,13 +392,6 @@ public class FXMLDocumentController implements Initializable {
                     FXMLDocumentController.this.captcha_data = paramDataReceivedParams.getData();
                     this.cap.append(FXMLDocumentController.this.captcha_data, 0, FXMLDocumentController.this.captcha_data.length);
                     FXMLDocumentController.this.captcha_data = this.cap.toByteArray();
-
-                    yzm_fos = new FileOutputStream(new File("tmp\\yzm.jpg"));
-                    yzm_fos.write(FXMLDocumentController.this.captcha_data);
-                    //ImageIO.write(ImageIO.read(new File("tmp\\yzm.jpg")),"JPG",new File("tmp\\yzm2.jpg"));
-                    yzm_fos.flush();
-                    yzm_fos.close();
-                    //System.out.println("验证码数据:" + new String(FXMLDocumentController.this.captchadata).substring(0, 100));
                     return;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -779,14 +771,14 @@ public class FXMLDocumentController implements Initializable {
 
                                 //验证码识别 //云打码识别
                                 if (bro_id_yzm_remote_ident_radio.isSelected()) {
-                                    captchaText = localIdentCaptcha("","");
+                                    captchaText = localIdentCaptcha(FXMLDocumentController.this.captcha_data,"","");
                                     //输出已经识别的验证码记录
                                     printlnInfoOnUIAndConsole(String.format("远程 已识别验证码为:%s", captchaText));
                                 }
 
                                 //验证码识别//本地识别
                                 if (bro_id_local_ident_flag_radio.isSelected()) {
-                                    captchaText = localIdentCaptcha("","");
+                                    captchaText = localIdentCaptcha(FXMLDocumentController.this.captcha_data,"","");
                                     //输出已经识别的验证码记录
                                     printlnInfoOnUIAndConsole(String.format("本地 已识别验证码为:%s", captchaText));
                                 }

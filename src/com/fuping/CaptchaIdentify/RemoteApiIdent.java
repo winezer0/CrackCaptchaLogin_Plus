@@ -84,7 +84,7 @@ public class RemoteApiIdent {
 
     public static void main(String[] args) {
         //输入图片地址 图片格式转换
-        String imagePath = "tmp/yzm2.jpg";
+        String imagePath = "TestRemote.jpg";
         String remoteApi = "http://127.0.0.1:5000/base64ocr"; // POST 请求的 URL
         String result = IndentCaptcha(imagePath, remoteApi, "200", null, null, "4", 5000);
         print_info(String.format("result:%s", result));

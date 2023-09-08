@@ -15,11 +15,6 @@ import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.PrintLog.PrintLog.print_error;
 
 public class TesseractsLocalIdent {
-
-    public static String localIdentCaptcha(String expectedRegex, String expectedLength) {
-        return localIdentCaptcha(getFileStrAbsolutePath("tmp\\yzm.jpg"),expectedRegex, expectedLength);
-    }
-
     public static String localIdentCaptcha(byte[] captcha_data, String expectedRegex, String expectedLength) {
         String imagePath = getFileStrAbsolutePath("captcha.png");
         imagePath = writeBytesToFile(imagePath, captcha_data);
@@ -179,7 +174,7 @@ public class TesseractsLocalIdent {
 //    }
 
     public static void main(String args[]) {
-        System.out.println(localIdentCaptcha("", ""));
+        System.out.println(localIdentCaptcha("TestRemote.jpg","", ""));
     }
 
 }
