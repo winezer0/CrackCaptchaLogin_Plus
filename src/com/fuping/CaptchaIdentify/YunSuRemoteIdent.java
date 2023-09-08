@@ -337,9 +337,7 @@ public class YunSuRemoteIdent {
                                       String typeid, String timeout, String softid, String softkey,
                                       byte[] byteArr) {
         String result = "";
-        String param = String
-                .format(
-                        "username=%s&password=%s&typeid=%s&timeout=%s&softid=%s&softkey=%s",
+        String param = String.format("username=%s&password=%s&typeid=%s&timeout=%s&softid=%s&softkey=%s",
                         username, password, typeid, timeout, softid, softkey);
         try {
             result = YunSuRemoteIdent.httpPostImage("http://api.ysdm.net/create.xml", param, byteArr);
