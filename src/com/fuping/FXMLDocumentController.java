@@ -348,7 +348,7 @@ public class FXMLDocumentController implements Initializable {
         return browser;
     }
 
-    public class MyNetworkDelegate extends DefaultNetworkDelegate {
+    public class MyNetworkDelegateForCaptchaUrl extends DefaultNetworkDelegate {
         private boolean isCompleteAuth;
         private boolean isCancelAuth;
         private String captcha_url;
@@ -356,7 +356,7 @@ public class FXMLDocumentController implements Initializable {
         private long current_id;
         private ByteArrayBuffer cap = new ByteArrayBuffer(4096);
 
-        public MyNetworkDelegate(String captcha_url) {
+        public MyNetworkDelegateForCaptchaUrl(String captcha_url) {
             this.captcha_url = captcha_url;
             int i = captcha_url.indexOf("?");
             if (i != -1)
@@ -458,15 +458,15 @@ public class FXMLDocumentController implements Initializable {
                         public void handle(ActionEvent arg0) {
                             paramAuthRequiredParams.setUsername(user_field.getText());
                             paramAuthRequiredParams.setPassword(pass_field.getText());
-                            MyNetworkDelegate.this.isCancelAuth = false;
-                            MyNetworkDelegate.this.isCompleteAuth = true;
+                            MyNetworkDelegateForCaptchaUrl.this.isCancelAuth = false;
+                            MyNetworkDelegateForCaptchaUrl.this.isCompleteAuth = true;
                             stage.close();
                         }
                     };
                     EventHandler cancelAction = new EventHandler<ActionEvent>() {
                         public void handle(ActionEvent arg0) {
-                            MyNetworkDelegate.this.isCancelAuth = true;
-                            MyNetworkDelegate.this.isCompleteAuth = true;
+                            MyNetworkDelegateForCaptchaUrl.this.isCancelAuth = true;
+                            MyNetworkDelegateForCaptchaUrl.this.isCompleteAuth = true;
                             stage.close();
                         }
                     };
@@ -476,9 +476,9 @@ public class FXMLDocumentController implements Initializable {
                         //关闭请求时的动作
                         @Override
                         public void handle(WindowEvent event) {
-                            MyNetworkDelegate.this.isCancelAuth = true;
+                            MyNetworkDelegateForCaptchaUrl.this.isCancelAuth = true;
                             System.out.println("hehe");
-                            MyNetworkDelegate.this.isCompleteAuth = true;
+                            MyNetworkDelegateForCaptchaUrl.this.isCompleteAuth = true;
                         }
                     });
 
@@ -646,7 +646,7 @@ public class FXMLDocumentController implements Initializable {
         YunSuConfig yunSuConfig = new YunSuConfig(ys_username, ys_password, ys_soft_id, ys_soft_key, ys_type_id, yzm_query_timeout.toString());
 
         //验证码输入URL
-        String captcha_url_input = this.bro_id_captcha_url_text.getText().trim();
+        String captcha_url_text = this.bro_id_captcha_url_text.getText().trim();
 
         //浏览器操作模式模式
         if (this.id_browser_op_mode_tab.isSelected()) {
@@ -703,7 +703,7 @@ public class FXMLDocumentController implements Initializable {
             }
 
             //设置JxBrowser中网络委托的对象，以实现对浏览器的网络请求和响应的控制和处理。//不知道有啥用,可能是为了提前加载验证码
-            browser.getContext().getNetworkService().setNetworkDelegate(new MyNetworkDelegate(captcha_url_input));
+            browser.getContext().getNetworkService().setNetworkDelegate(new MyNetworkDelegateForCaptchaUrl(captcha_url_text));
 
             //开启一个新的线程进行爆破操作
             new Thread(new Runnable() {
@@ -879,14 +879,14 @@ public class FXMLDocumentController implements Initializable {
                         return;
                     }
 
-                    String schema = login_url.startsWith("http") ? "http" : "https";
-                    String keyword2 = FXMLDocumentController.this.nor_id_success_keys_text.getText();
-                    String captchaurlinput2 = FXMLDocumentController.this.nor_id_captcha_url_text.getText();
+                    String nor_schema = login_url.startsWith("http") ? "http" : "https";
+                    String nor_success_keys_text = FXMLDocumentController.this.nor_id_success_keys_text.getText();
+                    String nor_captcha_url_text = FXMLDocumentController.this.nor_id_captcha_url_text.getText();
 
                     for (int i = 0; i < thread.intValue(); i++) {
                         new Thread(
-                                new SendCrackThread(cdl, FXMLDocumentController.this.queue, request, schema, FXMLDocumentController.this.nor_id_output_text_area, keyword2,
-                                        captchaurlinput2, timeout2, Boolean.valueOf(FXMLDocumentController.this.nor_id_captcha_ident_check.isSelected()), yunSuConfig, login_url))
+                                new SendCrackThread(cdl, FXMLDocumentController.this.queue, request, nor_schema, FXMLDocumentController.this.nor_id_output_text_area, nor_success_keys_text,
+                                        nor_captcha_url_text, timeout2, Boolean.valueOf(FXMLDocumentController.this.nor_id_captcha_ident_check.isSelected()), yunSuConfig, login_url))
                                 .start();
                     }
                     try {
