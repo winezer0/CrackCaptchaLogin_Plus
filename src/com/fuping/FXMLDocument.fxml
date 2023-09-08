@@ -378,54 +378,41 @@
       </VBox>
    </center>
    <bottom>
-      <VBox prefHeight="13.0" fx:id="ys_id_all_yunsu_set_vbox" prefWidth="847.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="13.0" fx:id="ys_id_all_yunsu_set_vbox" prefWidth="634.0" BorderPane.alignment="CENTER">
          <children>
             <Separator prefWidth="200.0" />
-            <HBox alignment="CENTER_LEFT" prefHeight="19.0" prefWidth="135.0" spacing="2.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
                <children>
-                  <Label prefHeight="21.0" prefWidth="1216.0" text="云速设置" HBox.hgrow="ALWAYS" />
+                  <Label prefHeight="34.0" prefWidth="108.0" text="远程识别地址" />
+                  <TextField fx:id="bro_id_remote_ident_url_text" prefHeight="31.0" prefWidth="729.0" promptText="远程识别地址" text="http://127.0.0.1:5000/ddddocr" HBox.hgrow="ALWAYS" />
                </children>
+               <VBox.margin>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </VBox.margin>
                <padding>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </padding>
             </HBox>
-            <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
                <children>
-                  <Label prefHeight="23.0" prefWidth="55.0" text="软件ID" />
-                  <TextField fx:id="ys_soft_id_text" prefHeight="30.0" prefWidth="110.0" text="1" />
-                  <Label prefHeight="23.0" prefWidth="70.0" text="软件KEY" />
-                  <TextField fx:id="ys_soft_key_text" prefHeight="30.0" prefWidth="538.0" text="b40ffbee5c1cf4e38028c197eb2fc751" HBox.hgrow="ALWAYS" />
-                  <ComboBox fx:id="yzm_query_timeout_combo" prefHeight="30.0" prefWidth="164.0" promptText="验证码查询超时">
-                     <value>
-                        <Integer fx:value="50" />
-                     </value>
-                     <items>
-                        <FXCollections fx:factory="observableArrayList">
-                           <Integer fx:value="10" />
-                           <Integer fx:value="20" />
-                           <Integer fx:value="30" />
-                           <Integer fx:value="50" />
-                           <Integer fx:value="80" />
-                           <Integer fx:value="99" />
-                        </FXCollections>
-                     </items>
-                  </ComboBox>
-
-                  <Button mnemonicParsing="false" onAction="#ys_query_info_action" prefHeight="30.0" prefWidth="99.0" text="账户查询" />
+                  <Label prefHeight="34.0" prefWidth="108.0" text="预期响应状态" />
+                  <TextField fx:id="bro_id_remote_expected_status_text" prefHeight="31.0" prefWidth="729.0" promptText="预期响应状态正则匹配" text="" HBox.hgrow="ALWAYS" />
                </children>
+               <VBox.margin>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </VBox.margin>
                <padding>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </padding>
             </HBox>
-            <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
                <children>
-                  <Label prefHeight="23.0" prefWidth="55.0" text="用户名" />
-                  <TextField fx:id="ys_username_text" prefHeight="30.0" prefWidth="110.0" text="demo" />
-                  <Label prefHeight="23.0" prefWidth="68.0" text="      密码" />
-                  <PasswordField fx:id="ys_password_text" prefHeight="30.0" prefWidth="538.0" text="demo" HBox.hgrow="ALWAYS" />
-                  <Label prefHeight="23.0" prefWidth="102.0" text="  题目类型" />
-                  <TextField fx:id="ys_type_id_text" prefHeight="30.0" prefWidth="75.0" text="3040" />
+                  <Label prefHeight="34.0" prefWidth="108.0" text="预期响应状态" />
+                  <TextField fx:id="bro_id_remote_expected_keywords_text" prefHeight="31.0" prefWidth="729.0" promptText="预期响应状态正则匹配" text="" HBox.hgrow="ALWAYS" />
                </children>
+               <VBox.margin>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </VBox.margin>
                <padding>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                </padding>
