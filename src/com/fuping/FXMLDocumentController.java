@@ -641,6 +641,8 @@ public class FXMLDocumentController implements Initializable {
         this.is_stop_send_crack = Boolean.valueOf(true);
     }
 
+
+
     //主要爆破函数的修改
     @FXML
     private void startCrack(ActionEvent event) {
@@ -686,52 +688,31 @@ public class FXMLDocumentController implements Initializable {
 
         //浏览器操作模式模式
         if (this.id_browser_op_mode_tab.isSelected()) {
-            //存在验证码时监测云速账号密码是否为空//后续需要修改删除
-            if(this.bro_id_captcha_switch_check.isSelected()) {
-                if ((ys_username.equals("")) || (ys_password.equals(""))) {
-                    new Alert(Alert.AlertType.NONE, "云速账号密码不能为空", new ButtonType[]{ButtonType.CLOSE});
-                    return;
-                }
-            }
-
             //获取用户名框框的内容
             String bro_user_ele_text = this.bro_id_user_ele_text.getText().trim();
             String bro_user_ele_type = this.bro_id_user_ele_type_combo.getValue();
-            if (bro_user_ele_text.equals("")) {
-                this.bro_id_user_ele_text.requestFocus();
-                return;
-            }
+            if (bro_user_ele_text.equals("")) { this.bro_id_user_ele_text.requestFocus(); return;}
 
             //获取密码框元素的内容
             String bro_pass_ele_text = this.bro_id_pass_ele_text.getText().trim();
             String bro_pass_ele_type = this.bro_id_pass_ele_type_combo.getValue();
-            if (bro_pass_ele_text.equals("")) {
-                this.bro_id_pass_ele_text.requestFocus();
-                return;
-            }
-
-            //获取验证码框元素的内容
-            String bro_captcha_ele_text = this.bro_id_captcha_ele_text.getText().trim();
-            String bro_captcha_ele_type = this.bro_id_captcha_ele_type_combo.getValue();
-            if (bro_captcha_ele_text.equals("")) {
-                this.bro_id_user_ele_text.requestFocus();
-                return;
-            }
-
-            //获取验证码输入URL的内容
-            String bro_captcha_url_text = this.bro_id_captcha_url_text.getText().trim();
-            if (bro_captcha_url_text.equals("")) {
-                this.bro_id_captcha_url_text.requestFocus();
-                return;
-            }
+            if (bro_pass_ele_text.equals("")) { this.bro_id_pass_ele_text.requestFocus(); return;}
 
             //登录按钮内容
             String bro_submit_ele_text = this.bro_id_submit_ele_text.getText().trim();
             String bro_id_submit_ele_type = this.bro_id_submit_ele_type_combo.getValue();
+            if (bro_submit_ele_text.equals("")) { this.bro_id_submit_ele_text.requestFocus(); return;}
+
+            //获取验证码输入URL的内容
+            String bro_captcha_url_text = this.bro_id_captcha_url_text.getText().trim();
+            if (this.bro_id_captcha_switch_check.isSelected() && bro_captcha_url_text.equals("")) {this.bro_id_captcha_url_text.requestFocus(); return;}
+            //获取验证码框元素的内容
+            String bro_captcha_ele_text = this.bro_id_captcha_ele_text.getText().trim();
+            String bro_captcha_ele_type = this.bro_id_captcha_ele_type_combo.getValue();
+            if (this.bro_id_captcha_switch_check.isSelected() && bro_captcha_ele_text.equals("")) {this.bro_id_user_ele_text.requestFocus(); return; }
 
             //初始化浏览器
             Browser browser = initJxBrowserInstance(BrowserProxySetting);
-
             //设置JxBrowser中网络委托的对象，以实现对浏览器的网络请求和响应的控制和处理。 //更详细的请求和响应处理,含保存验证码图片
             browser.getContext().getNetworkService().setNetworkDelegate(new MyNetworkDelegate(bro_captcha_url_text));
 

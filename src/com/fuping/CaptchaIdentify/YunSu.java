@@ -117,9 +117,7 @@ public class YunSu{
         con.setDoOutput(true);
         con.setDoInput(true);
         con.setUseCaches(true);
-        con.setRequestProperty("Content-Type",
-                "multipart/form-data; boundary=" + boundary);
-
+        con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
         out = con.getOutputStream();
 
         for (String paramValue : param.split("[&]")) {
@@ -350,8 +348,6 @@ public class YunSu{
         } catch(Exception e) {
             result = "未知问题";
         }
-
-
         return result;
     }
 
