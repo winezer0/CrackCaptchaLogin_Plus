@@ -4,7 +4,7 @@ package com.fuping.BaseCrack;
 import com.fuping.BrowserUtils.MyHostnameVerifier;
 import com.fuping.BrowserUtils.MyTrustStrategy;
 import com.fuping.LoadDict.UserPassPair;
-import com.fuping.CaptchaIdentify.YunSu;
+import com.fuping.CaptchaIdentify.YunSuRemoteIdentify;
 import com.fuping.CaptchaIdentify.YunSuConfig;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -82,9 +82,11 @@ public class SendCrackThread extends Task<String> {
                     CloseableHttpResponse response = httpclient.execute(new HttpGet(this.chatchaurlinput2));
                     HttpEntity entity = response.getEntity();
                     byte[] captchadata = EntityUtils.toByteArray(entity);
-                    String result = YunSu.createByPost(this.yunSuConfig.getUsername(), this.yunSuConfig.getPassword(),
+                    String result = YunSuRemoteIdentify.createByPost(this.yunSuConfig.getUsername(), this.yunSuConfig.getPassword(),
                             this.yunSuConfig.getTypeid(), this.yunSuConfig.getTimeout(), this.yunSuConfig.getSoftid1(),
                             this.yunSuConfig.getSoftkey(), captchadata);
+
+
                     System.out.println("result:" + result);
                     int k = result.indexOf("|");
                     if (k == -1) {

@@ -1,8 +1,9 @@
 package com.fuping;
 
 import com.fuping.BrowserUtils.MyDialogHandler;
-import com.fuping.CaptchaIdentify.YunSu;
+import com.fuping.CaptchaIdentify.YunSuRemoteIdentify;
 import com.fuping.CaptchaIdentify.YunSuConfig;
+import com.fuping.CaptchaIdentify.TesseractsOcrIdent;
 import com.fuping.LoadDict.UserPassPair;
 import com.teamdev.jxbrowser.chromium.Callback;
 import com.teamdev.jxbrowser.chromium.*;
@@ -603,7 +604,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML  //查询YS信息,需要修改|删除
     private void ys_query_info_action(ActionEvent event) {
         String query_info_result = "";
-        query_info_result = YunSu.getInfo(this.ys_username_text.getText().trim(), this.ys_password_text.getText().trim());
+        query_info_result = YunSuRemoteIdentify.getInfo(this.ys_username_text.getText().trim(), this.ys_password_text.getText().trim());
         this.bro_id_output_text_area.appendText(query_info_result);
     }
     @FXML  //点击 验证码识别开关需要 禁用|开启 的按钮
@@ -640,7 +641,6 @@ public class FXMLDocumentController implements Initializable {
     private void nor_stop_send_crack(ActionEvent event) {
         this.is_stop_send_crack = Boolean.valueOf(true);
     }
-
 
 
     //主要爆破函数的修改
@@ -780,41 +780,36 @@ public class FXMLDocumentController implements Initializable {
                                 if("break".equals(action_status)) break; else if("continue".equals(action_status)) continue;
                             }
 
-//                            //获取验证码并进行识别
-//                            if (FXMLDocumentController.this.bro_id_captcha_switch_check.isSelected()) {
-//                                //captcha_data 在
-//                                if (FXMLDocumentController.this.captcha_data == null) {
-//                                    printlnErrorOnUIAndConsole("获取验证码失败 (captcha数据为空)");
-//                                    continue;
-//                                }
-//
-//                                //验证码识别 //云打码识别
-//                                if (bro_id_yzm_remote_ident_radio.isSelected()) {
-//                                    String result = YunSu.createByPost(ys_username, ys_password, ys_type_id, yzm_query_timeout.toString(), ys_soft_id, ys_soft_key, FXMLDocumentController.this.captcha_data);
-//                                    // int k = result.indexOf("|");
-//                                    if (result.contains("Error_Code")) {
-//                                        printlnErrorOnUIAndConsole(String.format("获取验证码失败 (查询结果%s)", result));
-//                                        break; //continue;
-//                                    }
-//                                    captchaText = YunSu.getResult(result);
-//                                }
-//                                //验证码识别//本地识别
-//                                if (bro_id_yzm_local_ident_radio.isSelected()) {
-//                                    captchaText = YzmToText.getCode();
-//                                }
-//
-//                                //输出已经识别的验证码记录
-//                                printlnInfoOnUIAndConsole(String.format("已识别验证码为:%s", captchaText));
-//
-//                                //定位验证码输入框并填写验证码
-//                                String action_captcha = findElementAndInput(document,bro_captcha_ele_text, bro_captcha_ele_type, captchaText);
-//
-//                                //处理资源寻找状态
-//                                if(!"success".equals(action_status)){
-//                                    printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_pass_ele_text, action_status));
-//                                    if("break".equals(action_status)) break; else if("continue".equals(action_status)) continue;
-//                                }
-//                            }
+                            //获取验证码并进行识别
+                            if (FXMLDocumentController.this.bro_id_captcha_switch_check.isSelected()) {
+                                //captcha_data不存在
+                                if (FXMLDocumentController.this.captcha_data == null) {
+                                    printlnErrorOnUIAndConsole("获取验证码失败 (captcha数据为空)");
+                                    continue;
+                                }
+
+                                //验证码识别 //云打码识别
+                                if (bro_id_yzm_remote_ident_radio.isSelected()) {
+                                    captchaText = TesseractsOcrIdent.getCode();
+                                    //输出已经识别的验证码记录
+                                    printlnInfoOnUIAndConsole(String.format("远程 已识别验证码为:%s", captchaText));
+                                }
+
+                                //验证码识别//本地识别
+                                if (bro_id_yzm_local_ident_radio.isSelected()) {
+                                    captchaText = TesseractsOcrIdent.getCode();
+                                    //输出已经识别的验证码记录
+                                    printlnInfoOnUIAndConsole(String.format("本地 已识别验证码为:%s", captchaText));
+                                }
+
+                                //定位验证码输入框并填写验证码
+                                action_status = findElementAndInput(document,bro_captcha_ele_text, bro_captcha_ele_type, captchaText);
+                                //处理资源寻找状态
+                                if(!"success".equals(action_status)){
+                                    printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_pass_ele_text, action_status));
+                                    if("break".equals(action_status)) break; else if("continue".equals(action_status)) continue;
+                                }
+                            }
 
 
                             //定位提交按钮, 并填写按钮
