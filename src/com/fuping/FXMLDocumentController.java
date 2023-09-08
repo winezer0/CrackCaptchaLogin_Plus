@@ -119,7 +119,7 @@ public class FXMLDocumentController implements Initializable {
 
     //云速账号相关
     @FXML  //YS整体设置,待删除
-    public VBox ys_id_all_yunsu_set_vbox;
+    public VBox bro_id_remote_index_set_vbox;
     @FXML
     private ComboBox<Integer> yzm_query_timeout_combo;
     @FXML  //YS账号设置,待删除
@@ -612,12 +612,12 @@ public class FXMLDocumentController implements Initializable {
         if (this.bro_id_captcha_switch_check.isSelected()) {
 
             this.bro_id_all_captcha_set_vbox.setDisable(false);
-            this.ys_id_all_yunsu_set_vbox.setDisable(false);
+            this.bro_id_remote_index_set_vbox.setDisable(false);
         }
         else {
             this.bro_id_all_captcha_set_vbox.setDisable(true);
 
-            this.ys_id_all_yunsu_set_vbox.setDisable(true);
+            this.bro_id_remote_index_set_vbox.setDisable(true);
         }
     }
 

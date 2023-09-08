@@ -378,13 +378,28 @@
       </VBox>
    </center>
    <bottom>
-      <VBox prefHeight="13.0" fx:id="ys_id_all_yunsu_set_vbox" prefWidth="634.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="13.0" fx:id="bro_id_remote_index_set_vbox" prefWidth="634.0" BorderPane.alignment="CENTER">
          <children>
             <Separator prefWidth="200.0" />
             <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
                <children>
-                  <Label prefHeight="34.0" prefWidth="108.0" text="远程识别地址" />
-                  <TextField fx:id="bro_id_remote_ident_url_text" prefHeight="31.0" prefWidth="729.0" promptText="远程识别地址" text="http://127.0.0.1:5000/ddddocr" HBox.hgrow="ALWAYS" />
+                  <Label prefHeight="34.0" prefWidth="108.0" text="远程识别接口" />
+                  <TextField fx:id="bro_id_remote_ident_url_text" prefHeight="31.0" prefWidth="729.0" promptText="远程识别接口URL地址" text="http://127.0.0.1:5000/ddddocr" HBox.hgrow="ALWAYS" />
+                  <ComboBox fx:id="bro_id_remote_ident_time_out_combo" prefHeight="31.0" prefWidth="108.0" promptText="请求超时时间">
+                     <value>
+                        <Integer fx:value="5" />
+                     </value>
+                     <items>
+                        <FXCollections fx:factory="observableArrayList">
+                           <Integer fx:value="1" />
+                           <Integer fx:value="2" />
+                           <Integer fx:value="3" />
+                           <Integer fx:value="5" />
+                           <Integer fx:value="8" />
+                           <Integer fx:value="10" />
+                        </FXCollections>
+                     </items>
+                  </ComboBox>
                </children>
                <VBox.margin>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -395,20 +410,10 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
                <children>
-                  <Label prefHeight="34.0" prefWidth="108.0" text="预期响应状态" />
-                  <TextField fx:id="bro_id_remote_expected_status_text" prefHeight="31.0" prefWidth="729.0" promptText="预期响应状态正则匹配" text="" HBox.hgrow="ALWAYS" />
-               </children>
-               <VBox.margin>
-                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-               </VBox.margin>
-               <padding>
-                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-               </padding>
-            </HBox>
-            <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
-               <children>
-                  <Label prefHeight="34.0" prefWidth="108.0" text="预期响应状态" />
-                  <TextField fx:id="bro_id_remote_expected_keywords_text" prefHeight="31.0" prefWidth="729.0" promptText="预期响应状态正则匹配" text="" HBox.hgrow="ALWAYS" />
+                  <Label prefHeight="34.0" prefWidth="108.0" text="识别成功判断" />
+                  <TextField fx:id="bro_id_remote_ident_expected_status_text" prefHeight="31.0" prefWidth="300.0" promptText="识别成功状态正则匹配" text="" HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="bro_id_remote_ident_expected_keywords_text" prefHeight="31.0" prefWidth="300.0" promptText="识别成功响应正则匹配" text="" HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="bro_id_remote_ident_expected_length_text" prefHeight="31.0" prefWidth="300" promptText="识别成功验证码长度匹配" text="" HBox.hgrow="ALWAYS" />
                </children>
                <VBox.margin>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
