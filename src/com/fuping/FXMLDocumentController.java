@@ -1,8 +1,6 @@
 package com.fuping;
 
 import com.fuping.BrowserUtils.MyDialogHandler;
-import com.fuping.CaptchaIdentify.YunSuRemoteIdent;
-import com.fuping.CaptchaIdentify.YunSuConfig;
 import com.fuping.CaptchaIdentify.TesseractsLocalIdent;
 import com.fuping.LoadDict.UserPassPair;
 import com.teamdev.jxbrowser.chromium.Callback;
@@ -425,7 +423,6 @@ public class FXMLDocumentController implements Initializable {
                     yzm_fos = new FileOutputStream(new File("tmp\\yzm.jpg"));
                     yzm_fos.write(FXMLDocumentController.this.captcha_data);
                     //ImageIO.write(ImageIO.read(new File("tmp\\yzm.jpg")),"JPG",new File("tmp\\yzm2.jpg"));
-
                     yzm_fos.flush();
                     yzm_fos.close();
                     //System.out.println("验证码数据:" + new String(FXMLDocumentController.this.captchadata).substring(0, 100));
@@ -601,12 +598,8 @@ public class FXMLDocumentController implements Initializable {
         else
             this.primaryStage.hide();
     }
-    @FXML  //查询YS信息,需要修改|删除
-    private void ys_query_info_action(ActionEvent event) {
-        String query_info_result = "";
-        query_info_result = YunSuRemoteIdent.getInfo(this.ys_username_text.getText().trim(), this.ys_password_text.getText().trim());
-        this.bro_id_output_text_area.appendText(query_info_result);
-    }
+
+
     @FXML  //点击 验证码识别开关需要 禁用|开启 的按钮
     private void bro_id_captcha_identify_action(ActionEvent event) {
         if (this.bro_id_captcha_switch_check.isSelected()) {
@@ -684,7 +677,6 @@ public class FXMLDocumentController implements Initializable {
         String ys_soft_key = this.ys_soft_key_text.getText().trim();
         String ys_type_id = this.ys_type_id_text.getText().trim();
         Integer yzm_query_timeout = this.yzm_query_timeout_combo.getValue();
-        YunSuConfig yunSuConfig = new YunSuConfig(ys_username, ys_password, ys_soft_id, ys_soft_key, ys_type_id, yzm_query_timeout.toString());
 
         //浏览器操作模式模式
         if (this.id_browser_op_mode_tab.isSelected()) {

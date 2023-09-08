@@ -1,5 +1,6 @@
 package com.fuping.CaptchaIdentify;
 
+import com.fuping.FXMLDocumentController;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 
@@ -8,6 +9,7 @@ import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.io.File;
+import java.io.FileOutputStream;
 
 public class TesseractsLocalIdent {
 
@@ -24,6 +26,21 @@ public class TesseractsLocalIdent {
             instance.setLanguage("num");
             result = instance.doOCR(img).replace(" ", "").replace("\n", "");
             System.out.println(result);
+        } catch (Exception e) {
+        }
+        return result;
+    }
+
+    public static String getCode(byte[] captcha_data) {
+        String result = "";
+        BufferedImage img;
+        try {
+            FileOutputStream yzm_fos = new FileOutputStream(new File("tmp\\yzm.jpg"));
+            yzm_fos.write(captcha_data);
+            //ImageIO.write(ImageIO.read(new File("tmp\\yzm.jpg")),"JPG",new File("tmp\\yzm2.jpg"));
+            yzm_fos.flush();
+            yzm_fos.close();
+            return getCode();
         } catch (Exception e) {
         }
         return result;

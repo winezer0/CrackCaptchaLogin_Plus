@@ -3,9 +3,8 @@ package com.fuping.BaseCrack;
 
 import com.fuping.BrowserUtils.MyHostnameVerifier;
 import com.fuping.BrowserUtils.MyTrustStrategy;
+import com.fuping.CaptchaIdentify.TesseractsLocalIdent;
 import com.fuping.LoadDict.UserPassPair;
-import com.fuping.CaptchaIdentify.YunSuRemoteIdent;
-import com.fuping.CaptchaIdentify.YunSuConfig;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.TextArea;
@@ -38,20 +37,27 @@ public class SendCrackThread extends Task<String> {
     private String chatchaurlinput2;
     private Integer timeout2;
     private Boolean ishavechptcha;
-    private YunSuConfig yunSuConfig;
     private String baseurl;
 
-    public SendCrackThread(CountDownLatch cdl, LinkedBlockingQueue<UserPassPair> queue, String request, String schema, TextArea id_outputarea2, String keyword2, String chatchaurlinput2, Integer timeout2, Boolean ishavechptcha, YunSuConfig yunSuConfig, String baseurl) {
+    public SendCrackThread(CountDownLatch cdl,
+                           LinkedBlockingQueue<UserPassPair> queue,
+                           String nor_request,
+                           String nor_schema,
+                           TextArea nor_id_output_area,
+                           String nor_keyword,
+                           String nor_captchaUrlInput,
+                           Integer nor_time_out,
+                           Boolean isHaveCaptcha,
+                           String baseurl) {
         this.cdl = cdl;
         this.queue = queue;
-        this.request = request;
-        this.schema = schema;
-        this.id_outputarea2 = id_outputarea2;
-        this.keyword2 = keyword2;
-        this.chatchaurlinput2 = chatchaurlinput2;
-        this.timeout2 = timeout2;
-        this.ishavechptcha = ishavechptcha;
-        this.yunSuConfig = yunSuConfig;
+        this.request = nor_request;
+        this.schema = nor_schema;
+        this.id_outputarea2 = nor_id_output_area;
+        this.keyword2 = nor_keyword;
+        this.chatchaurlinput2 = nor_captchaUrlInput;
+        this.timeout2 = nor_time_out;
+        this.ishavechptcha = isHaveCaptcha;
         this.baseurl = baseurl;
     }
 
@@ -60,12 +66,19 @@ public class SendCrackThread extends Task<String> {
             String ua = "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0";
             SSLContext sslcontext = SSLContexts.custom().loadTrustMaterial(new MyTrustStrategy()).build();
             CloseableHttpResponse httpresponse;
-            RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(this.timeout2.intValue())
-                    .setConnectionRequestTimeout(this.timeout2.intValue()).setSocketTimeout(this.timeout2.intValue()).build();
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setConnectTimeout(this.timeout2.intValue())
+                    .setConnectionRequestTimeout(this.timeout2.intValue())
+                    .setSocketTimeout(this.timeout2.intValue())
+                    .build();
 
-            CloseableHttpClient httpclient = HttpClients.custom().setSSLContext(sslcontext)
-                    .setSSLHostnameVerifier(new MyHostnameVerifier()).setUserAgent(ua)
-                    .setDefaultRequestConfig(requestConfig).build();
+            CloseableHttpClient httpclient = HttpClients
+                    .custom()
+                    .setSSLContext(sslcontext)
+                    .setSSLHostnameVerifier(new MyHostnameVerifier())
+                    .setUserAgent(ua)
+                    .setDefaultRequestConfig(requestConfig)
+                    .build();
 
             httpclient.execute(new HttpGet(this.baseurl));
 
@@ -76,17 +89,11 @@ public class SendCrackThread extends Task<String> {
                 String newrequest = this.request.replace("$username$", userPassPair.getUsername()).replace("$password$", userPassPair.getPassword());
                 String lastresult = null;
 
-
-
                 if (this.ishavechptcha.booleanValue()) {
                     CloseableHttpResponse response = httpclient.execute(new HttpGet(this.chatchaurlinput2));
                     HttpEntity entity = response.getEntity();
-                    byte[] captchadata = EntityUtils.toByteArray(entity);
-                    String result = YunSuRemoteIdent.createByPost(this.yunSuConfig.getUsername(), this.yunSuConfig.getPassword(),
-                            this.yunSuConfig.getTypeid(), this.yunSuConfig.getTimeout(), this.yunSuConfig.getSoftid1(),
-                            this.yunSuConfig.getSoftkey(), captchadata);
-
-
+                    byte[] captcha_data = EntityUtils.toByteArray(entity);
+                    String result = TesseractsLocalIdent.getCode(captcha_data);
                     System.out.println("result:" + result);
                     int k = result.indexOf("|");
                     if (k == -1) {
@@ -141,7 +148,6 @@ public class SendCrackThread extends Task<String> {
                     try {
                         httpresponse = httpclient.execute(httpget);
                     } catch (Exception e) {
-
                         e.printStackTrace();
                         continue;
                     }
