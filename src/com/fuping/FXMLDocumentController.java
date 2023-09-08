@@ -1,9 +1,9 @@
 package com.fuping;
 
 import com.fuping.BrowserUtils.MyDialogHandler;
-import com.fuping.CaptchaIdentify.YunSuRemoteIdentify;
+import com.fuping.CaptchaIdentify.YunSuRemoteIdent;
 import com.fuping.CaptchaIdentify.YunSuConfig;
-import com.fuping.CaptchaIdentify.TesseractsOcrIdent;
+import com.fuping.CaptchaIdentify.TesseractsLocalIdent;
 import com.fuping.LoadDict.UserPassPair;
 import com.teamdev.jxbrowser.chromium.Callback;
 import com.teamdev.jxbrowser.chromium.*;
@@ -604,7 +604,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML  //查询YS信息,需要修改|删除
     private void ys_query_info_action(ActionEvent event) {
         String query_info_result = "";
-        query_info_result = YunSuRemoteIdentify.getInfo(this.ys_username_text.getText().trim(), this.ys_password_text.getText().trim());
+        query_info_result = YunSuRemoteIdent.getInfo(this.ys_username_text.getText().trim(), this.ys_password_text.getText().trim());
         this.bro_id_output_text_area.appendText(query_info_result);
     }
     @FXML  //点击 验证码识别开关需要 禁用|开启 的按钮
@@ -790,14 +790,14 @@ public class FXMLDocumentController implements Initializable {
 
                                 //验证码识别 //云打码识别
                                 if (bro_id_yzm_remote_ident_radio.isSelected()) {
-                                    captchaText = TesseractsOcrIdent.getCode();
+                                    captchaText = TesseractsLocalIdent.getCode();
                                     //输出已经识别的验证码记录
                                     printlnInfoOnUIAndConsole(String.format("远程 已识别验证码为:%s", captchaText));
                                 }
 
                                 //验证码识别//本地识别
                                 if (bro_id_yzm_local_ident_radio.isSelected()) {
-                                    captchaText = TesseractsOcrIdent.getCode();
+                                    captchaText = TesseractsLocalIdent.getCode();
                                     //输出已经识别的验证码记录
                                     printlnInfoOnUIAndConsole(String.format("本地 已识别验证码为:%s", captchaText));
                                 }

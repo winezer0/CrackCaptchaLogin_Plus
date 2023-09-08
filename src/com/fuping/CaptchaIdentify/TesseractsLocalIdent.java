@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.io.File;
 
-public class TesseractsOcrIdent {
+public class TesseractsLocalIdent {
 
     public static String getCode() {
         String result = "";

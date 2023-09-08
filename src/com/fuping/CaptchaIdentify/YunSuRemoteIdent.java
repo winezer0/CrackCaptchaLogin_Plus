@@ -23,7 +23,7 @@ import java.security.MessageDigest;
 import java.util.Date;
 
 
-public class YunSuRemoteIdentify {
+public class YunSuRemoteIdent {
 
     /**
      * 字符串MD5加密
@@ -161,7 +161,7 @@ public class YunSuRemoteIdentify {
         String param = String.format("username=%s&password=%s", username, password);
         String result;
         try {
-            result = YunSuRemoteIdentify.httpRequestData(
+            result = YunSuRemoteIdent.httpRequestData(
                     "http://api.ysdm.net/info.xml", param);
         } catch (IOException e) {
             result = "未知问题";
@@ -181,7 +181,7 @@ public class YunSuRemoteIdentify {
         String param = String.format("username=%s&password=%s&email=%s", username, password, email);
         String result;
         try {
-            result = YunSuRemoteIdentify.httpRequestData(
+            result = YunSuRemoteIdent.httpRequestData(
                     "http://api.ysdm.net/register.xml", param);
         } catch (IOException e) {
             result = "未知问题";
@@ -203,7 +203,7 @@ public class YunSuRemoteIdentify {
                 password, id);
         String result;
         try {
-            result = YunSuRemoteIdentify.httpRequestData(
+            result = YunSuRemoteIdent.httpRequestData(
                     "http://api.ysdm.net/recharge.xml", param);
         } catch (IOException e) {
             result = "未知问题";
@@ -285,7 +285,7 @@ public class YunSuRemoteIdentify {
                         username, password, softid, softkey, id);
         String result;
         try {
-            result = YunSuRemoteIdentify.httpRequestData("http://api.ysdm.net/reporterror.xml",
+            result = YunSuRemoteIdent.httpRequestData("http://api.ysdm.net/reporterror.xml",
                     param);
         } catch (IOException e) {
             result = "未知问题";
@@ -323,7 +323,7 @@ public class YunSuRemoteIdentify {
                 fis.read(data, 0, size);
                 if(null != fis) fis.close();
 
-                if (data.length > 0)	result = YunSuRemoteIdentify.httpPostImage("http://api.ysdm.net/create.xml", param, data);
+                if (data.length > 0)	result = YunSuRemoteIdent.httpPostImage("http://api.ysdm.net/create.xml", param, data);
             }
         } catch(Exception e) {
             result = "未知问题";
@@ -342,7 +342,7 @@ public class YunSuRemoteIdentify {
                         "username=%s&password=%s&typeid=%s&timeout=%s&softid=%s&softkey=%s",
                         username, password, typeid, timeout, softid, softkey);
         try {
-            result = YunSuRemoteIdentify.httpPostImage("http://api.ysdm.net/create.xml", param, byteArr);
+            result = YunSuRemoteIdent.httpPostImage("http://api.ysdm.net/create.xml", param, byteArr);
         } catch(Exception e) {
             result = "未知问题";
         }
@@ -378,6 +378,6 @@ public class YunSuRemoteIdentify {
     }
 
     public static void main(String[] args) {
-        String result = YunSuRemoteIdentify.createByPost("ys_username", "ys_password", "ys_type_id", "yzm_query_timeout", "ys_soft_id", "ys_soft_key", "captcha_data");
+        String result = YunSuRemoteIdent.createByPost("ys_username", "ys_password", "ys_type_id", "yzm_query_timeout", "ys_soft_id", "ys_soft_key", "captcha_data");
     }
 }
