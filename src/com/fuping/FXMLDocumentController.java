@@ -836,12 +836,7 @@ public class FXMLDocumentController implements Initializable {
 //                            }
 
 
-
-
-
                             //定位提交按钮, 并填写按钮
-
-                            //点击按钮前先重置页面加载状态
                             try {
                                 InputElement submitElement = findElementByOption(document, bro_submit_ele_text, bro_id_submit_ele_type);
                                 submitElement.click();
@@ -856,9 +851,10 @@ public class FXMLDocumentController implements Initializable {
                             //在当前编辑区域（可能是文本框或富文本编辑器等）的光标位置插入一个新的空行，类似于按下回车键创建一个新行。
                             browser.executeCommand(EditorCommand.INSERT_NEW_LINE);
 
+                            //点击按钮前先重置页面加载状态
+                            loading_status= LOADING_START;
                             //需要等待页面加载完毕
                             if (bro_id_submit_auto_wait_check.isSelected()){
-                                loading_status= LOADING_START;
                                 Thread.sleep(SubmitAutoWaitInterval);
                                 long wait_start_time = System.currentTimeMillis();
                                 while (isEmptyIfStr(loading_status) || loading_status.contains(LOADING_START)) {
