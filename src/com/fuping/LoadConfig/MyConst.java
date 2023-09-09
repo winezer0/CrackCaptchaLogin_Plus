@@ -36,7 +36,7 @@ public class MyConst {
     public static String const_cartesian = "cartesian"; //默认
 
     public static String globalUserMarkInPass = "%USER%";  //密码内的用户名变量
-    public static boolean default_exclude_history = false;    //是否排除历史爆破记录
+    public static boolean globalExcludeHistory = false;    //是否排除历史爆破记录
 
     //记录账号密码文件是否修改过,如果没有修改的话,就考虑不重新读取
     public static long globalUserFileLastModified = 0;
@@ -112,7 +112,7 @@ public class MyConst {
         default_dict_compo_mode = configReader.getString("dict_compo_mode", const_cartesian);
 
         globalUserMarkInPass = configReader.getString("user_mark_in_pass", "%USER%");
-        default_exclude_history = configReader.isTrue("exclude_history", false);
+        globalExcludeHistory = configReader.isTrue("exclude_history", false);
 
         //加载默认的登录框配置
         default_login_url = configReader.getString("login_url", "http://127.0.0.1/demo/index.php/Home/Login/login.html");

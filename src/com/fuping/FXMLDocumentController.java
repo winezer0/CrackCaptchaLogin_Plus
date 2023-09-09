@@ -517,7 +517,7 @@ public class FXMLDocumentController implements Initializable {
         setWithCheck(this.bro_id_submit_ele_type_combo, default_submit_ele_type);
         //设置浏览器选项
         setWithCheck(this.bro_id_show_browser_check, default_show_browser);
-        setWithCheck(this.bro_id_exclude_history_check, default_exclude_history);
+        setWithCheck(this.bro_id_exclude_history_check, globalExcludeHistory);
 
         setWithCheck(this.bro_id_login_page_wait_time_combo, default_login_page_wait_time);
         setWithCheck(this.bro_id_submit_fixed_wait_time_combo, default_submit_fixed_wait_time);
@@ -661,13 +661,14 @@ public class FXMLDocumentController implements Initializable {
         boolean isModifiedLoginUrl = isModifiedLoginUrl(login_url); //登录URL是否修改
         boolean isModifiedDictMode = isModifiedDictMode(this.bro_id_dict_compo_mode_combo.getValue()); //字典模式是否修改
         boolean isModifiedExcludeHistory = isModifiedExcludeHistory(this.bro_id_exclude_history_check.isSelected());//排除历史状态是否修改
+
         if(isModifiedAuthFile||isModifiedLoginUrl||isModifiedDictMode||isModifiedExcludeHistory){
             //当登录URL或账号密码文件修改后,就需要重新更新
             printlnInfoOnUIAndConsole(String.format("加载账号密码文件开始..."));
             //点击登录后加载字典文件
             HashSet<UserPassPair> UserPassPairsHashSet = loadUserPassFile(globalUserNameFile, globalPassWordFile, globalUserPassFile, globalPairSeparator, default_dict_compo_mode);
             //过滤历史字典记录,并转换为Array格式
-            globalUserPassPairsArray = processedUserPassHashSet(UserPassPairsHashSet, globalHistoryFilePath, default_exclude_history, globalUserMarkInPass);
+            globalUserPassPairsArray = processedUserPassHashSet(UserPassPairsHashSet, globalHistoryFilePath, globalExcludeHistory, globalUserMarkInPass);
         }
         //判断字典列表数量是否大于0
         if(globalUserPassPairsArray.length <= 0){

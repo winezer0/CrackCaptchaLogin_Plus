@@ -217,11 +217,11 @@ public class Utils {
 
     public static boolean isModifiedExcludeHistory(boolean exclude_history){
         //检查登录URL是否更新, 更新了就重新赋值
-        if(exclude_history == default_exclude_history){
+        if(exclude_history == globalExcludeHistory){
             return false;
         } else {
-            print_info(String.format("The Exclude History has been modified from [%s] to [%s]", default_exclude_history, exclude_history));
-            default_exclude_history = exclude_history;
+            print_info(String.format("The Exclude History has been modified from [%s] to [%s]", globalExcludeHistory, exclude_history));
+            globalExcludeHistory = exclude_history;
             return true;
         }
     }
