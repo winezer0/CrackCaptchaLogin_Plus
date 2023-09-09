@@ -3,6 +3,7 @@ package com.fuping.BrowserUtils;
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.dom.By;
 import com.teamdev.jxbrowser.chromium.dom.DOMDocument;
+import com.teamdev.jxbrowser.chromium.dom.internal.Element;
 import com.teamdev.jxbrowser.chromium.dom.internal.InputElement;
 
 import java.awt.*;
@@ -24,6 +25,7 @@ public class BrowserUtils {
     }
 
     public static void OpenUrlWithLocalBrowser(String url) {
+        //使用系统浏览器打开网页
         try {
             URI uri = URI.create(url);
             Desktop dp = Desktop.getDesktop();
@@ -40,7 +42,7 @@ public class BrowserUtils {
         }
     }
 
-    public static InputElement findElementByOption(DOMDocument doc, String elementValue, String selectOption ) {
+    public static InputElement findInputElementByOption(DOMDocument doc, String elementValue, String selectOption ) {
         //输入用户名元素 //需要添加输入XPath|css元素
         InputElement inputElement;
         switch (selectOption.toLowerCase()) {
@@ -62,4 +64,29 @@ public class BrowserUtils {
         }
         return inputElement;
     }
+
+
+    public static Element findElementByOption(DOMDocument doc, String elementValue, String selectOption ) {
+        //输入用户名元素 //需要添加输入XPath|css元素
+        Element element;
+        switch (selectOption.toLowerCase()) {
+            case "id":
+                element = (Element) doc.findElement(By.id(elementValue));
+                break;
+            case "name":
+                element = (Element) doc.findElement(By.name(elementValue));
+                break;
+            case "class":
+                element = (Element) doc.findElement(By.className(elementValue));
+                break;
+            case "css":
+                element = (Element) doc.findElement(By.cssSelector(elementValue));
+                break;
+            case "xpath":
+            default:
+                element = (Element) doc.findElement(By.xpath(elementValue));
+        }
+        return element;
+    }
+
 }

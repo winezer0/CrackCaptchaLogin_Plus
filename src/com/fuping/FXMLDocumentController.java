@@ -6,6 +6,7 @@ import com.teamdev.jxbrowser.chromium.Callback;
 import com.teamdev.jxbrowser.chromium.*;
 import com.teamdev.jxbrowser.chromium.dom.By;
 import com.teamdev.jxbrowser.chromium.dom.DOMDocument;
+import com.teamdev.jxbrowser.chromium.dom.internal.Element;
 import com.teamdev.jxbrowser.chromium.dom.internal.InputElement;
 import com.teamdev.jxbrowser.chromium.events.*;
 import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
@@ -29,7 +30,6 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.http.util.ByteArrayBuffer;
 
-import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.HashSet;
@@ -38,7 +38,7 @@ import java.util.ResourceBundle;
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.BrowserUtils.BrowserUtils.*;
 import static com.fuping.CaptchaIdentify.CaptchaUtils.LoadImageToFile;
-import static com.fuping.CaptchaIdentify.RemoteApiIdent.IndentCaptcha;
+import static com.fuping.CaptchaIdentify.RemoteApiIdent.remoteIndentCaptcha;
 import static com.fuping.CaptchaIdentify.TesseractsLocalIdent.localIdentCaptcha;
 import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.LoadConfig.MyConst.*;
@@ -130,7 +130,6 @@ public class FXMLDocumentController implements Initializable {
 
     private Stage primaryStage;
     private byte[] captcha_data;
-    private String captchaText = null;
 
     //记录当前页面加载状态
     private String loading_status;
@@ -182,7 +181,7 @@ public class FXMLDocumentController implements Initializable {
     private String findElementAndInput(DOMDocument document, String locate_info, String selectedOption, String input_string) {
         String action_string = "success";
         try {
-            InputElement findElement = findElementByOption(document, locate_info, selectedOption);
+            InputElement findElement = findInputElementByOption(document, locate_info, selectedOption);
             findElement.setValue(input_string);
         }
         catch (IllegalStateException illegalStateException) {
@@ -202,6 +201,74 @@ public class FXMLDocumentController implements Initializable {
             action_string = "continue";
         }
         return action_string;
+    }
+
+    //识别验证码的函数, 便于合并
+    private String identCaptcha(boolean remoteIdent, String imagePath, byte[] imageBytes){
+        //获取验证码筛选条件
+        String ident_format_length = this.bro_id_ident_format_length_text.getText(); //期望长度
+        String ident_format_regex = this.bro_id_ident_format_regex_text.getText(); //期望格式
+        Integer ident_time_out = this.bro_id_ident_time_out_combo.getValue();
+
+        //记录验证码识别结果
+        String captcha_indent_text = null;
+        //远程识别模式
+        if(remoteIdent){
+            //获取是被接口信息接口URL
+            String remote_ident_url_text = this.bro_id_remote_ident_url_text.getText().trim();
+            if (isEmptyIfStr(remote_ident_url_text)){
+                this.bro_id_remote_ident_url_text.requestFocus();
+                return null;
+            }
+            //获取响应判断条件
+            String ident_expected_status = this.bro_id_remote_expected_status_text.getText(); //期望状态码
+            String ident_expected_keywords = this.bro_id_remote_expected_keywords_text.getText(); //期望响应
+            //响应结果正则提取
+            String ident_extract_regex = this.bro_id_remote_extract_regex_text.getText(); //提取数据
+
+            printlnInfoOnUIAndConsole("远程识别测试开始 ...");
+            try {
+                //识别图片地址
+                if (isNotEmptyIfStr(imagePath)){
+                    captcha_indent_text = remoteIndentCaptcha(
+                            imagePath,
+                            remote_ident_url_text,
+                            ident_expected_status,
+                            ident_expected_keywords,
+                            ident_extract_regex,
+                            ident_format_length,
+                            ident_time_out
+                    );
+                } else {
+                    captcha_indent_text = remoteIndentCaptcha(imageBytes,
+                            remote_ident_url_text,
+                            ident_expected_status,
+                            ident_expected_keywords,
+                            ident_extract_regex,
+                            ident_format_length,
+                            ident_time_out
+                    );
+                }
+                printlnInfoOnUIAndConsole(String.format("远程验证码识别结果:%s", captcha_indent_text));
+            }catch (Exception e){
+                printlnErrorOnUIAndConsole(String.format("远程验证码识别出错:%s", e.getMessage()));
+                e.printStackTrace();
+            }
+        } else {
+            printlnInfoOnUIAndConsole("本地识别测试开始 ...");
+            try {
+                if (isNotEmptyIfStr(imagePath)){
+                    captcha_indent_text = localIdentCaptcha(imagePath, ident_format_regex, ident_format_length, globalLocaleTessDataName);
+                } else {
+                    captcha_indent_text = localIdentCaptcha(imageBytes, ident_format_regex, ident_format_length, globalLocaleTessDataName);
+                }
+                printlnInfoOnUIAndConsole(String.format("本地验证码识别结果:%s", captcha_indent_text));
+            } catch (Exception e) {
+                printlnErrorOnUIAndConsole(String.format("本地验证码识别出错:%s", e.getMessage()));
+                e.printStackTrace();
+            }
+        }
+        return captcha_indent_text;
     }
 
     //浏览器动作配置
@@ -349,7 +416,6 @@ public class FXMLDocumentController implements Initializable {
         return browser;
     }
 
-
     public class MyNetworkDelegate extends DefaultNetworkDelegate {
         private boolean isCompleteAuth;
         private boolean isCancelAuth;
@@ -374,7 +440,7 @@ public class FXMLDocumentController implements Initializable {
         public void onBeforeSendHeaders(BeforeSendHeadersParams paramBeforeSendHeadersParams) {
             //发送请求前动作
             if (paramBeforeSendHeadersParams.getURL().startsWith(this.url)) {
-                System.err.println("正在发起验证码请求。");
+                print_info("正在发起验证码请求");
                 paramBeforeSendHeadersParams.getHeadersEx().setHeader("Accept-Encoding", "");
                 this.cap.clear();
             }
@@ -385,10 +451,9 @@ public class FXMLDocumentController implements Initializable {
 
             //存储验证码数据
             String current_url = paramDataReceivedParams.getURL();
-            FileOutputStream yzm_fos;
             if (current_url.startsWith(this.url)) {
                 try {
-                    System.out.println("已获取验证码数据:" + current_url);
+                    print_info("已获取验证码数据 onDataReceived:" + current_url);
                     FXMLDocumentController.this.captcha_data = paramDataReceivedParams.getData();
                     this.cap.append(FXMLDocumentController.this.captcha_data, 0, FXMLDocumentController.this.captcha_data.length);
                     FXMLDocumentController.this.captcha_data = this.cap.toByteArray();
@@ -400,7 +465,7 @@ public class FXMLDocumentController implements Initializable {
 
             //检查登录关键字匹配状态
             String charset = paramDataReceivedParams.getCharset();
-            if (charset.equals("")) { charset = "utf-8"; }
+            if (isEmptyIfStr(charset)) { charset = "utf-8"; }
             try {
                 String receive = new String(paramDataReceivedParams.getData(), charset);
                 String success_key = FXMLDocumentController.this.bro_id_success_regex_text.getText();
@@ -470,8 +535,6 @@ public class FXMLDocumentController implements Initializable {
                             stage.close();
                         }
                     };
-
-
                     stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                         //关闭请求时的动作
                         @Override
@@ -481,7 +544,6 @@ public class FXMLDocumentController implements Initializable {
                             MyNetworkDelegate.this.isCompleteAuth = true;
                         }
                     });
-
                     ok_button.setOnAction(okAction);
                     user_field.setOnAction(okAction);
                     pass_field.setOnAction(okAction);
@@ -551,12 +613,6 @@ public class FXMLDocumentController implements Initializable {
 
     }
 
-    @FXML  //程序帮助文档
-    private void program_help(ActionEvent event) {
-        String url = "http://www.cnblogs.com/SEC-fsq/p/5712792.html";
-        OpenUrlWithLocalBrowser(url);
-    }
-
     @FXML  //浏览器窗口显示设置,不需要管理
     private void bro_id_show_browser_action(ActionEvent event) {
         if (this.primaryStage == null) {
@@ -581,66 +637,24 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML //测试验证码识别功能是否正常
     public void bro_id_remote_ident_test_run(ActionEvent event) {
+        //获取识别方式
+        boolean remoteIdent = this.bro_id_yzm_remote_ident_radio.isSelected();
+
         //获取验证码输入URL的内容
         String bro_captcha_url_text = this.bro_id_captcha_url_text.getText().trim();
-        if (isEmptyIfStr(bro_captcha_url_text)) {this.bro_id_captcha_url_text.requestFocus(); return;}
-
-        //获取验证码筛选条件
-        String ident_format_length = this.bro_id_ident_format_length_text.getText(); //期望长度
-        String ident_format_regex = this.bro_id_ident_format_regex_text.getText(); //期望格式
-        Integer ident_time_out = bro_id_ident_time_out_combo.getValue();
-
-        //远程识别模式
-        if(this.bro_id_yzm_remote_ident_radio.isSelected()){
-            //获取接口 URL
-            String remote_ident_url_text = this.bro_id_remote_ident_url_text.getText().trim();
-            if (isEmptyIfStr(remote_ident_url_text)){this.bro_id_remote_ident_url_text.requestFocus(); return;}
-
-            //获取响应判断条件
-            String ident_expected_status = this.bro_id_remote_expected_status_text.getText(); //期望状态码
-            String ident_expected_keywords = this.bro_id_remote_expected_keywords_text.getText(); //期望响应
-            //响应结果正则提取
-            String ident_extract_regex = bro_id_remote_extract_regex_text.getText(); //提取数据
-
-            new Thread(new Runnable() {
-                public void run() {
-                    printlnInfoOnUIAndConsole(String.format("远程识别测试开始 ..."));
-
-                    //获取一个验证码图片 //保存图片到本地
-                    String imagePath = LoadImageToFile(bro_captcha_url_text, "TestRemote.jpg");
-                    printlnInfoOnUIAndConsole(String.format("保存图片到本地文件%s", imagePath));
-
-                    try {
-                        String result = IndentCaptcha(imagePath,
-                                remote_ident_url_text,
-                                ident_expected_status, ident_expected_keywords, ident_extract_regex,
-                                ident_format_length, ident_time_out
-                        );
-                        printlnInfoOnUIAndConsole(String.format("远程验证码识别结果:%s", result));
-                    }catch (Exception e){
-                        printlnErrorOnUIAndConsole(String.format("远程验证码识别出错:%s",e.getMessage()));
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
+        if (isEmptyIfStr(bro_captcha_url_text)) {
+            this.bro_id_captcha_url_text.requestFocus();
+            return;
         }
-        else if (this.bro_id_local_ident_flag_radio.isSelected()){
-            new Thread(new Runnable() {
-                public void run() {
-                    printlnInfoOnUIAndConsole(String.format("本地识别测试开始 ..."));
 
-                    try {
-                        String imagePath = LoadImageToFile(bro_captcha_url_text, "TestLocale.jpg");
-                        printlnInfoOnUIAndConsole(String.format("保存图片到本地文件%s", imagePath));
-                        String result = localIdentCaptcha(imagePath, ident_format_regex, ident_format_length, globalLocaleTessDataName);
-                        printlnInfoOnUIAndConsole(String.format("本地验证码识别结果:%s", result));
-                    } catch (Exception e) {
-                        printlnErrorOnUIAndConsole(String.format("本地验证码识别出错:%s", e.getMessage()));
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-        }
+        //另外开一个线程处理,以免UI卡顿
+        new Thread(new Runnable() {
+            public void run() {
+                String imagePath = LoadImageToFile(bro_captcha_url_text, "TestRemote.jpg");
+                printlnInfoOnUIAndConsole(String.format("Stored Image [%s] To [%s]", bro_captcha_url_text, imagePath));
+                identCaptcha(remoteIdent, imagePath, null);
+            }
+        }).start();
     }
 
     //主要爆破函数的修改
@@ -649,7 +663,7 @@ public class FXMLDocumentController implements Initializable {
         //读取登录 URL
         String login_url = this.id_login_url_text.getText().trim();
         //登陆 URL 检查
-        if (login_url.equals("") || !login_url.startsWith("http")) {
+        if (isEmptyIfStr(login_url) || !login_url.startsWith("http")) {
             new Alert(Alert.AlertType.NONE, "请输入完整的登录页面URL", new ButtonType[]{ButtonType.CLOSE}).show();
             return;
         }
@@ -664,18 +678,18 @@ public class FXMLDocumentController implements Initializable {
 
         if(isModifiedAuthFile||isModifiedLoginUrl||isModifiedDictMode||isModifiedExcludeHistory){
             //当登录URL或账号密码文件修改后,就需要重新更新
-            printlnInfoOnUIAndConsole(String.format("加载账号密码文件开始..."));
+            printlnInfoOnUIAndConsole("加载账号密码文件开始...");
             //点击登录后加载字典文件
             HashSet<UserPassPair> UserPassPairsHashSet = loadUserPassFile(globalUserNameFile, globalPassWordFile, globalUserPassFile, globalPairSeparator, default_dict_compo_mode);
             //过滤历史字典记录,并转换为Array格式
             globalUserPassPairsArray = processedUserPassHashSet(UserPassPairsHashSet, globalHistoryFilePath, globalExcludeHistory, globalUserMarkInPass);
         }
         //判断字典列表数量是否大于0
-        if(globalUserPassPairsArray.length <= 0){
+        if(globalUserPassPairsArray.length > 0){
+            printlnInfoOnUIAndConsole(String.format("加载账号密码文件完成 当前账号:密码数量[%s], 开始爆破操作...", globalUserPassPairsArray.length));
+        } else {
             printlnErrorOnUIAndConsole(String.format("加载账号密码文件完成 当前账号:密码数量[%s], 跳过爆破操作...", globalUserPassPairsArray.length));
             return;
-        } else {
-            printlnInfoOnUIAndConsole(String.format("加载账号密码文件完成 当前账号:密码数量[%s], 开始爆破操作...", globalUserPassPairsArray.length));
         }
 
         //浏览器操作模式模式
@@ -683,28 +697,28 @@ public class FXMLDocumentController implements Initializable {
             //获取用户名框框的内容
             String bro_user_ele_text = this.bro_id_user_ele_text.getText().trim();
             String bro_user_ele_type = this.bro_id_user_ele_type_combo.getValue();
-            if (bro_user_ele_text.equals("")) { this.bro_id_user_ele_text.requestFocus(); return;}
+            if (isEmptyIfStr(bro_user_ele_text)) { this.bro_id_user_ele_text.requestFocus(); return;}
 
             //获取密码框元素的内容
             String bro_pass_ele_text = this.bro_id_pass_ele_text.getText().trim();
             String bro_pass_ele_type = this.bro_id_pass_ele_type_combo.getValue();
-            if (bro_pass_ele_text.equals("")) { this.bro_id_pass_ele_text.requestFocus(); return;}
+            if (isEmptyIfStr(bro_pass_ele_text)) { this.bro_id_pass_ele_text.requestFocus(); return;}
 
             //登录按钮内容
             String bro_submit_ele_text = this.bro_id_submit_ele_text.getText().trim();
             String bro_id_submit_ele_type = this.bro_id_submit_ele_type_combo.getValue();
-            if (bro_submit_ele_text.equals("")) { this.bro_id_submit_ele_text.requestFocus(); return;}
+            if (isEmptyIfStr(bro_submit_ele_text)) { this.bro_id_submit_ele_text.requestFocus(); return;}
 
             //获取验证码输入URL的内容
             String bro_captcha_url_text = this.bro_id_captcha_url_text.getText().trim();
-            if (this.bro_id_captcha_switch_check.isSelected() && bro_captcha_url_text.equals("")) {this.bro_id_captcha_url_text.requestFocus(); return;}
-            //获取验证码框元素的内容
-            String bro_captcha_ele_text = this.bro_id_captcha_ele_text.getText().trim();
-            String bro_captcha_ele_type = this.bro_id_captcha_ele_type_combo.getValue();
-            if (this.bro_id_captcha_switch_check.isSelected() && bro_captcha_ele_text.equals("")) {this.bro_id_user_ele_text.requestFocus(); return; }
+            if (this.bro_id_captcha_switch_check.isSelected() && isEmptyIfStr(bro_captcha_url_text)) {
+                this.bro_id_captcha_url_text.requestFocus();
+                return;
+            }
 
             //初始化浏览器
             Browser browser = initJxBrowserInstance(globalBrowserProxy);
+
             //设置JxBrowser中网络委托的对象，以实现对浏览器的网络请求和响应的控制和处理。 //更详细的请求和响应处理,含保存验证码图片
             browser.getContext().getNetworkService().setNetworkDelegate(new MyNetworkDelegate(bro_captcha_url_text));
 
@@ -780,21 +794,23 @@ public class FXMLDocumentController implements Initializable {
                                     continue;
                                 }
 
-                                //验证码识别 //云打码识别
-                                if (bro_id_yzm_remote_ident_radio.isSelected()) {
-                                    captchaText = localIdentCaptcha(FXMLDocumentController.this.captcha_data,"","", globalLocaleTessDataName);
-                                    //输出已经识别的验证码记录
-                                    printlnInfoOnUIAndConsole(String.format("远程 已识别验证码为:%s", captchaText));
-                                }
-
-                                //验证码识别//本地识别
-                                if (bro_id_local_ident_flag_radio.isSelected()) {
-                                    captchaText = localIdentCaptcha(FXMLDocumentController.this.captcha_data,"","", globalLocaleTessDataName);
-                                    //输出已经识别的验证码记录
-                                    printlnInfoOnUIAndConsole(String.format("本地 已识别验证码为:%s", captchaText));
-                                }
-
                                 //定位验证码输入框并填写验证码
+                                String bro_captcha_ele_text = FXMLDocumentController.this.bro_id_captcha_ele_text.getText().trim();
+                                String bro_captcha_ele_type = FXMLDocumentController.this.bro_id_captcha_ele_type_combo.getValue();
+                                if (isEmptyIfStr(bro_captcha_ele_text)) {
+                                    FXMLDocumentController.this.bro_id_user_ele_text.requestFocus();
+                                    return;
+                                }
+
+                                //开始验证码识别
+                                String captchaText = identCaptcha(bro_id_yzm_remote_ident_radio.isSelected(), null, FXMLDocumentController.this.captcha_data);
+                                //判断验证码 是否是否正确
+                                if(isEmptyIfStr(captchaText)){
+                                    printlnErrorOnUIAndConsole(String.format("跳过操作 验证码识别错误:%s", captchaText));
+                                    continue;
+                                }
+
+                                //输入验证码元素 并检查输入状态
                                 action_status = findElementAndInput(document,bro_captcha_ele_text, bro_captcha_ele_type, captchaText);
                                 //处理资源寻找状态
                                 if(!"success".equalsIgnoreCase(action_status)){
@@ -803,16 +819,17 @@ public class FXMLDocumentController implements Initializable {
                                 }
                             }
 
-
                             //定位提交按钮, 并填写按钮
                             try {
-                                InputElement submitElement = findElementByOption(document, bro_submit_ele_text, bro_id_submit_ele_type);
+                                Element submitElement = findElementByOption(document, bro_submit_ele_text, bro_id_submit_ele_type);
                                 submitElement.click();
-                            } catch (Exception e) {
-                                printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_submit_ele_text, bro_id_submit_ele_type));
+                            } catch (Exception exception) {
+                                exception.printStackTrace();
+                                printlnErrorOnUIAndConsole(String.format("Error For Location:[%s] <--> Action:[%s] <--> Error:[%s]", bro_submit_ele_text, bro_id_submit_ele_type, exception.getMessage()));
                                 try {
                                     document.findElement(By.cssSelector("[type=submit]")).click();
-                                } catch (IllegalStateException ee) {
+                                } catch (IllegalStateException illegalStateException) {
+                                    illegalStateException.printStackTrace();
                                     printlnErrorOnUIAndConsole("Error For document.findElement(By.cssSelector(\"[type=submit]\")).click()");
                                 }
                             }

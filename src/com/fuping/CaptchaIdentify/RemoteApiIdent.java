@@ -6,6 +6,7 @@ import cn.hutool.http.HttpUtil;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.CaptchaIdentify.CaptchaUtils.imageToBase64;
+import static com.fuping.CaptchaIdentify.CaptchaUtils.writeBytesToFile;
 import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.PrintLog.PrintLog.print_error;
 import static com.fuping.PrintLog.PrintLog.print_info;
@@ -44,9 +45,19 @@ public class RemoteApiIdent {
             return null;
         }
     }
-    public static String IndentCaptcha(String imagePath, String remoteApi,
-                                       String expectedStatus, String expectedKeywords,
-                                       String extractRegex, String expectedLength, Integer ident_time_out){
+
+    public static String remoteIndentCaptcha(byte[] captcha_data, String remoteApi,
+                                             String expectedStatus, String expectedKeywords,
+                                             String extractRegex, String expectedLength, Integer ident_time_out){
+
+        String imagePath = getFileStrAbsolutePath("captcha.png");
+        imagePath = writeBytesToFile(imagePath, captcha_data);
+        return remoteIndentCaptcha(imagePath, remoteApi, expectedStatus, expectedKeywords, extractRegex, expectedLength, ident_time_out);
+    }
+
+    public static String remoteIndentCaptcha(String imagePath, String remoteApi,
+                                             String expectedStatus, String expectedKeywords,
+                                             String extractRegex, String expectedLength, Integer ident_time_out){
 
         //从绝地路径提取
         imagePath = getFileStrAbsolutePath(imagePath);
@@ -86,7 +97,7 @@ public class RemoteApiIdent {
         //输入图片地址 图片格式转换
         String imagePath = "TestRemote.jpg";
         String remoteApi = "http://127.0.0.1:5000/base64ocr"; // POST 请求的 URL
-        String result = IndentCaptcha(imagePath, remoteApi, "200", null, null, "4", 5000);
+        String result = remoteIndentCaptcha(imagePath, remoteApi, "200", null, null, "4", 5000);
         print_info(String.format("result:%s", result));
     }
 }
