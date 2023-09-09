@@ -26,18 +26,22 @@ public class TesseractsLocalIdent {
         //将保存的图片转换为jpg
         try {
             BufferedImage img = ImageIO.read(new File(pngImagePath));
-
             String jpgImagePath = getFileStrAbsolutePath("captcha.jpg");
             ImageIO.write(img, "JPG", new File(jpgImagePath));
             img = ImageIO.read(new File(jpgImagePath));
             //创建 TesseractsOcr 实例
             ITesseract tesseracts = new Tesseract();
 
-            if(isNotEmptyIfStr(tessDataName) && isNotEmptyFile(String.format("tessdata%s%s.traineddata", File.separator, tessDataName))){
-                //设置识别数据集的路径
-                //tesseracts.setDatapath(tessDataPath);  //存在依赖,提示要设置环境变量, 弃用
-                tesseracts.setLanguage(tessDataName); //直接设置语言前缀
-                print_info(String.format("Used tessData Name:[%s] Path:[%s]", tessDataName, String.format("tessdata%s%s.traineddata", File.separator, tessDataName)));
+            //设置识别数据集的路径
+            if(isNotEmptyIfStr(tessDataName)){
+                String dataAbsolutePat = getFileStrAbsolutePath(String.format("tessdata%s%s.traineddata", File.separator, tessDataName));
+                if( isNotEmptyFile(dataAbsolutePat)){
+                    //tesseracts.setDatapath(tessDataPath);  //存在依赖,提示要设置环境变量, 弃用
+                    tesseracts.setLanguage(tessDataName); //直接设置语言前缀
+                    print_info(String.format("Use Found TessData Name:[%s] Path:[%s]", tessDataName, dataAbsolutePat));
+                }else {
+                    print_error(String.format("Not Found TessData Name:[%s] Path:[%s]", tessDataName, dataAbsolutePat));
+                }
             }
 
             String captchaResult = tesseracts.doOCR(img).replace(" ", "").replace("\n", "");
