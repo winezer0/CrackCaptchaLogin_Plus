@@ -28,12 +28,12 @@ public class RemoteApiIdent {
             String responseBody = response.body();
 
             //当前 ExpectedStatus 不为空时, 判断响应状态码是否包含关键字正则
-            if (!isEmptyIfStr(ExpectedStatus) && !containsMatchingSubString(String.valueOf(statusCode), ExpectedStatus)) {
+            if (isNotEmptyIfStr(ExpectedStatus) && !containsMatchingSubString(String.valueOf(statusCode), ExpectedStatus)) {
                 print_error(String.format("异常状态: [%s] <--> [%s]", ExpectedStatus, statusCode));
                 return null;
             }
             //当前 ExpectedKeywords 不为空时, 判断响应体是否包含关键字正则
-            if (!isEmptyIfStr(ExpectedKeywords) && !containsMatchingSubString(responseBody, ExpectedKeywords)) {
+            if (isNotEmptyIfStr(ExpectedKeywords) && !containsMatchingSubString(responseBody, ExpectedKeywords)) {
                 print_error(String.format("异常内容: [%s] <--> [%s]", ExpectedKeywords, responseBody));
                 return null;
             }

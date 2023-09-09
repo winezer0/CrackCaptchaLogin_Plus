@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.net.URI;
 
 
-import static com.fuping.LoadConfig.MyConst.ClearCookiesSetting;
+import static com.fuping.LoadConfig.MyConst.globalClearCookiesFlag;
 
 public class BrowserUtils {
     public static void AutoClearAllCookies(Browser browser) {
         //清除cookie
         //参考 JxBrowser之五：清除cache和cookie以及SSL证书处理 https://www.yii666.com/article/677652.html
-        if (ClearCookiesSetting){
+        if (globalClearCookiesFlag){
             browser.getCookieStorage().deleteAll();
             //List<Cookie> cookies = browser.getCookieStorage().getAllCookies();
             //print_info(String.format("Auto Clear Browser All Cookies ... %s", cookies.toString()));

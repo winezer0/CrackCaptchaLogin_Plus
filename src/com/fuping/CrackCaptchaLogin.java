@@ -15,7 +15,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 
-import static com.fuping.LoadConfig.MyConst.ProgramVersion;
+import static com.fuping.LoadConfig.MyConst.globalProgramVersion;
 import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class CrackCaptchaLogin extends Application {
@@ -43,7 +43,7 @@ public class CrackCaptchaLogin extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(CrackCaptchaLogin.class.getResource("FXMLDocument.fxml"));
         primaryStage.setScene(new Scene(root, 1069, 652));
-        primaryStage.setTitle(String.format("小米范验证码登录爆破工具(%s)", ProgramVersion));
+        primaryStage.setTitle(String.format("小米范验证码登录爆破工具(%s)", globalProgramVersion));
         primaryStage.setResizable(false);
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icon.jpg")));
         primaryStage.show();

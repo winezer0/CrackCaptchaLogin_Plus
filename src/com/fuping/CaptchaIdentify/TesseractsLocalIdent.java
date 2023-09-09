@@ -9,19 +9,19 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.CaptchaIdentify.CaptchaUtils.writeBytesToFile;
 import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.PrintLog.PrintLog.print_error;
+import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class TesseractsLocalIdent {
-    public static String localIdentCaptcha(byte[] captcha_data, String expectedRegex, String expectedLength) {
+    public static String localIdentCaptcha(byte[] captcha_data, String expectedRegex, String expectedLength, String tessDataName) {
         String imagePath = getFileStrAbsolutePath("captcha.png");
         imagePath = writeBytesToFile(imagePath, captcha_data);
-        return localIdentCaptcha(imagePath, expectedRegex, expectedLength);
+        return localIdentCaptcha(imagePath, expectedRegex, expectedLength, tessDataName);
     }
 
-    public static String localIdentCaptcha(String pngImagePath, String expectedRegex, String expectedLength) {
+    public static String localIdentCaptcha(String pngImagePath, String expectedRegex, String expectedLength, String tessDataName) {
         pngImagePath = getFileStrAbsolutePath(pngImagePath);
         //将保存的图片转换为jpg
         try {
@@ -32,11 +32,17 @@ public class TesseractsLocalIdent {
             img = ImageIO.read(new File(jpgImagePath));
             //创建 TesseractsOcr 实例
             ITesseract tesseracts = new Tesseract();
-            //instance.setLanguage("num");
-            String captchaResult = tesseracts.doOCR(img).replace(" ", "").replace("\n", "");
 
+            if(isNotEmptyIfStr(tessDataName) && isNotEmptyFile(String.format("tessdata%s%s.traineddata", File.separator, tessDataName))){
+                //设置识别数据集的路径
+                //tesseracts.setDatapath(tessDataPath);  //存在依赖,提示要设置环境变量, 弃用
+                tesseracts.setLanguage(tessDataName); //直接设置语言前缀
+                print_info(String.format("Used tessData Name:[%s] Path:[%s]", tessDataName, String.format("tessdata%s%s.traineddata", File.separator, tessDataName)));
+            }
+
+            String captchaResult = tesseracts.doOCR(img).replace(" ", "").replace("\n", "");
             //当前 ExpectedRegex 不为空时, 判断验证码是否符合正则
-            if (!isEmptyIfStr(expectedRegex) && !containsMatchingSubString(captchaResult, expectedRegex)) {
+            if (isNotEmptyIfStr(expectedRegex) && !containsMatchingSubString(captchaResult, expectedRegex)) {
                 print_error(String.format("格式错误: [%s] <--> [%s]", expectedRegex, captchaResult));
                 return null;
             }
@@ -174,7 +180,7 @@ public class TesseractsLocalIdent {
 //    }
 
     public static void main(String args[]) {
-        System.out.println(localIdentCaptcha("TestRemote.jpg","", ""));
+        System.out.println(localIdentCaptcha("TestRemote.jpg","", "", ""));
     }
 
 }

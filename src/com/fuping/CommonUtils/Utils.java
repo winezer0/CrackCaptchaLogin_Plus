@@ -35,6 +35,11 @@ public class Utils {
         return !isEmptyFile(fileStr);
     }
 
+    public static boolean isNotEmptyIfStr(String string) {
+        //判断字符串是否不为空
+        return !isEmptyIfStr(string);
+    }
+
     public static String checkFileEncode(String absolutePath, String defaultEncode){
         //检测文件编码
         String encoding = defaultEncode;
@@ -52,7 +57,7 @@ public class Utils {
     public static String genFileNameByUrl(String urlString, String defaultPath, String suffix, boolean useAbsolutePath){
         String filename = defaultPath;
 
-        if (!isEmptyIfStr(urlString)){
+        if (isNotEmptyIfStr(urlString)){
             filename = urlString.split("[\\\\\"*?<>|%'#]")[0]; // 按照 # 或 ? 进行切割
             filename = filename.replaceAll("[/:]", "_"); // 对URL的特殊字符进行替换
             filename = String.format("%s%s", filename, suffix);
@@ -104,8 +109,8 @@ public class Utils {
 
     public static void initBaseOnLoginUrlFile(String login_url) {
         //根据当前登录URL生成 history 文件名称
-        HistoryFilePath = genFileNameByUrl(login_url, "dict/history.txt", ".history.txt", true);
-        LogRecodeFilePath = genFileNameByUrl(login_url, "dict/history.log", ".history.log", true);
+        globalHistoryFilePath = genFileNameByUrl(login_url, "dict/history.txt", ".history.txt", true);
+        globalLogRecodeFilePath = genFileNameByUrl(login_url, "dict/history.log", ".history.log", true);
     }
 
     public static UserPassPair[] processedUserPassHashSet(HashSet<UserPassPair> pairsHashSet, String historyFile, boolean exclude_history, String userMarkInPass){
@@ -175,14 +180,14 @@ public class Utils {
     }
 
     public static boolean isModifiedAuthFile() {
-        long pairFileTime = getFileModified(UserPassFile);
-        long nameFileTime = getFileModified(UserNameFile);
-        long passFileTime = getFileModified(PassWordFile);
+        long pairFileTime = getFileModified(globalUserPassFile);
+        long nameFileTime = getFileModified(globalUserNameFile);
+        long passFileTime = getFileModified(globalPassWordFile);
 
-        if(nameFileTime != UserFileLastModified || passFileTime != PassFileLastModified || pairFileTime != PairFileLastModified){
-            PairFileLastModified = pairFileTime;
-            UserFileLastModified = nameFileTime;
-            PassFileLastModified = passFileTime;
+        if(nameFileTime != globalUserFileLastModified || passFileTime != globalPassFileLastModified || pairFileTime != globalPairFileLastModified){
+            globalPairFileLastModified = pairFileTime;
+            globalUserFileLastModified = nameFileTime;
+            globalPassFileLastModified = passFileTime;
             return true;
         }
         return false;
@@ -201,11 +206,11 @@ public class Utils {
 
     public static boolean isModifiedDictMode(String dict_mode){
         //检查登录URL是否更新, 更新了就重新赋值
-        if(dict_mode.equalsIgnoreCase(dict_compo_mode)) {
+        if(dict_mode.equalsIgnoreCase(default_dict_compo_mode)) {
             return false;
         } else{
-            print_info(String.format("The dict mode has been modified from [%s] to [%s]", dict_compo_mode, dict_mode));
-            dict_compo_mode = dict_mode;
+            print_info(String.format("The dict mode has been modified from [%s] to [%s]", default_dict_compo_mode, dict_mode));
+            default_dict_compo_mode = dict_mode;
             return true;
         }
     }

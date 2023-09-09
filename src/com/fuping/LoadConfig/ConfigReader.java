@@ -7,8 +7,7 @@ import java.io.*;
 import java.util.Properties;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
-import static com.fuping.CommonUtils.Utils.checkFileEncode;
-import static com.fuping.CommonUtils.Utils.getFileStrAbsolutePath;
+import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.PrintLog.PrintLog.print_error;
 import static com.fuping.PrintLog.PrintLog.print_info;
 
@@ -73,14 +72,14 @@ public class ConfigReader {
     public String getString(String paramString, String defaultValue) {
         //先从系统参数中文件获取
         String ParamValue =  getSystemString(paramString);
-        if (!isEmptyIfStr(ParamValue)){
+        if (isNotEmptyIfStr(ParamValue)){
             print_info(String.format("Get Param Value From [System Property]: %s=%s", paramString, ParamValue));
             return ParamValue;
         }
 
         //再从配置文件中获取
         ParamValue = getPropString(paramString);
-        if (!isEmptyIfStr(ParamValue) && !"null".equalsIgnoreCase(ParamValue)){
+        if (isNotEmptyIfStr(ParamValue) && !"null".equalsIgnoreCase(ParamValue)){
             print_info(String.format("Get Param Value From [Config Property]: %s=%s", paramString, ParamValue));
             return ParamValue;
         }
