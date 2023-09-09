@@ -39,7 +39,7 @@ import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.BrowserUtils.BrowserUtils.*;
 import static com.fuping.CaptchaIdentify.CaptchaUtils.LoadImageToFile;
 import static com.fuping.CaptchaIdentify.RemoteApiIdent.remoteIndentCaptcha;
-import static com.fuping.CaptchaIdentify.TesseractsLocalIdent.localIdentCaptcha;
+import static com.fuping.CaptchaIdentify.TesseractsLocaleIdent.localeIdentCaptcha;
 import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.LoadConfig.MyConst.*;
 import static com.fuping.LoadDict.LoadDictUtils.loadUserPassFile;
@@ -116,7 +116,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private RadioButton bro_id_yzm_remote_ident_radio;
     @FXML
-    private RadioButton bro_id_local_ident_flag_radio;
+    private RadioButton bro_id_locale_ident_flag_radio;
     @FXML
     private TextField bro_id_captcha_regex_text;
 
@@ -133,9 +133,14 @@ public class FXMLDocumentController implements Initializable {
 
     //记录当前页面加载状态
     private String loading_status;
-    private final String LOADING_START = "loading_start";
-    private final String LOADING_FINISH = "loading_finish";
-    private final String LOADING_FAILED = "loading_failed";
+    private final String const_loading_start = "loading_start";
+    private final String const_loading_finish = "loading_finish";
+    private final String const_loading_failed = "loading_failed";
+
+    private String crack_status;
+    private final String const_login_success = "login_success";  //登录成功
+    private final String const_login_failure = "login_failure";  //登录失败
+    private final String const_error_captcha = "error_captcha";  //验证码错误常量
 
     //一些工具类方法
     public void setWithCheck(Object eleObj, Object Value) {
@@ -226,7 +231,6 @@ public class FXMLDocumentController implements Initializable {
             //响应结果正则提取
             String ident_extract_regex = this.bro_id_remote_extract_regex_text.getText(); //提取数据
 
-            printlnInfoOnUIAndConsole("远程识别测试开始 ...");
             try {
                 //识别图片地址
                 if (isNotEmptyIfStr(imagePath)){
@@ -249,22 +253,21 @@ public class FXMLDocumentController implements Initializable {
                             ident_time_out
                     );
                 }
-                printlnInfoOnUIAndConsole(String.format("远程验证码识别结果:%s", captcha_indent_text));
+                printlnInfoOnUIAndConsole(String.format("验证码 远程识别结果: [%s]", captcha_indent_text));
             }catch (Exception e){
-                printlnErrorOnUIAndConsole(String.format("远程验证码识别出错:%s", e.getMessage()));
+                printlnErrorOnUIAndConsole(String.format("验证码 远程识别错误: [%s]", e.getMessage()));
                 e.printStackTrace();
             }
         } else {
-            printlnInfoOnUIAndConsole("本地识别测试开始 ...");
             try {
                 if (isNotEmptyIfStr(imagePath)){
-                    captcha_indent_text = localIdentCaptcha(imagePath, ident_format_regex, ident_format_length, globalLocaleTessDataName);
+                    captcha_indent_text = localeIdentCaptcha(imagePath, ident_format_regex, ident_format_length, globalLocaleTessDataName);
                 } else {
-                    captcha_indent_text = localIdentCaptcha(imageBytes, ident_format_regex, ident_format_length, globalLocaleTessDataName);
+                    captcha_indent_text = localeIdentCaptcha(imageBytes, ident_format_regex, ident_format_length, globalLocaleTessDataName);
                 }
-                printlnInfoOnUIAndConsole(String.format("本地验证码识别结果:%s", captcha_indent_text));
+                printlnInfoOnUIAndConsole(String.format("验证码 本地识别结果: [%s]", captcha_indent_text));
             } catch (Exception e) {
-                printlnErrorOnUIAndConsole(String.format("本地验证码识别出错:%s", e.getMessage()));
+                printlnErrorOnUIAndConsole(String.format("验证码 本地识别出错: [%s]", e.getMessage()));
                 e.printStackTrace();
             }
         }
@@ -357,8 +360,8 @@ public class FXMLDocumentController implements Initializable {
                         public void run() {
                             //输出加载中记录输出两次 UI重复,不是错误,是浏览器实际进行了主页和登录请求两次
                             String validatedURL = event.getValidatedURL();
-                            loading_status= String.format("%s<->%s", LOADING_START, validatedURL);
-                            printlnInfoOnUIAndConsole(String.format("%s: [%s]", LOADING_START, validatedURL));
+                            loading_status= String.format("%s<->%s", const_loading_start, validatedURL);
+                            printlnInfoOnUIAndConsole(String.format("Loading Status: %s %s", const_loading_start, validatedURL));
                             progressIndicator.setProgress(-1.0D);
                         }
                     });
@@ -371,8 +374,8 @@ public class FXMLDocumentController implements Initializable {
                     Platform.runLater(new Runnable() {
                         public void run() {
                             String validatedURL = event.getValidatedURL();
-                            loading_status= String.format("%s<->%s", LOADING_FAILED, validatedURL);
-                            printlnInfoOnUIAndConsole(String.format("%s: [%s]", LOADING_FAILED, validatedURL));
+                            loading_status= String.format("%s<->%s", const_loading_failed, validatedURL);
+                            printlnErrorOnUIAndConsole(String.format("Loading Status: %s %s", const_loading_failed, validatedURL));
                             progressIndicator.setProgress(1.0D);
                         }
                     });
@@ -384,8 +387,8 @@ public class FXMLDocumentController implements Initializable {
                     Platform.runLater(new Runnable() {
                         public void run() {
                             String validatedURL = event.getValidatedURL();
-                            loading_status= String.format("%s<->%s", LOADING_FINISH, validatedURL);
-                            printlnInfoOnUIAndConsole(String.format("%s: [%s]", LOADING_FINISH, validatedURL));
+                            loading_status= String.format("%s<->%s", const_loading_finish, validatedURL);
+                            printlnInfoOnUIAndConsole(String.format("Loading Status: %s %s", const_loading_finish, validatedURL));
                             progressIndicator.setProgress(1.0D);
                         }
                     });
@@ -440,7 +443,7 @@ public class FXMLDocumentController implements Initializable {
         public void onBeforeSendHeaders(BeforeSendHeadersParams paramBeforeSendHeadersParams) {
             //发送请求前动作
             if (paramBeforeSendHeadersParams.getURL().startsWith(this.url)) {
-                print_info("正在发起验证码请求");
+                print_info(String.format("正在发起验证码请求 BeforeSendHeaders:%s", this.url));
                 paramBeforeSendHeadersParams.getHeadersEx().setHeader("Accept-Encoding", "");
                 this.cap.clear();
             }
@@ -453,7 +456,7 @@ public class FXMLDocumentController implements Initializable {
             String current_url = paramDataReceivedParams.getURL();
             if (current_url.startsWith(this.url)) {
                 try {
-                    print_info("已获取验证码数据 onDataReceived:" + current_url);
+                    //print_info("已获取验证码数据 onDataReceived:" + current_url);
                     FXMLDocumentController.this.captcha_data = paramDataReceivedParams.getData();
                     this.cap.append(FXMLDocumentController.this.captcha_data, 0, FXMLDocumentController.this.captcha_data.length);
                     FXMLDocumentController.this.captcha_data = this.cap.toByteArray();
@@ -470,17 +473,20 @@ public class FXMLDocumentController implements Initializable {
                 String receive = new String(paramDataReceivedParams.getData(), charset);
                 String success_key = FXMLDocumentController.this.bro_id_success_regex_text.getText();
                 if(containsMatchingSubString(receive, success_key)){
-                    printlnInfoOnUIAndConsole(String.format("%s 页面存在登录成功关键字 [%s]", paramDataReceivedParams.getURL(), success_key));
+                    crack_status = String.format("%s<->%s", const_login_success, paramDataReceivedParams.getURL());
+                    printlnInfoOnUIAndConsole(String.format("响应内容匹配: 登录成功 %s [Find:%s]",crack_status, success_key));
                 }
 
                 String failure_key = FXMLDocumentController.this.bro_id_failure_regex_text.getText();
                 if(containsMatchingSubString(receive, failure_key)){
-                    printlnInfoOnUIAndConsole(String.format("%s 页面存在登录失败关键字 [%s]", paramDataReceivedParams.getURL(), failure_key));
+                    crack_status = String.format("%s<->%s", const_login_failure, paramDataReceivedParams.getURL());
+                    printlnErrorOnUIAndConsole(String.format("响应内容匹配: 登录失败 %s [Find:%s]",crack_status, failure_key));
                 }
 
                 String captcha_fail = FXMLDocumentController.this.bro_id_captcha_regex_text.getText();
                 if(containsMatchingSubString(receive, captcha_fail)){
-                    printlnInfoOnUIAndConsole(String.format("%s 页面存在验证码失败关键字 [%s]", paramDataReceivedParams.getURL(), captcha_fail));
+                    crack_status = String.format("%s<->%s", const_error_captcha, paramDataReceivedParams.getURL());
+                    printlnErrorOnUIAndConsole(String.format("响应内容匹配: 验证码错误 %s [Find:%s]",crack_status, captcha_fail));
                 }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -593,7 +599,7 @@ public class FXMLDocumentController implements Initializable {
         //设置验证码识别开关
         setWithCheck(this.bro_id_captcha_switch_check, default_captcha_switch);
         //设置验证码识别方式
-        setWithCheck(default_local_identify ? this.bro_id_local_ident_flag_radio : this.bro_id_yzm_remote_ident_radio, true);
+        setWithCheck(default_locale_identify ? this.bro_id_locale_ident_flag_radio : this.bro_id_yzm_remote_ident_radio, true);
         //设置验证码属性
         setWithCheck(this.bro_id_captcha_url_text, default_captcha_url);
         setWithCheck(this.bro_id_captcha_ele_text, default_captcha_ele_value);
@@ -672,17 +678,24 @@ public class FXMLDocumentController implements Initializable {
 
         //检查是否存在关键按钮信息修改,(都需要更新到全局变量做记录),并且重新更新加载字典
         boolean isModifiedAuthFile = isModifiedAuthFile(); //字典文件是否修改
-        boolean isModifiedLoginUrl = isModifiedLoginUrl(login_url); //登录URL是否修改
-        boolean isModifiedDictMode = isModifiedDictMode(this.bro_id_dict_compo_mode_combo.getValue()); //字典模式是否修改
-        boolean isModifiedExcludeHistory = isModifiedExcludeHistory(this.bro_id_exclude_history_check.isSelected());//排除历史状态是否修改
+        print_info(String.format("isModifiedAuthFile %s", isModifiedAuthFile));
 
-        if(isModifiedAuthFile||isModifiedLoginUrl||isModifiedDictMode||isModifiedExcludeHistory){
+        boolean isModifiedLoginUrl = isModifiedLoginUrl(login_url); //登录URL是否修改
+        print_info(String.format("isModifiedLoginUrl %s", isModifiedLoginUrl));
+
+        boolean isModifiedDictMode = isModifiedDictMode(this.bro_id_dict_compo_mode_combo.getValue()); //字典模式是否修改
+        print_info(String.format("isModifiedDictMode %s", isModifiedDictMode));
+
+        boolean isModifiedExcludeHistory = isModifiedExcludeHistory(this.bro_id_exclude_history_check.isSelected());//排除历史状态是否修改
+        print_info(String.format("isModifiedExcludeHistory %s", isModifiedExcludeHistory));
+
+        if(globalExcludeHistory||isModifiedAuthFile||isModifiedLoginUrl||isModifiedDictMode||isModifiedExcludeHistory){
             //当登录URL或账号密码文件修改后,就需要重新更新
             printlnInfoOnUIAndConsole("加载账号密码文件开始...");
             //点击登录后加载字典文件
             HashSet<UserPassPair> UserPassPairsHashSet = loadUserPassFile(globalUserNameFile, globalPassWordFile, globalUserPassFile, globalPairSeparator, default_dict_compo_mode);
             //过滤历史字典记录,并转换为Array格式
-            globalUserPassPairsArray = processedUserPassHashSet(UserPassPairsHashSet, globalHistoryFilePath, globalExcludeHistory, globalUserMarkInPass);
+            globalUserPassPairsArray = processedUserPassHashSet(UserPassPairsHashSet, globalCrackHistoryFilePath, globalExcludeHistory, globalUserMarkInPass);
         }
         //判断字典列表数量是否大于0
         if(globalUserPassPairsArray.length > 0){
@@ -806,7 +819,7 @@ public class FXMLDocumentController implements Initializable {
                                 String captchaText = identCaptcha(bro_id_yzm_remote_ident_radio.isSelected(), null, FXMLDocumentController.this.captcha_data);
                                 //判断验证码 是否是否正确
                                 if(isEmptyIfStr(captchaText)){
-                                    printlnErrorOnUIAndConsole(String.format("跳过操作 验证码识别错误:%s", captchaText));
+                                    printlnErrorOnUIAndConsole(String.format("跳过操作 验证码识别错误...", captchaText));
                                     continue;
                                 }
 
@@ -837,12 +850,13 @@ public class FXMLDocumentController implements Initializable {
                             browser.executeCommand(EditorCommand.INSERT_NEW_LINE);
 
                             //点击按钮前先重置页面加载状态
-                            loading_status= LOADING_START;
+                            loading_status="";
+                            crack_status="";
                             //需要等待页面加载完毕
                             if (bro_id_submit_auto_wait_check.isSelected()){
                                 Thread.sleep(global_submit_auto_wait_interval);
                                 long wait_start_time = System.currentTimeMillis();
-                                while (isEmptyIfStr(loading_status) || loading_status.contains(LOADING_START)) {
+                                while (isEmptyIfStr(loading_status) || loading_status.contains(const_loading_start)) {
                                     //输出检查状态
                                     printlnInfoOnUIAndConsole(String.format("checking status: [%s]", loading_status));
                                     // 检查是否超时
@@ -855,6 +869,7 @@ public class FXMLDocumentController implements Initializable {
                                 }
                             } else {Thread.sleep((bro_submit_fixed_wait_time>0)?bro_submit_fixed_wait_time:2000);}
 
+
                             //输出加载状态
                             String cur_url = browser.getURL();
                             String cur_title = browser.getTitle();
@@ -863,17 +878,35 @@ public class FXMLDocumentController implements Initializable {
                             //判断是否跳转
                             boolean isPageForward = !urlRemoveQuery(login_url).equalsIgnoreCase(urlRemoveQuery(cur_url));
                             //进行日志记录
-                            String title = "是否跳转,登录URL,测试账号,测试密码,跳转URL,网页标题,内容长度";
-                            writeTitleToFile(globalLogRecodeFilePath, title);
-                            String content = String.format("%s,%s,%s,%s,%s,%s,%s", isPageForward, login_url, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length);
-                            writeLineToFile(globalLogRecodeFilePath, content);
+                            String title = "爆破状态,加载状态,是否跳转,登录URL,测试账号,测试密码,跳转URL,网页标题,内容长度";
+                            writeTitleToFile(globalCrackLogRecodeFilePath, title);
+                            String content = String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s",
+                                    crack_status,loading_status,isPageForward,login_url,userPassPair.getUsername(),userPassPair.getPassword(),cur_url,cur_title,cur_length);
+                            writeLineToFile(globalCrackLogRecodeFilePath, content);
 
-                            if(loading_status.contains(LOADING_FINISH)){
-                                //进行爆破历史记录
-                                writeUserPassPairToFile(globalHistoryFilePath, ":", userPassPair);
-                                printlnInfoOnUIAndConsole(String.format("加载成功|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
-                            }else {
-                                printlnInfoOnUIAndConsole(String.format("加载失败|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
+                            print_info(String.format("crack_status:%s", crack_status));
+
+                            if(loading_status.contains(const_loading_finish)){
+                                //判断登录状态是否时验证码码错误,是的话,就不能记录到爆破历史中
+                                if(crack_status.contains(const_error_captcha)){
+                                    writeUserPassPairToFile(globalErrorCaptchaFilePath, ":", userPassPair);
+                                    printlnErrorOnUIAndConsole(String.format("验证码错误|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
+                                }else {
+                                    //进行爆破历史记录
+                                    writeUserPassPairToFile(globalCrackHistoryFilePath, ":", userPassPair);
+                                    if(crack_status.contains(const_login_success)){
+                                        writeUserPassPairToFile(globalLoginSuccessFilePath, ":", userPassPair);
+                                        printlnInfoOnUIAndConsole(String.format("登录成功|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
+                                    } else if(crack_status.contains(const_login_failure)){
+                                        writeUserPassPairToFile(globalLoginFailureFilePath, ":", userPassPair);
+                                        printlnErrorOnUIAndConsole(String.format("登录失败|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
+                                    } else {
+                                        printlnInfoOnUIAndConsole(String.format("未知状态|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
+                                    }
+                                }
+                           }else {
+                                printlnErrorOnUIAndConsole(String.format("加载失败|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
+
                                 //判断当前是不是固定加载模式,是的话就自动添加一点加载时间
                                 if(!bro_id_submit_auto_wait_check.isSelected() && bro_submit_fixed_wait_time < global_submit_auto_wait_limit) {
                                     bro_submit_fixed_wait_time += 1000;

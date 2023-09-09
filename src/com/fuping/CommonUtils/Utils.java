@@ -109,8 +109,11 @@ public class Utils {
 
     public static void initBaseOnLoginUrlFile(String login_url) {
         //根据当前登录URL生成 history 文件名称
-        globalHistoryFilePath = genFileNameByUrl(login_url, "dict/history.txt", ".history.txt", true);
-        globalLogRecodeFilePath = genFileNameByUrl(login_url, "dict/history.log", ".history.log", true);
+        globalCrackHistoryFilePath = genFileNameByUrl(login_url, "dict/CrackHistory.log", ".CrackHistory.log", true);
+        globalCrackLogRecodeFilePath = genFileNameByUrl(login_url, "dict/CrackLogRecode.csv", ".CrackLogRecode.csv", true);
+        globalLoginSuccessFilePath = genFileNameByUrl(login_url, "dict/LoginSuccess.log", ".LoginSuccess.log", true);
+        globalLoginFailureFilePath = genFileNameByUrl(login_url, "dict/LoginFailure.log", ".LoginFailure.log", true);
+        globalErrorCaptchaFilePath = genFileNameByUrl(login_url, "dict/ErrorCaptcha.log", ".ErrorCaptcha.log", true);
     }
 
     public static UserPassPair[] processedUserPassHashSet(HashSet<UserPassPair> pairsHashSet, String historyFile, boolean exclude_history, String userMarkInPass){
@@ -190,6 +193,7 @@ public class Utils {
             globalPassFileLastModified = passFileTime;
             return true;
         }
+
         return false;
     }
 

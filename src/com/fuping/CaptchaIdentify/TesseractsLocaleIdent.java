@@ -14,14 +14,14 @@ import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.PrintLog.PrintLog.print_error;
 import static com.fuping.PrintLog.PrintLog.print_info;
 
-public class TesseractsLocalIdent {
-    public static String localIdentCaptcha(byte[] captcha_data, String expectedRegex, String expectedLength, String tessDataName) {
+public class TesseractsLocaleIdent {
+    public static String localeIdentCaptcha(byte[] captcha_data, String expectedRegex, String expectedLength, String tessDataName) {
         String imagePath = getFileStrAbsolutePath("captcha.png");
         imagePath = writeBytesToFile(imagePath, captcha_data);
-        return localIdentCaptcha(imagePath, expectedRegex, expectedLength, tessDataName);
+        return localeIdentCaptcha(imagePath, expectedRegex, expectedLength, tessDataName);
     }
 
-    public static String localIdentCaptcha(String pngImagePath, String expectedRegex, String expectedLength, String tessDataName) {
+    public static String localeIdentCaptcha(String pngImagePath, String expectedRegex, String expectedLength, String tessDataName) {
         pngImagePath = getFileStrAbsolutePath(pngImagePath);
         //将保存的图片转换为jpg
         try {
@@ -184,7 +184,7 @@ public class TesseractsLocalIdent {
 //    }
 
     public static void main(String args[]) {
-        System.out.println(localIdentCaptcha("TestRemote.jpg","", "", ""));
+        System.out.println(localeIdentCaptcha("TestRemote.jpg","", "", ""));
     }
 
 }

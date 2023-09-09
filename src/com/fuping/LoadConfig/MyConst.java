@@ -11,8 +11,12 @@ public class MyConst {
     public static UserPassPair[] globalUserPassPairsArray = null;
 
     //存储默认历史记录文件
-    public static String globalHistoryFilePath = null ;
-    public static String globalLogRecodeFilePath = null ;
+    public static String globalCrackHistoryFilePath = null;   //记录成功爆破的历史
+    public static String globalCrackLogRecodeFilePath = null;   //记录爆破记录
+
+    public static String globalLoginSuccessFilePath = null;   //记录密码正确的记录
+    public static String globalLoginFailureFilePath = null;   //记录密码错误的记录
+    public static String globalErrorCaptchaFilePath = null;   //记录验证错误的记录
 
     //设置配置参数名称
     public static String globalProgramVersion = null ;
@@ -76,7 +80,7 @@ public class MyConst {
     public static String default_captcha_ele_type = null;
 
     public static boolean default_captcha_switch = false;
-    public static boolean default_local_identify = false;
+    public static boolean default_locale_identify = false;
 
     //验证码识别相关配置变量
     public static String default_ident_time_out =null;  //验证码识别超时毫秒
@@ -138,7 +142,7 @@ public class MyConst {
         default_resp_key_captcha_regex = configReader.getString("captcha_regex", "验证码错误");
 
         default_captcha_switch = configReader.isTrue("captcha_switch", false);
-        default_local_identify = configReader.isTrue("local_Identify", false);
+        default_locale_identify = configReader.isTrue("locale_Identify", false);
 
         default_captcha_url = configReader.getString("captcha_url", null);
         default_captcha_ele_value = configReader.getString("captcha_ele_value", null);
