@@ -38,9 +38,9 @@ public class TesseractsLocaleIdent {
                 if( isNotEmptyFile(dataAbsolutePat)){
                     //tesseracts.setDatapath(tessDataPath);  //存在依赖,提示要设置环境变量, 弃用
                     tesseracts.setLanguage(tessDataName); //直接设置语言前缀
-                    print_info(String.format("Use Found TessData Name:[%s] Path:[%s]", tessDataName, dataAbsolutePat));
+                    print_info(String.format("Use Found TessData From Name:[%s] On Path:[%s]", tessDataName, dataAbsolutePat));
                 }else {
-                    print_error(String.format("Not Found TessData Name:[%s] Path:[%s]", tessDataName, dataAbsolutePat));
+                    print_error(String.format("Not Found TessData From Name:[%s]!!! Please Move [%s.raineddata] To [%s]",tessDataName, tessDataName, dataAbsolutePat));
                 }
             }
 
