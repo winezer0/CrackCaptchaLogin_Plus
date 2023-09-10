@@ -678,13 +678,13 @@ public class FXMLDocumentController implements Initializable {
 
         //检查是否存在关键按钮信息修改,(都需要更新到全局变量做记录),并且重新更新加载字典
         boolean isModifiedAuthFile = isModifiedAuthFile(); //字典文件是否修改
-        print_info(String.format("isModifiedAuthFile %s", isModifiedAuthFile));
+        //print_info(String.format("isModifiedAuthFile %s", isModifiedAuthFile));
 
         boolean isModifiedLoginUrl = isModifiedLoginUrl(login_url); //登录URL是否修改
-        print_info(String.format("isModifiedLoginUrl %s", isModifiedLoginUrl));
+        //print_info(String.format("isModifiedLoginUrl %s", isModifiedLoginUrl));
 
         boolean isModifiedDictMode = isModifiedDictMode(this.bro_id_dict_compo_mode_combo.getValue()); //字典模式是否修改
-        print_info(String.format("isModifiedDictMode %s", isModifiedDictMode));
+        //print_info(String.format("isModifiedDictMode %s", isModifiedDictMode));
 
         boolean isModifiedExcludeHistory = isModifiedExcludeHistory(this.bro_id_exclude_history_check.isSelected());//排除历史状态是否修改
         print_info(String.format("isModifiedExcludeHistory %s", isModifiedExcludeHistory));
