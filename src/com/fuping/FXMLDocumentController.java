@@ -687,7 +687,7 @@ public class FXMLDocumentController implements Initializable {
         //print_info(String.format("isModifiedDictMode %s", isModifiedDictMode));
 
         boolean isModifiedExcludeHistory = isModifiedExcludeHistory(this.bro_id_exclude_history_check.isSelected());//排除历史状态是否修改
-        print_info(String.format("isModifiedExcludeHistory %s", isModifiedExcludeHistory));
+        //print_info(String.format("isModifiedExcludeHistory %s", isModifiedExcludeHistory));
 
         if(globalExcludeHistory||isModifiedAuthFile||isModifiedLoginUrl||isModifiedDictMode||isModifiedExcludeHistory){
             //当登录URL或账号密码文件修改后,就需要重新更新
