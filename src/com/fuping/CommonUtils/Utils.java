@@ -116,10 +116,15 @@ public class Utils {
         globalErrorCaptchaFilePath = genFileNameByUrl(login_url, "dict/ErrorCaptcha.log", ".ErrorCaptcha.log", true);
     }
 
-    public static UserPassPair[] processedUserPassHashSet(HashSet<UserPassPair> pairsHashSet, String historyFile, boolean exclude_history, String userMarkInPass){
+    public static UserPassPair[] processedUserPassHashSet(
+            HashSet<UserPassPair> pairsHashSet,
+            String historyFile,
+            String separator,
+            boolean exclude_history,
+            String userMarkInPass){
         //读取 history 文件,排除历史扫描记录 ，
         if (exclude_history) {
-            pairsHashSet = excludeHistoryPairs(pairsHashSet,  historyFile, ":");
+            pairsHashSet = excludeHistoryPairs(pairsHashSet,  historyFile, separator);
             print_info(String.format("Pairs Count After Exclude History [%s] From [%s]", pairsHashSet.size(), historyFile));
         }
 
@@ -221,11 +226,11 @@ public class Utils {
 
     public static boolean isModifiedExcludeHistory(boolean exclude_history){
         //检查登录URL是否更新, 更新了就重新赋值
-        if(exclude_history == globalExcludeHistory){
+        if(exclude_history == globalExcludeHistorySwitch){
             return false;
         } else {
-            print_info(String.format("The Exclude History has been modified from [%s] to [%s]", globalExcludeHistory, exclude_history));
-            globalExcludeHistory = exclude_history;
+            print_info(String.format("The Exclude History has been modified from [%s] to [%s]", globalExcludeHistorySwitch, exclude_history));
+            globalExcludeHistorySwitch = exclude_history;
             return true;
         }
     }

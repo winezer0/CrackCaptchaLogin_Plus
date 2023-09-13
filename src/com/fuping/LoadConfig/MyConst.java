@@ -25,7 +25,7 @@ public class MyConst {
     //JxBrowser相关配置参数
     public static String globalBrowserProxy = null;
     public static String globalBrowserUserAgent = null;
-    public static boolean globalClearCookiesFlag = false;
+    public static boolean globalClearCookiesSwitch = false;
 
     //字典文件相关参数
     public static String globalUserNameFile = null;
@@ -41,7 +41,7 @@ public class MyConst {
     public static final String const_cartesian = "cartesian"; //默认
 
     public static String globalUserMarkInPass = "%USER%";  //密码内的用户名变量
-    public static boolean globalExcludeHistory = false;    //是否排除历史爆破记录
+    public static boolean globalExcludeHistorySwitch = false;    //是否排除历史爆破记录
 
     //记录账号密码文件是否修改过,如果没有修改的话,就考虑不重新读取
     public static long globalUserFileLastModified = 0;
@@ -60,12 +60,12 @@ public class MyConst {
     public static String default_submit_ele_value = null;
     public static String default_submit_ele_type = null;
 
-    public static boolean default_show_browser = false;
+    public static boolean default_show_browser_switch = false;
 
     public static int default_login_page_wait_time = 1000;  //登录页面加载后的等待时间
 
     //登录按钮点击后的等待时间
-    public static boolean default_submit_auto_wait = true; //是否自动等待模式常量
+    public static boolean default_submit_auto_wait_switch = true; //是否自动等待模式常量
     public static int default_submit_fixed_wait_time = 2000; //常规模式下点击提交按钮后的 固定的等待时间
     public static long global_submit_auto_wait_limit = 5000; //自动等待模式下的 超时等待时间设置
     public static long global_submit_auto_wait_interval = 500; //自动等待模式下的 每次等待时间
@@ -80,8 +80,8 @@ public class MyConst {
     public static String default_captcha_ele_value = null;
     public static String default_captcha_ele_type = null;
 
-    public static boolean default_captcha_switch = false;
-    public static boolean default_locale_identify = false;
+    public static boolean default_ident_captcha_switch = false;
+    public static boolean default_locale_identify_switch = false;
 
     //验证码识别相关配置变量
     public static int default_ident_time_out=1000;  //验证码识别超时毫秒
@@ -114,7 +114,7 @@ public class MyConst {
         //浏览器UA设置
         globalBrowserUserAgent = configReader.getString("browser_ua", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36");
         //是否清理Cookie
-        globalClearCookiesFlag = configReader.isTrue("clear_cookies", false);
+        globalClearCookiesSwitch = configReader.isTrue("clear_cookies", false);
         //加载账号密码、文件路径
         globalUserNameFile = configReader.getString("user_name_file", null);
         globalPassWordFile = configReader.getString("pass_word_file", null);
@@ -125,7 +125,7 @@ public class MyConst {
         default_dict_compo_mode = configReader.getString("dict_compo_mode", const_cartesian);
 
         globalUserMarkInPass = configReader.getString("user_mark_in_pass", "%USER%");
-        globalExcludeHistory = configReader.isTrue("exclude_history", false);
+        globalExcludeHistorySwitch = configReader.isTrue("exclude_history", false);
 
         //加载默认的登录框配置
         default_login_url = configReader.getString("login_url", "http://127.0.0.1/demo/index.php/Home/Login/login.html");
@@ -138,10 +138,10 @@ public class MyConst {
         default_submit_ele_value = configReader.getString("submit_ele_value", "login");
         default_submit_ele_type = configReader.getString("submit_ele_type", null);
 
-        default_show_browser = configReader.isTrue("browser_show", false);
+        default_show_browser_switch = configReader.isTrue("browser_show", false);
 
         default_login_page_wait_time = Integer.parseInt(configReader.getString("login_page_wait_time", "1000"));
-        default_submit_auto_wait = configReader.isTrue("submit_auto_wait", true);
+        default_submit_auto_wait_switch = configReader.isTrue("submit_auto_wait", true);
         default_submit_fixed_wait_time = Integer.parseInt(configReader.getString("submit_fixed_wait_limit", "2000"));
         global_submit_auto_wait_limit = Integer.parseInt(configReader.getString("submit_auto_wait_limit", "5000"));
         global_submit_auto_wait_interval = Integer.parseInt(configReader.getString("submit_auto_wait_interval", "500"));
@@ -150,8 +150,8 @@ public class MyConst {
         default_resp_key_failure_regex = configReader.getString("failure_regex", "登录失败");
         default_resp_key_captcha_regex = configReader.getString("captcha_regex", "验证码错误");
 
-        default_captcha_switch = configReader.isTrue("captcha_switch", false);
-        default_locale_identify = configReader.isTrue("locale_Identify", false);
+        default_ident_captcha_switch = configReader.isTrue("captcha_switch", false);
+        default_locale_identify_switch = configReader.isTrue("locale_Identify", false);
 
         default_captcha_url = configReader.getString("captcha_url", null);
         default_captcha_ele_value = configReader.getString("captcha_ele_value", null);

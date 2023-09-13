@@ -595,12 +595,12 @@ public class FXMLDocumentController implements Initializable {
         setWithCheck(this.bro_id_submit_ele_text, default_submit_ele_value);
         setWithCheck(this.bro_id_submit_ele_type_combo, default_submit_ele_type);
         //设置浏览器选项
-        setWithCheck(this.bro_id_show_browser_check, default_show_browser);
-        setWithCheck(this.bro_id_exclude_history_check, globalExcludeHistory);
+        setWithCheck(this.bro_id_show_browser_check, default_show_browser_switch);
+        setWithCheck(this.bro_id_exclude_history_check, globalExcludeHistorySwitch);
 
         setWithCheck(this.bro_id_login_page_wait_time_combo, default_login_page_wait_time);
         setWithCheck(this.bro_id_submit_fixed_wait_time_combo, default_submit_fixed_wait_time);
-        setWithCheck(this.bro_id_submit_auto_wait_check, default_submit_auto_wait);
+        setWithCheck(this.bro_id_submit_auto_wait_check, default_submit_auto_wait_switch);
 
         setWithCheck(this.bro_id_dict_compo_mode_combo, default_dict_compo_mode);
         //设置关键字匹配
@@ -608,9 +608,9 @@ public class FXMLDocumentController implements Initializable {
         setWithCheck(this.bro_id_failure_regex_text, default_resp_key_failure_regex);
         setWithCheck(this.bro_id_captcha_regex_text, default_resp_key_captcha_regex);
         //设置验证码识别开关
-        setWithCheck(this.bro_id_captcha_switch_check, default_captcha_switch);
+        setWithCheck(this.bro_id_captcha_switch_check, default_ident_captcha_switch);
         //设置验证码识别方式
-        setWithCheck(default_locale_identify ? this.bro_id_locale_ident_flag_radio : this.bro_id_yzm_remote_ident_radio, true);
+        setWithCheck(default_locale_identify_switch ? this.bro_id_locale_ident_flag_radio : this.bro_id_yzm_remote_ident_radio, true);
         //设置验证码属性
         setWithCheck(this.bro_id_captcha_url_text, default_captcha_url);
         setWithCheck(this.bro_id_captcha_ele_text, default_captcha_ele_value);
@@ -704,13 +704,13 @@ public class FXMLDocumentController implements Initializable {
         boolean isModifiedExcludeHistory = isModifiedExcludeHistory(this.bro_id_exclude_history_check.isSelected());//排除历史状态是否修改
         //print_info(String.format("isModifiedExcludeHistory %s", isModifiedExcludeHistory));
 
-        if(globalExcludeHistory||isModifiedAuthFile||isModifiedLoginUrl||isModifiedDictMode||isModifiedExcludeHistory){
+        if(globalExcludeHistorySwitch ||isModifiedAuthFile||isModifiedLoginUrl||isModifiedDictMode||isModifiedExcludeHistory){
             //当登录URL或账号密码文件修改后,就需要重新更新
             printlnInfoOnUIAndConsole("加载账号密码文件开始...");
             //点击登录后加载字典文件
             HashSet<UserPassPair> UserPassPairsHashSet = loadUserPassFile(globalUserNameFile, globalPassWordFile, globalUserPassFile, globalPairSeparator, default_dict_compo_mode);
             //过滤历史字典记录,并转换为Array格式
-            globalUserPassPairsArray = processedUserPassHashSet(UserPassPairsHashSet, globalCrackHistoryFilePath, globalExcludeHistory, globalUserMarkInPass);
+            globalUserPassPairsArray = processedUserPassHashSet(UserPassPairsHashSet, globalCrackHistoryFilePath, globalPairSeparator, globalExcludeHistorySwitch, globalUserMarkInPass);
         }
         //判断字典列表数量是否大于0
         if(globalUserPassPairsArray.length > 0){
