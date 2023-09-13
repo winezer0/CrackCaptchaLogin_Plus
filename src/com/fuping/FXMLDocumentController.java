@@ -909,10 +909,10 @@ public class FXMLDocumentController implements Initializable {
                             //判断是否跳转
                             boolean isPageForward = !urlRemoveQuery(login_url).equalsIgnoreCase(urlRemoveQuery(cur_url));
                             //进行日志记录
-                            String title = "爆破状态,加载状态,是否跳转,登录URL,测试账号,测试密码,跳转URL,网页标题,内容长度";
+                            String title = "是否跳转,登录URL,测试账号,测试密码,跳转URL,网页标题,内容长度,爆破状态,加载状态";
                             writeTitleToFile(globalCrackLogRecodeFilePath, title);
-                            String content = String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s",
-                                    crack_status,loading_status,isPageForward,login_url,userPassPair.getUsername(),userPassPair.getPassword(),cur_url,cur_title,cur_length);
+                            String content = String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"",
+                                    isPageForward,login_url,userPassPair.getUsername(),userPassPair.getPassword(),cur_url,cur_title,cur_length,crack_status,loading_status);
                             writeLineToFile(globalCrackLogRecodeFilePath, content);
 
                             print_info(String.format("crack_status:%s", crack_status));
@@ -920,16 +920,16 @@ public class FXMLDocumentController implements Initializable {
                             if(loading_status.contains(const_loading_finish)){
                                 //判断登录状态是否时验证码码错误,是的话,就不能记录到爆破历史中
                                 if(crack_status.contains(const_error_captcha)){
-                                    writeUserPassPairToFile(globalErrorCaptchaFilePath, ":", userPassPair);
+                                    writeUserPassPairToFile(globalErrorCaptchaFilePath, globalPairSeparator, userPassPair);
                                     printlnErrorOnUIAndConsole(String.format("验证码错误|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
                                 }else {
                                     //进行爆破历史记录
-                                    writeUserPassPairToFile(globalCrackHistoryFilePath, ":", userPassPair);
+                                    writeUserPassPairToFile(globalCrackHistoryFilePath, globalPairSeparator, userPassPair);
                                     if(crack_status.contains(const_login_success)){
-                                        writeUserPassPairToFile(globalLoginSuccessFilePath, ":", userPassPair);
+                                        writeUserPassPairToFile(globalLoginSuccessFilePath, globalPairSeparator, userPassPair);
                                         printlnInfoOnUIAndConsole(String.format("登录成功|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
                                     } else if(crack_status.contains(const_login_failure)){
-                                        writeUserPassPairToFile(globalLoginFailureFilePath, ":", userPassPair);
+                                        writeUserPassPairToFile(globalLoginFailureFilePath, globalPairSeparator, userPassPair);
                                         printlnErrorOnUIAndConsole(String.format("登录失败|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
                                     } else {
                                         printlnInfoOnUIAndConsole(String.format("未知状态|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
