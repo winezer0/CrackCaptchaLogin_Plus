@@ -12,6 +12,7 @@
          <children>
             <TextField fx:id="id_login_url_text" promptText="请输入登录页面的URL" text="" HBox.hgrow="ALWAYS" />
             <Button mnemonicParsing="false" onAction="#startCrack" text="开始爆破" />
+            <Button mnemonicParsing="false" onAction="#stopCrack" text="停止爆破" />
          </children>
          <BorderPane.margin>
             <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

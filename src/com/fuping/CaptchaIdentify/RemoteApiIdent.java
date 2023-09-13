@@ -38,9 +38,10 @@ public class RemoteApiIdent {
                 print_error(String.format("异常内容: [%s] <--> [%s]", ExpectedKeywords, responseBody));
                 return null;
             }
-            //print_info(String.format("Remote OCR Status:[%s] Content: [%s]", statusCode, responseBody));
+            print_info(String.format("Remote OCR API Access Status: [%s]<-->[%s]", statusCode, responseBody));
             return responseBody;
         } catch (Exception exception){
+            print_error("Remote OCR API Access Error, Please Check API Is Normal?");
             exception.printStackTrace();
             return null;
         }

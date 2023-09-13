@@ -2,10 +2,11 @@ package com.fuping.LoadConfig;
 
 import com.fuping.LoadDict.UserPassPair;
 
+import static com.fuping.PrintLog.PrintLog.print_info;
+
 public class MyConst {
     // 私有静态成员变量，用于保存单例实例
     private static MyConst MyConstInstance;
-
 
     //本次全局变量命名规范,设置在UI上做初始值的加init或default,完整的全局变量加global
     public static UserPassPair[] globalUserPassPairsArray = null;
@@ -35,9 +36,9 @@ public class MyConst {
 
     public static String default_dict_compo_mode = null;      //指定字典组合方式 cartesian  pitchfork pair_file
 
-    public static String const_pair_file = "pair_file";
-    public static String const_pitchfork = "pitchfork";
-    public static String const_cartesian = "cartesian"; //默认
+    public static final String const_pair_file = "pair_file";
+    public static final String const_pitchfork = "pitchfork";
+    public static final String const_cartesian = "cartesian"; //默认
 
     public static String globalUserMarkInPass = "%USER%";  //密码内的用户名变量
     public static boolean globalExcludeHistory = false;    //是否排除历史爆破记录
@@ -83,10 +84,10 @@ public class MyConst {
     public static boolean default_locale_identify = false;
 
     //验证码识别相关配置变量
-    public static String default_ident_time_out =null;  //验证码识别超时毫秒
+    public static int default_ident_time_out=1000;  //验证码识别超时毫秒
 
-    public static String default_ident_format_regex =null;  //验证码格式正则校验
-    public static String default_ident_format_length =null; //验证码格式长度校验
+    public static String default_ident_format_regex=null;  //验证码格式正则校验
+    public static String default_ident_format_length=null; //验证码格式长度校验
 
     public static String default_remote_ident_url =null;  //远程模式 默认的API地址
     public static String default_remote_extract_regex =null; //远程模式 从响应中提取验证码的正则
@@ -94,6 +95,14 @@ public class MyConst {
     public static String default_remote_expected_keywords =null;  //访问成功响应正则匹配
 
     public static String globalLocaleTessDataName =null; //默认调用的数据集名称, 实际上就是tessdata目录下的文件名前缀
+
+
+    //定义查找元素失败后的操作
+    public static String const_browser_close_action;     //浏览器关闭后的动作  break
+    public static String const_find_Ele_illegal_action;  //查找到不合法的动作时 continue
+    public static String const_find_Ele_null_action;     //没有找到元素对应的操作 continue
+    public static String const_find_Ele_exception_action; //发生其他异常时的动作 continue
+
 
     public MyConst(){
         ConfigReader configReader = ConfigReader.getInstance();
@@ -148,7 +157,7 @@ public class MyConst {
         default_captcha_ele_value = configReader.getString("captcha_ele_value", null);
         default_captcha_ele_type = configReader.getString("captcha_ele_type", null);
 
-        default_ident_time_out = configReader.getString("ident_time_out", null);
+        default_ident_time_out = Integer.parseInt(configReader.getString("ident_time_out", "1000"));
         default_ident_format_regex = configReader.getString("ident_format_regex", null);
         default_ident_format_length = configReader.getString("ident_format_length", null);
         default_remote_ident_url = configReader.getString("remote_ident_url", null);
@@ -157,6 +166,14 @@ public class MyConst {
         default_remote_expected_keywords = configReader.getString("remote_expected_keywords", null);
         //指定默认本地识别数据集路径
         globalLocaleTessDataName = configReader.getString("locale_tess_data_name", null);
+
+        //指定对应的操作
+        const_browser_close_action = configReader.getString("browser_close_action", "break");
+        const_find_Ele_illegal_action = configReader.getString("find_ele_illegal_action", "continue");
+        const_find_Ele_null_action = configReader.getString("find_ele_null_action", "continue");
+        const_find_Ele_exception_action = configReader.getString("find_ele_exception_action", "continue");
+
+        print_info("Loaded Config Finish...");
     }
 
 

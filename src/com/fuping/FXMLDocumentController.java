@@ -194,16 +194,18 @@ public class FXMLDocumentController implements Initializable {
             System.out.println(eMessage);
             if (eMessage.contains("Channel is already closed")) {
                 printlnErrorOnUIAndConsole("浏览器已关闭 (IllegalStateException) 停止测试...");
+                action_string = const_browser_close_action;
+            }else {
+                illegalStateException.printStackTrace();
+                action_string = const_find_Ele_illegal_action ;
             }
-            illegalStateException.printStackTrace();
-            action_string = "break";
         }
         catch (NullPointerException nullPointerException) {
             printlnErrorOnUIAndConsole("定位元素失败 (nullPointerException) 停止测试...");
-            action_string = "break";
+            action_string = const_find_Ele_null_action;
         } catch (Exception exception) {
             exception.printStackTrace();
-            action_string = "continue";
+            action_string = const_find_Ele_exception_action;
         }
         return action_string;
     }
@@ -419,6 +421,15 @@ public class FXMLDocumentController implements Initializable {
         return browser;
     }
 
+    //定义是否停止所有爆破动作
+    public static boolean stopCrackStatus = false;
+
+    @FXML //停止爆破动作
+    public void stopCrack(ActionEvent actionEvent) {
+        stopCrackStatus = true;
+        printlnErrorOnUIAndConsole("已点击停止按钮,请等待停止信号传递...");
+    }
+
     public class MyNetworkDelegate extends DefaultNetworkDelegate {
         private boolean isCompleteAuth;
         private boolean isCancelAuth;
@@ -606,7 +617,7 @@ public class FXMLDocumentController implements Initializable {
         setWithCheck(this.bro_id_captcha_ele_type_combo, default_captcha_ele_type);
 
         //设置验证码配置细节
-        setWithCheck(this.bro_id_ident_time_out_combo, Integer.parseInt(default_ident_time_out));
+        setWithCheck(this.bro_id_ident_time_out_combo, default_ident_time_out);
         setWithCheck(this.bro_id_ident_format_regex_text, default_ident_format_regex);
         setWithCheck(this.bro_id_ident_format_length_text, default_ident_format_length);
         setWithCheck(this.bro_id_remote_ident_url_text, default_remote_ident_url);
@@ -663,9 +674,13 @@ public class FXMLDocumentController implements Initializable {
         }).start();
     }
 
+
     //主要爆破函数的修改
     @FXML
     private void startCrack(ActionEvent event) {
+        //初始化停止爆破状态为 false,以免上次的状态影响本次的操作
+        stopCrackStatus = false;
+
         //读取登录 URL
         String login_url = this.id_login_url_text.getText().trim();
         //登陆 URL 检查
@@ -744,8 +759,14 @@ public class FXMLDocumentController implements Initializable {
                         Integer bro_submit_fixed_wait_time = FXMLDocumentController.this.bro_id_submit_fixed_wait_time_combo.getValue();
 
                         //遍历账号密码字典
-                        for (int index = 0; index < globalUserPassPairsArray.length; index++) {
+                        for (int index = 0; index < globalUserPassPairsArray.length; ) {
                             UserPassPair userPassPair = globalUserPassPairsArray[index];
+
+                            //判断停止按钮是否点击,是的话就跳出循环
+                            if(stopCrackStatus) {
+                                printlnErrorOnUIAndConsole("发现已点击停止按钮, 停止爆破动作");
+                                break;
+                            }
 
                             //输出当前即将测试的数据
                             printlnInfoOnUIAndConsole(String.format("当前进度 [%s/%s] <--> [%s] [%s]", index+1, globalUserPassPairsArray.length, userPassPair, login_url));
@@ -833,6 +854,7 @@ public class FXMLDocumentController implements Initializable {
                             }
 
                             //定位提交按钮, 并填写按钮
+                            String submit_status = "success";
                             try {
                                 Element submitElement = findElementByOption(document, bro_submit_ele_text, bro_id_submit_ele_type);
                                 submitElement.click();
@@ -844,14 +866,23 @@ public class FXMLDocumentController implements Initializable {
                                 } catch (IllegalStateException illegalStateException) {
                                     illegalStateException.printStackTrace();
                                     printlnErrorOnUIAndConsole("Error For document.findElement(By.cssSelector(\"[type=submit]\")).click()");
+                                    submit_status = const_find_Ele_null_action;
+                                }
+                            } finally {
+                                //处理按钮点击状态
+                                if(!"success".equalsIgnoreCase(submit_status)){
+                                    printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_submit_ele_text, submit_status));
+                                    if("break".equalsIgnoreCase(submit_status)) break; else if("continue".equalsIgnoreCase(submit_status)) continue;
                                 }
                             }
+
                             //在当前编辑区域（可能是文本框或富文本编辑器等）的光标位置插入一个新的空行，类似于按下回车键创建一个新行。
                             browser.executeCommand(EditorCommand.INSERT_NEW_LINE);
 
                             //点击按钮前先重置页面加载状态
                             loading_status="";
                             crack_status="";
+
                             //需要等待页面加载完毕
                             if (bro_id_submit_auto_wait_check.isSelected()){
                                 Thread.sleep(global_submit_auto_wait_interval);
@@ -903,21 +934,23 @@ public class FXMLDocumentController implements Initializable {
                                     } else {
                                         printlnInfoOnUIAndConsole(String.format("未知状态|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
                                     }
+
+                                    //对统计计数进行增加
+                                    index ++;
                                 }
                            }else {
                                 printlnErrorOnUIAndConsole(String.format("加载失败|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
-
                                 //判断当前是不是固定加载模式,是的话就自动添加一点加载时间
                                 if(!bro_id_submit_auto_wait_check.isSelected() && bro_submit_fixed_wait_time < global_submit_auto_wait_limit) {
                                     bro_submit_fixed_wait_time += 1000;
                                     printlnInfoOnUIAndConsole(String.format("等待超时|||自动更新等待时间至[%s]", bro_submit_fixed_wait_time));
                                 }
                             }
-                            //停止所有请求,防止影响到下一次的使用 //6.15版本没有办法处理
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
+                        //停止所有请求,防止影响到下一次的使用 //6.15版本没有办法处理关闭浏览器
                         browser.dispose();
                         printlnInfoOnUIAndConsole("所有任务爆破结束");
                     }
