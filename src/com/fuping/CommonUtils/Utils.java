@@ -236,6 +236,12 @@ public class Utils {
     }
 
 
+    public static String escapeString(Object Obj){
+        if(null==Obj) return "null";
+        String string = String.valueOf(Obj);
+        return string.replace("\"","\\\"");
+    }
+
     public static void main(String[] args) {
         String urlString = "https://www.example.com/login.jsp?session=1";
         System.out.println(genFileNameByUrl(urlString, "dict/history.txt",".history.txt",true));

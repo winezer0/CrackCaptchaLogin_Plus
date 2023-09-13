@@ -911,7 +911,18 @@ public class FXMLDocumentController implements Initializable {
                             //进行日志记录
                             String title = "是否跳转,登录URL,测试账号,测试密码,跳转URL,网页标题,内容长度,爆破状态,加载状态";
                             writeTitleToFile(globalCrackLogRecodeFilePath, title);
-                            String content = String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"", isPageForward,login_url,userPassPair.getUsername(),userPassPair.getPassword(),cur_url,cur_title,cur_length,crack_status,loading_status);
+
+                            String content = String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"",
+                                    escapeString(isPageForward),
+                                    escapeString(login_url),
+                                    escapeString(userPassPair.getUsername()),
+                                    escapeString(userPassPair.getPassword()),
+                                    escapeString(cur_url),
+                                    escapeString(cur_title),
+                                    escapeString(cur_length),
+                                    escapeString(crack_status),
+                                    escapeString(loading_status)
+                            );
                             writeLineToFile(globalCrackLogRecodeFilePath, content);
 
                             print_info(String.format("crack_status:%s", crack_status));
