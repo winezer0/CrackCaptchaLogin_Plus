@@ -1,12 +1,6 @@
 # CrackCaptcahLogin
 
-数据文件过大, 编译打包版本请参考 文章 索引到公众号网盘下载
-
-CrackCaptcahLogin Plus 基于浏览器自动化登陆测试工具
-
-https://mp.weixin.qq.com/s/9ELFFr-y9ixMdnOXR97MHg
-
-
+数据文件过大, 编译打包版本请参考 文章  https://mp.weixin.qq.com/s/9ELFFr-y9ixMdnOXR97MHg  索引 到 公众号网盘下载
 
 参考CrackCaptchaLogin 的框架进行修改,  仅保留了本地OCR识别功能,其他都已经进行重写。
 
