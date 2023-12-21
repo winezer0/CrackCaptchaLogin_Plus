@@ -33,6 +33,7 @@ import org.apache.http.util.ByteArrayBuffer;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
@@ -187,7 +188,12 @@ public class FXMLDocumentController implements Initializable {
         String action_string = "success";
         try {
             InputElement findElement = findInputElementByOption(document, locate_info, selectedOption);
+            Map<String, String> attributes = findElement.getAttributes();
+
             findElement.setValue(input_string);
+            for (String attrName : attributes.keySet()) {
+                System.out.println(attrName + " = " + attributes.get(attrName));
+            }
         }
         catch (IllegalStateException illegalStateException) {
             String eMessage = illegalStateException.getMessage();
@@ -199,8 +205,7 @@ public class FXMLDocumentController implements Initializable {
                 illegalStateException.printStackTrace();
                 action_string = const_find_Ele_illegal_action ;
             }
-        }
-        catch (NullPointerException nullPointerException) {
+        } catch (NullPointerException nullPointerException) {
             printlnErrorOnUIAndConsole("定位元素失败 (nullPointerException) 停止测试...");
             action_string = const_find_Ele_null_action;
         } catch (Exception exception) {
@@ -801,23 +806,25 @@ public class FXMLDocumentController implements Initializable {
 
                             //加载URl文档
                             DOMDocument document = browser.getDocument();
-
                             //输入用户名
                             String action_status;
                             action_status = findElementAndInput(document, bro_user_ele_text, bro_user_ele_type, userPassPair.getUsername());
-
                             //处理资源寻找状态
                             if(!"success".equalsIgnoreCase(action_status)){
-                                printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_pass_ele_text, action_status));
+                                printlnErrorOnUIAndConsole(String.format("Error For Location [USERNAME] [%s] <--> Action: [%s]", bro_user_ele_text, action_status));
                                 if("break".equalsIgnoreCase(action_status)) break; else if("continue".equalsIgnoreCase(action_status)) continue;
+                            }else{
+                                print_info("find [USERNAME] Element And Input Success ...");
                             }
 
                             //查找密码输入框
-                            action_status = findElementAndInput(document,bro_pass_ele_text, bro_pass_ele_type, userPassPair.getPassword());
+                            action_status = findElementAndInput(document, bro_pass_ele_text, bro_pass_ele_type, userPassPair.getPassword());
                             //处理资源寻找状态
                             if(!"success".equalsIgnoreCase(action_status)){
-                                printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_pass_ele_text, action_status));
+                                printlnErrorOnUIAndConsole(String.format("Error For Location [PASSWORD] [%s] <--> Action: [%s]", bro_pass_ele_text, action_status));
                                 if("break".equalsIgnoreCase(action_status)) break; else if("continue".equalsIgnoreCase(action_status)) continue;
+                            }else{
+                                print_info("find [PASSWORD] Element And Input Success ...");
                             }
 
                             //获取验证码并进行识别
@@ -828,7 +835,7 @@ public class FXMLDocumentController implements Initializable {
                                     continue;
                                 }
 
-                                //定位验证码输入框并填写验证码
+                                //获取输入的验证码元素定位信息
                                 String bro_captcha_ele_text = FXMLDocumentController.this.bro_id_captcha_ele_text.getText().trim();
                                 String bro_captcha_ele_type = FXMLDocumentController.this.bro_id_captcha_ele_type_combo.getValue();
                                 if (isEmptyIfStr(bro_captcha_ele_text)) {
@@ -848,9 +855,12 @@ public class FXMLDocumentController implements Initializable {
                                 action_status = findElementAndInput(document,bro_captcha_ele_text, bro_captcha_ele_type, captchaText);
                                 //处理资源寻找状态
                                 if(!"success".equalsIgnoreCase(action_status)){
-                                    printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_pass_ele_text, action_status));
+                                    printlnErrorOnUIAndConsole(String.format("Error For Location [CAPTCHA] [%s] <--> Action: [%s]", bro_captcha_ele_text, action_status));
                                     if("break".equalsIgnoreCase(action_status)) break; else if("continue".equalsIgnoreCase(action_status)) continue;
+                                }else{
+                                    print_info("find [CAPTCHA] Element And Input Success ...");
                                 }
+
                             }
 
                             //定位提交按钮, 并填写按钮
@@ -871,13 +881,15 @@ public class FXMLDocumentController implements Initializable {
                             } finally {
                                 //处理按钮点击状态
                                 if(!"success".equalsIgnoreCase(submit_status)){
-                                    printlnErrorOnUIAndConsole(String.format("Error For Location [%s] <--> Action: [%s]", bro_submit_ele_text, submit_status));
+                                    printlnErrorOnUIAndConsole(String.format("Error For Location [SUBMIT] [%s] <--> Action: [%s]", bro_submit_ele_text, submit_status));
                                     if("break".equalsIgnoreCase(submit_status)) break; else if("continue".equalsIgnoreCase(submit_status)) continue;
+                                }else{
+                                    print_info("find [SUBMIT] Element And Input Success ...");
                                 }
                             }
 
-                            //在当前编辑区域（可能是文本框或富文本编辑器等）的光标位置插入一个新的空行，类似于按下回车键创建一个新行。
-                            browser.executeCommand(EditorCommand.INSERT_NEW_LINE);
+//                            //在当前编辑区域（可能是文本框或富文本编辑器等）的光标位置插入一个新的空行，类似于按下回车键创建一个新行。
+//                            browser.executeCommand(EditorCommand.INSERT_NEW_LINE);
 
                             //点击按钮前先重置页面加载状态
                             loading_status="";
