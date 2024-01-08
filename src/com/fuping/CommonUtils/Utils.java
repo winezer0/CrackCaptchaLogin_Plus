@@ -16,9 +16,6 @@ import static com.fuping.LoadDict.LoadDictUtils.replaceUserMarkInPass;
 import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class Utils {
-
-
-
     public static String getFileStrAbsolutePath(String fileStr) {
         //获取文件的物理路径
         return new File(fileStr).getAbsolutePath();
@@ -106,7 +103,6 @@ public class Utils {
         }
     }
 
-
     public static void initBaseOnLoginUrlFile(String login_url) {
         //根据当前登录URL生成 history 文件名称
         globalCrackHistoryFilePath = genFileNameByUrl(login_url, "dict/CrackHistory.log", ".CrackHistory.log", true);
@@ -163,7 +159,6 @@ public class Utils {
             return null; // 没有匹配项
         }
     }
-
 
     public static boolean isNumber(String string){
         try {
@@ -235,11 +230,28 @@ public class Utils {
         }
     }
 
-
     public static String escapeString(Object Obj){
         if(null==Obj) return "null";
         String string = String.valueOf(Obj);
         return string.replace("\"","\\\"");
+    }
+
+    public static boolean isSimilarLink(String cur_captcha_url, String raw_captcha_url){
+        //使用字符串匹配
+        if(raw_captcha_url.equalsIgnoreCase(cur_captcha_url)){
+            return true;
+        }
+
+        //使用正则匹配
+        Pattern pattern = Pattern.compile(raw_captcha_url);
+        Matcher matcher = pattern.matcher(cur_captcha_url);
+        if (matcher.matches()) {
+            //System.out.println(String.format("Pattern Match found! %s", cur_captcha_url));
+            return true;
+        }
+
+        //匹配失败
+        return false;
     }
 
     public static void main(String[] args) {
