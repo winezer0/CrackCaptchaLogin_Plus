@@ -61,7 +61,6 @@ public class MyConst {
     public static String default_submit_ele_type = null;
 
     public static boolean default_show_browser_switch = false;
-
     public static int default_login_page_wait_time = 1000;  //登录页面加载后的等待时间
 
     //登录按钮点击后的等待时间
@@ -69,6 +68,9 @@ public class MyConst {
     public static int default_submit_fixed_wait_time = 2000; //常规模式下点击提交按钮后的 固定的等待时间
     public static long global_submit_auto_wait_limit = 5000; //自动等待模式下的 超时等待时间设置
     public static long global_submit_auto_wait_interval = 500; //自动等待模式下的 每次等待时间
+
+    //是否保存无法识别当前链接状态的情况
+    public static boolean default_store_unknown_load_status = false;
 
     //响应判断的关键字正则
     public static String default_resp_key_success_regex = null;
@@ -145,6 +147,8 @@ public class MyConst {
         default_submit_fixed_wait_time = Integer.parseInt(configReader.getString("submit_fixed_wait_limit", "2000"));
         global_submit_auto_wait_limit = Integer.parseInt(configReader.getString("submit_auto_wait_limit", "5000"));
         global_submit_auto_wait_interval = Integer.parseInt(configReader.getString("submit_auto_wait_interval", "500"));
+
+        default_store_unknown_load_status = configReader.isTrue("store_unknown_load_status", false);
 
         default_resp_key_success_regex = configReader.getString("success_regex", "welcome");
         default_resp_key_failure_regex = configReader.getString("failure_regex", "登录失败");

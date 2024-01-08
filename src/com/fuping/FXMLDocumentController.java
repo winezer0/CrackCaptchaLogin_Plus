@@ -109,6 +109,8 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private CheckBox bro_id_captcha_switch_check;
     @FXML
+    private CheckBox bro_id_store_unknown_status_check;
+    @FXML
     private TextField bro_id_captcha_url_text;
     @FXML
     private ComboBox<String> bro_id_captcha_ele_type_combo;
@@ -137,6 +139,7 @@ public class FXMLDocumentController implements Initializable {
     private final String const_loading_start = "loading_start";
     private final String const_loading_finish = "loading_finish";
     private final String const_loading_failed = "loading_failed";
+    private final String const_loading_unknown = "loading_unknown"; //在没有获取到状态时使用
 
     private String crack_status;
     private final String const_login_success = "login_success";  //登录成功
@@ -191,9 +194,7 @@ public class FXMLDocumentController implements Initializable {
             Map<String, String> attributes = findElement.getAttributes();
 
             findElement.setValue(input_string);
-            for (String attrName : attributes.keySet()) {
-                System.out.println(attrName + " = " + attributes.get(attrName));
-            }
+            // for (String attrName : attributes.keySet()) { System.out.println(attrName + " = " + attributes.get(attrName)); }
         }
         catch (IllegalStateException illegalStateException) {
             String eMessage = illegalStateException.getMessage();
@@ -603,6 +604,9 @@ public class FXMLDocumentController implements Initializable {
         setWithCheck(this.bro_id_show_browser_check, default_show_browser_switch);
         setWithCheck(this.bro_id_exclude_history_check, globalExcludeHistorySwitch);
 
+        //设置是否保存默认状态
+        setWithCheck(this.bro_id_store_unknown_status_check, default_store_unknown_load_status);
+
         setWithCheck(this.bro_id_login_page_wait_time_combo, default_login_page_wait_time);
         setWithCheck(this.bro_id_submit_fixed_wait_time_combo, default_submit_fixed_wait_time);
         setWithCheck(this.bro_id_submit_auto_wait_check, default_submit_auto_wait_switch);
@@ -912,6 +916,8 @@ public class FXMLDocumentController implements Initializable {
                                 }
                             } else {Thread.sleep((bro_submit_fixed_wait_time>0)?bro_submit_fixed_wait_time:2000);}
 
+                            //设置 loading_status 为 const_loading_unknown
+                            if(isEmptyIfStr(loading_status)) loading_status = const_loading_unknown;
 
                             //输出加载状态
                             String cur_url = browser.getURL();
@@ -939,7 +945,8 @@ public class FXMLDocumentController implements Initializable {
 
                             print_info(String.format("crack_status:%s", crack_status));
 
-                            if(loading_status.contains(const_loading_finish)){
+                            //添加一个条件, 动态判断对于 const_loading_unknown 状态的是响应是否保存到结果中
+                            if(loading_status.contains(const_loading_finish) || (bro_id_store_unknown_status_check.isSelected() && loading_status.contains(const_loading_unknown))){
                                 //判断登录状态是否时验证码码错误,是的话,就不能记录到爆破历史中
                                 if(crack_status.contains(const_error_captcha)){
                                     writeUserPassPairToFile(globalErrorCaptchaFilePath, globalPairSeparator, userPassPair);
