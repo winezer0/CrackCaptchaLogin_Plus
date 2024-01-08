@@ -20,5 +20,4 @@
 *.log
 *.history.*
 *.bak
-*.properties
 *.csv
