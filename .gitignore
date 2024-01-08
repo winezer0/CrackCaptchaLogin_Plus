@@ -2,7 +2,6 @@
 /.idea/
 /bin/
 /out/
-/lib/
 /decompiled_*/
 *.iml
 .DS_Store
