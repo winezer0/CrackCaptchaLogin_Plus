@@ -149,7 +149,7 @@ public class FXMLDocumentController implements Initializable {
 
     private String base_login_url = null;  //设置当前登录url的全局变量用于后续调用
     private String base_captcha_url = null;  //设置当前登录验证码url用于后续调用
-    private boolean captcha_is_error = false; //设置当前验证码识别错误状态
+    private boolean captcha_ident_was_error = false; //设置当前验证码识别错误状态
 
     //一些工具类方法
     public void setWithCheck(Object eleObj, Object Value) {
@@ -800,7 +800,7 @@ public class FXMLDocumentController implements Initializable {
                             //判断当前页面是不是登录页面 当前页面不是登录页时重新加载登录页面
                             //当用户指定了 global_login_page_reload_per_time 时，重新加载页面
                             //当验证码是错误的时候也需要重新加载页面，不然总是重新识别不出来,死循环
-                            if(global_login_page_reload_per_time || !base_login_url.equals(browser.getURL()) || captcha_is_error){
+                            if(global_login_page_reload_per_time || !base_login_url.equals(browser.getURL()) || captcha_ident_was_error){
                                 try {
                                     Browser.invokeAndWaitFinishLoadingMainFrame(browser, new Callback<Browser>() {
                                         public void invoke(Browser browser) {
@@ -852,7 +852,7 @@ public class FXMLDocumentController implements Initializable {
                                 //captcha_data不存在
                                 if (FXMLDocumentController.this.captcha_data == null) {
                                     printlnErrorOnUIAndConsole("获取验证码失败 (captcha数据为空)");
-                                    captcha_is_error = true;
+                                    captcha_ident_was_error = true;
                                     continue;
                                 }
 
@@ -869,7 +869,7 @@ public class FXMLDocumentController implements Initializable {
                                 //判断验证码 是否是否正确
                                 if(isEmptyIfStr(captchaText)){
                                     printlnErrorOnUIAndConsole(String.format("跳过操作 验证码识别错误...", captchaText));
-                                    captcha_is_error = true;
+                                    captcha_ident_was_error = true;
                                     continue;
                                 }
 
@@ -883,7 +883,7 @@ public class FXMLDocumentController implements Initializable {
                                     print_info("find [CAPTCHA] Element And Input Success ...");
                                 }
 
-                                captcha_is_error = false;
+                                captcha_ident_was_error = false;
                             }
 
                             //定位提交按钮, 并填写按钮
@@ -968,6 +968,7 @@ public class FXMLDocumentController implements Initializable {
                             if(loading_status.contains(const_loading_finish) || (bro_id_store_unknown_status_check.isSelected() && loading_status.contains(const_loading_unknown))){
                                 //判断登录状态是否时验证码码错误,是的话,就不能记录到爆破历史中
                                 if(crack_status.contains(const_error_captcha)){
+                                    captcha_ident_was_error = true;
                                     writeUserPassPairToFile(globalErrorCaptchaFilePath, globalPairSeparator, userPassPair);
                                     printlnErrorOnUIAndConsole(String.format("验证码错误|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", base_login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
                                 }else {
