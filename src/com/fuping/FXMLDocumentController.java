@@ -147,8 +147,9 @@ public class FXMLDocumentController implements Initializable {
     private final String const_login_failure = "login_failure";  //登录失败
     private final String const_error_captcha = "error_captcha";  //验证码错误常量
 
-    private String base_login_url;  //设置当前登录url的全局变量用于后续调用
-    private String base_captcha_url;  //设置当前登录验证码url用于后续调用
+    private String base_login_url = null;  //设置当前登录url的全局变量用于后续调用
+    private String base_captcha_url = null;  //设置当前登录验证码url用于后续调用
+    private boolean captcha_is_error = false; //设置当前验证码识别错误状态
 
     //一些工具类方法
     public void setWithCheck(Object eleObj, Object Value) {
@@ -465,10 +466,10 @@ public class FXMLDocumentController implements Initializable {
             //发送请求前动作
             String getReqURL = paramBeforeSendHeadersParams.getURL();
             //需要判断那think php的情况，baseurl都是一样的，不能作为验证码图片URL
-            if (Utils.isSimilarLink(getReqURL, base_captcha_url)) {
-                print_info(String.format("正在发起验证码请求 BeforeSendHeaders:%s", getReqURL));
-                paramBeforeSendHeadersParams.getHeadersEx().setHeader("Accept-Encoding", "");
+            if (base_captcha_url != null && Utils.isSimilarLink(getReqURL, base_captcha_url)) {
                 this.captchaBytes.clear();
+                paramBeforeSendHeadersParams.getHeadersEx().setHeader("Accept-Encoding", "");
+                print_info(String.format("正在发起验证码请求 BeforeSendHeaders:%s", getReqURL));
             }
         }
         @Override
@@ -477,12 +478,12 @@ public class FXMLDocumentController implements Initializable {
 
             //存储验证码数据
             String getReqURL = paramDataReceivedParams.getURL();
-            if (Utils.isSimilarLink(getReqURL, base_captcha_url)) {
+            if (base_captcha_url != null && Utils.isSimilarLink(getReqURL, base_captcha_url)) {
                 try {
-                    // print_info("已获取验证码数据 onDataReceived:" + getReqURL);
                     FXMLDocumentController.this.captcha_data = paramDataReceivedParams.getData();
                     this.captchaBytes.append(FXMLDocumentController.this.captcha_data, 0, FXMLDocumentController.this.captcha_data.length);
                     FXMLDocumentController.this.captcha_data = this.captchaBytes.toByteArray();
+                    print_info(String.format("获取验证码数据 onDataReceived:[%s] From [%s]", FXMLDocumentController.this.captcha_data.length, getReqURL));
                     return;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -752,9 +753,8 @@ public class FXMLDocumentController implements Initializable {
             String bro_id_submit_ele_type = this.bro_id_submit_ele_type_combo.getValue();
             if (isEmptyIfStr(bro_submit_ele_text)) { this.bro_id_submit_ele_text.requestFocus(); return;}
 
-            //获取验证码输入URL的内容
-            base_captcha_url = this.bro_id_captcha_url_text.getText().trim();
-            if (this.bro_id_captcha_switch_check.isSelected() && isEmptyIfStr(base_captcha_url)) {
+            //检查验证码输入URL的内容
+            if (this.bro_id_captcha_switch_check.isSelected() && isEmptyIfStr(this.bro_id_captcha_url_text.getText().trim())) {
                 this.bro_id_captcha_url_text.requestFocus();
                 return;
             }
@@ -763,7 +763,10 @@ public class FXMLDocumentController implements Initializable {
             Browser browser = initJxBrowserInstance(globalBrowserProxy);
 
             //设置JxBrowser中网络委托的对象，以实现对浏览器的网络请求和响应的控制和处理。 //更详细的请求和响应处理,含保存验证码图片
-            browser.getContext().getNetworkService().setNetworkDelegate(new MyNetworkDelegate(base_captcha_url));
+            if (this.bro_id_captcha_switch_check.isSelected()){
+                base_captcha_url = this.bro_id_captcha_url_text.getText().trim();
+                browser.getContext().getNetworkService().setNetworkDelegate(new MyNetworkDelegate(base_captcha_url));
+            }
 
             //开启一个新的线程进行爆破操作
             new Thread(new Runnable() {
@@ -788,31 +791,38 @@ public class FXMLDocumentController implements Initializable {
 
                             //清理所有Cookie //可能存在问题,比如验证码, 没有Cookie会怎么样呢?
                             AutoClearAllCookies(browser);
-                            //清空上一次记录的的验证码数据
-                            FXMLDocumentController.this.captcha_data = null;
+
+                            //清空上一次记录的的验证码数据 //清空的话会导致没有加载页面的时候验证码图片没有值
+                            //FXMLDocumentController.this.captcha_data = null;
+
 
                             //加载登录URL
-                            try {
-                                Browser.invokeAndWaitFinishLoadingMainFrame(browser, new Callback<Browser>() {
-                                            public void invoke(Browser browser) {
-                                                browser.loadURL(base_login_url);
-                                            }
-                                        }, 120);
-                            } catch (IllegalStateException illegalStateException) {
-                                String illegalStateExceptionMessage = illegalStateException.getMessage();
-                                System.out.println(illegalStateExceptionMessage);
-                                if (illegalStateExceptionMessage.contains("Channel is already closed")) {
-                                    printlnErrorOnUIAndConsole("停止测试, 请点击按钮重新开始");
-                                    break;
+                            //判断当前页面是不是登录页面 当前页面不是登录页时重新加载登录页面
+                            //当用户指定了 global_login_page_reload_per_time 时，重新加载页面
+                            //当验证码是错误的时候也需要重新加载页面，不然总是重新识别不出来,死循环
+                            if(global_login_page_reload_per_time || !base_login_url.equals(browser.getURL()) || captcha_is_error){
+                                try {
+                                    Browser.invokeAndWaitFinishLoadingMainFrame(browser, new Callback<Browser>() {
+                                        public void invoke(Browser browser) {
+                                            browser.loadURL(base_login_url);
+                                        }
+                                    }, global_login_page_load_time);
+                                } catch (IllegalStateException illegalStateException) {
+                                    String illegalStateExceptionMessage = illegalStateException.getMessage();
+                                    System.out.println(illegalStateExceptionMessage);
+                                    if (illegalStateExceptionMessage.contains("Channel is already closed")) {
+                                        printlnErrorOnUIAndConsole("停止测试, 请点击按钮重新开始");
+                                        break;
+                                    }
+                                } catch (Exception exception) {
+                                    printlnErrorOnUIAndConsole("访问超时, 请检查网络设置状态");
+                                    exception.printStackTrace();
+                                    if(global_login_page_load_timeout_rework) continue;
                                 }
-                            } catch (Exception exception) {
-                                printlnErrorOnUIAndConsole("访问超时, 请检查网络设置状态");
-                                exception.printStackTrace();
-                                continue;
-                            }
 
-                            //进行线程延迟 //等待页面加载完毕//原则上是可以不需要的
-                            Thread.sleep((bro_login_page_wait_time>0)?bro_login_page_wait_time:0);
+                                //进行线程延迟 //等待页面加载完毕//原则上是可以不需要的
+                                Thread.sleep((bro_login_page_wait_time>0)?bro_login_page_wait_time:0);
+                            }
 
                             //加载URl文档
                             DOMDocument document = browser.getDocument();
@@ -842,6 +852,7 @@ public class FXMLDocumentController implements Initializable {
                                 //captcha_data不存在
                                 if (FXMLDocumentController.this.captcha_data == null) {
                                     printlnErrorOnUIAndConsole("获取验证码失败 (captcha数据为空)");
+                                    captcha_is_error = true;
                                     continue;
                                 }
 
@@ -858,6 +869,7 @@ public class FXMLDocumentController implements Initializable {
                                 //判断验证码 是否是否正确
                                 if(isEmptyIfStr(captchaText)){
                                     printlnErrorOnUIAndConsole(String.format("跳过操作 验证码识别错误...", captchaText));
+                                    captcha_is_error = true;
                                     continue;
                                 }
 
@@ -871,6 +883,7 @@ public class FXMLDocumentController implements Initializable {
                                     print_info("find [CAPTCHA] Element And Input Success ...");
                                 }
 
+                                captcha_is_error = false;
                             }
 
                             //定位提交按钮, 并填写按钮
@@ -898,8 +911,8 @@ public class FXMLDocumentController implements Initializable {
                                 }
                             }
 
-//                            //在当前编辑区域（可能是文本框或富文本编辑器等）的光标位置插入一个新的空行，类似于按下回车键创建一个新行。
-//                            browser.executeCommand(EditorCommand.INSERT_NEW_LINE);
+                            //在当前编辑区域（可能是文本框或富文本编辑器等）的光标位置插入一个新的空行，类似于按下回车键创建一个新行。
+                            //browser.executeCommand(EditorCommand.INSERT_NEW_LINE);
 
                             //点击按钮前先重置页面加载状态
                             loading_status="";

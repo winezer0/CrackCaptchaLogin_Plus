@@ -61,8 +61,13 @@ public class MyConst {
     public static String default_submit_ele_type = null;
 
     public static boolean default_show_browser_switch = false;
-    public static int default_login_page_wait_time = 1000;  //登录页面加载后的等待时间
 
+    public static boolean global_login_page_reload_per_time = true; //是否每次都重新加载登录页面
+    public static int global_login_page_load_time = 30;  //登录页面加载超时时间
+    public static boolean global_login_page_load_timeout_rework = true; //登录页面加载超时是否重头再来
+
+
+    public static int default_login_page_wait_time = 1000;  //登录页面加载后的等待时间
     //登录按钮点击后的等待时间
     public static boolean default_submit_auto_wait_switch = true; //是否自动等待模式常量
     public static int default_submit_fixed_wait_time = 2000; //常规模式下点击提交按钮后的 固定的等待时间
@@ -141,6 +146,10 @@ public class MyConst {
         default_submit_ele_type = configReader.getString("submit_ele_type", null);
 
         default_show_browser_switch = configReader.isTrue("browser_show", false);
+
+        global_login_page_reload_per_time = configReader.isTrue("login_page_reload_per_time", true);
+        global_login_page_load_time = Integer.parseInt(configReader.getString("login_page_load_time", "30"));
+        global_login_page_load_timeout_rework = configReader.isTrue("login_page_load_timeout_rework", true);
 
         default_login_page_wait_time = Integer.parseInt(configReader.getString("login_page_wait_time", "1000"));
         default_submit_auto_wait_switch = configReader.isTrue("submit_auto_wait", true);
