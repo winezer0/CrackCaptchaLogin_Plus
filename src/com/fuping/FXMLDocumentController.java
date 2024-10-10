@@ -254,6 +254,7 @@ public class FXMLDocumentController implements Initializable {
                             remote_resp_is_ok_status,
                             remote_resp_is_ok_keywords,
                             ident_result_extract_regex,
+                            ident_format_regex,
                             ident_format_length,
                             ident_time_out
                     );
@@ -263,6 +264,7 @@ public class FXMLDocumentController implements Initializable {
                             remote_resp_is_ok_status,
                             remote_resp_is_ok_keywords,
                             ident_result_extract_regex,
+                            ident_format_regex,
                             ident_format_length,
                             ident_time_out
                     );

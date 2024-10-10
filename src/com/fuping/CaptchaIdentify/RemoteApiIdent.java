@@ -48,17 +48,31 @@ public class RemoteApiIdent {
     }
 
     public static String remoteIndentCaptcha(byte[] captcha_data, String remoteApi,
-                                             String expectedStatus, String expectedKeywords,
-                                             String extractRegex, String expectedLength, Integer ident_time_out){
+                                             String expectedStatus, String expectedKeywords, String extractRegex,
+                                             String expectedRegex, String expectedLength,
+                                             Integer ident_time_out){
 
         String imagePath = getFileStrAbsolutePath("captcha.png");
         imagePath = writeBytesToFile(imagePath, captcha_data);
-        return remoteIndentCaptcha(imagePath, remoteApi, expectedStatus, expectedKeywords, extractRegex, expectedLength, ident_time_out);
+        return remoteIndentCaptcha(imagePath, remoteApi, expectedStatus, expectedKeywords, extractRegex, expectedRegex, expectedLength, ident_time_out);
     }
 
+    /**
+     * 远程识别验证码
+     * @param imagePath 验证码文件路径
+     * @param remoteApi 远程识别API
+     * @param expectedStatus 正常识别的响应状态码 一般是200
+     * @param expectedKeywords  正常识别的响应含有的关键字 可为空
+     * @param extractRegex 从响应中提取验证码的正则表达式 为空时表名都是验证码
+     * @param expectedRegex 限定验证码的格式 如 \w+
+     * @param expectedLength 限定验证码的长度 如 4
+     * @param ident_time_out 远程识别的超时时间
+     * @return
+     */
     public static String remoteIndentCaptcha(String imagePath, String remoteApi,
-                                             String expectedStatus, String expectedKeywords,
-                                             String extractRegex, String expectedLength, Integer ident_time_out){
+                                             String expectedStatus, String expectedKeywords, String extractRegex,
+                                             String expectedRegex, String expectedLength,
+                                             Integer ident_time_out){
 
         //从绝地路径提取
         imagePath = getFileStrAbsolutePath(imagePath);
@@ -84,9 +98,15 @@ public class RemoteApiIdent {
             return null;
         }
 
+        //当前 ExpectedRegex 不为空时, 判断验证码是否符合正则
+        if (isNotEmptyIfStr(expectedRegex) && !containsMatchingSubString(captchaResult, expectedRegex)) {
+            print_error(String.format("识别错误: 结果[%s] <--> 期望格式:[%s]", captchaResult, expectedRegex));
+            return null;
+        }
+
         //当前 captchaResult 不为空时, 判断验证码长度是否正确
         if (isNumber(expectedLength) && Integer.parseInt(expectedLength) !=  captchaResult.length()) {
-            print_error(String.format("识别错误: 结果[%s] <--> 长度[%s] <--> 期望长度:[%s]",captchaResult, captchaResult.length(), expectedLength));
+            print_error(String.format("识别错误: 结果[%s] <--> 期望长度:[%s] <--> 实际长度[%s] ",captchaResult, expectedLength, captchaResult.length()));
             return null;
         }
 
@@ -98,7 +118,7 @@ public class RemoteApiIdent {
         //输入图片地址 图片格式转换
         String imagePath = "TestRemote.jpg";
         String remoteApi = "http://127.0.0.1:5000/base64ocr"; // POST 请求的 URL
-        String result = remoteIndentCaptcha(imagePath, remoteApi, "200", null, null, "4", 5000);
+        String result = remoteIndentCaptcha(imagePath, remoteApi, "200", null, null, "", "4", 5000);
         print_info(String.format("result:%s", result));
     }
 }
