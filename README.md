@@ -34,21 +34,19 @@ CrackCaptcahLogin 2.0 更新：
 
 ##  工具使用 
 
-使用命令`java -jar CrackCaptcahLogin.jar`打开工具
-
+### 启动ocr api服务器.
 对于需要调用ocr识别的情况，需要先启动ocr api服务器.
 
 考虑使用本地免费ddddocr api
 
 https://github.com/winezer0/OcrApi/tree/main/ddddocr_api
 
-
-基本使用：
+### 基本使用：
+使用命令`java -jar CrackCaptcahLogin.jar`打开工具
 
 根据 UI 进行手动配置
 
-
-进阶使用： 
+### 进阶使用： 
 
 如需设置每个元素的默认值和其他选项，便于对项目进行重复爆破,请修改 config.prop 配置文件
 
