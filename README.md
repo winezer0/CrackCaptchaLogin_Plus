@@ -8,6 +8,8 @@
 识别数据文件过大, 编译打包版本请关注 NOVASEC 公众号 回复【共享】获取网盘下载链接
 NOVASEC 公众号 https://mp.weixin.qq.com/s/9ELFFr-y9ixMdnOXR97MHg
 当前网盘 CrackCaptchaLogin release版本 为 3.7 20240108
+
+如果不需要本地识别数据【非必要】，可以直接在release中下载最新发布的包。
 ```
 
 
