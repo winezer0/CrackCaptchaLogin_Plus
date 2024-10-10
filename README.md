@@ -10,6 +10,7 @@ NOVASEC 公众号 https://mp.weixin.qq.com/s/9ELFFr-y9ixMdnOXR97MHg
 当前网盘 CrackCaptchaLogin release版本 为 3.7 20240108
 ```
 
+
 ## 功能介绍
 
 参考CrackCaptchaLogin 的框架进行修改
@@ -56,18 +57,20 @@ CrackCaptcahLogin 2.0 更新：
 返回的数据可通过正则自定义提取, 默认提取所有响应内容作为验证码。
 
 
-
 ##  工具使用 
-
 
 使用命令`java -jar CrackCaptcahLogin.jar`打开工具
 
+对于需要调用ocr识别的情况，需要先启动ocr api服务器.
+
+考虑使用本地免费ddddocr api
+
+https://github.com/winezer0/OcrApi/tree/main/ddddocr_api
 
 
 基本使用：
 
 根据 UI 进行手动配置
-
 
 
 进阶使用： 
