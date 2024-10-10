@@ -951,13 +951,15 @@ public class FXMLDocumentController implements Initializable {
                                     //继续等待
                                     Thread.sleep(global_submit_auto_wait_interval);
                                 }
-                            } else {Thread.sleep((bro_submit_fixed_wait_time>0)?bro_submit_fixed_wait_time:2000);}
+                            } else {
+                                Thread.sleep((bro_submit_fixed_wait_time>0)?bro_submit_fixed_wait_time:2000);
+                            }
 
 
                             //设置 loading_status 为 const_loading_unknown
-                            if(isEmptyIfStr(loading_status)) {
-                                loading_status = LOADING_UNKNOWN;
+                            if(isEmptyIfStr(loading_status)|| LOADING_UNKNOWN.equalsIgnoreCase(loading_status)) {
                                 printlnErrorOnUIAndConsole(String.format("最终页面状态异常: [%s] 保留: [%s]", loading_status, bro_id_store_unknown_status_check.isSelected()));
+                                loading_status = LOADING_UNKNOWN;
                             }
 
                             //输出加载状态
@@ -1011,11 +1013,15 @@ public class FXMLDocumentController implements Initializable {
                                 }
                            }else {
                                 printlnErrorOnUIAndConsole(String.format("加载失败|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", base_login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
+
                                 //判断当前是不是固定加载模式,是的话就自动添加一点加载时间
                                 if(!bro_id_submit_auto_wait_check.isSelected() && bro_submit_fixed_wait_time < global_submit_auto_wait_limit) {
                                     bro_submit_fixed_wait_time += 1000;
                                     printlnInfoOnUIAndConsole(String.format("等待超时|||自动更新等待时间至[%s]", bro_submit_fixed_wait_time));
                                 }
+
+                                //对于未知加载状态的数据进行跳过，但是不保存，防止死循环的发生
+                                index ++;
                             }
                         }
                     } catch (Exception e) {
