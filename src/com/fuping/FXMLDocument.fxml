@@ -317,7 +317,7 @@
                <children>
                   <Label prefWidth="108.0" text="远程识别设置" />
                   <TextField fx:id="bro_id_remote_ident_url_text" prefWidth="300.0" promptText="远程识别API" text="" HBox.hgrow="ALWAYS" />
-                  <TextField fx:id="bro_id_remote_extract_regex_text" prefWidth="300.0" promptText="响应内容验证码正则提取" text="" HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="bro_id_remote_ident_result_extract_regex_text" prefWidth="300.0" promptText="响应内容中验证码提取正则" text="" HBox.hgrow="ALWAYS" />
                </children>
                <VBox.margin>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -329,8 +329,8 @@
             <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
                <children>
                   <Label prefHeight="34.0" prefWidth="108.0" text="调用成功判断" />
-                  <TextField fx:id="bro_id_remote_expected_status_text" prefHeight="31.0" prefWidth="300.0" promptText="访问成功状态正则匹配" text="" HBox.hgrow="ALWAYS" />
-                  <TextField fx:id="bro_id_remote_expected_keywords_text" prefHeight="31.0" prefWidth="300.0" promptText="访问成功响应正则匹配" text="" HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="bro_id_remote_resp_is_ok_status_text" prefHeight="31.0" prefWidth="300.0" promptText="访问成功状态关键字(正则)" text="" HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="bro_id_remote_resp_is_ok_keywords_text" prefHeight="31.0" prefWidth="300.0" promptText="访问成功响应关键字(正则)" text="" HBox.hgrow="ALWAYS" />
                </children>
                <VBox.margin>
                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

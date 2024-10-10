@@ -60,11 +60,11 @@ public class FXMLDocumentController implements Initializable {
     @FXML //远程识别接口地址
     public TextField bro_id_remote_ident_url_text;
     @FXML  //识别结果判断条件
-    public TextField bro_id_remote_expected_status_text;
+    public TextField bro_id_remote_resp_is_ok_status_text;
     @FXML  //识别结果判断条件
-    public TextField bro_id_remote_expected_keywords_text;
+    public TextField bro_id_remote_resp_is_ok_keywords_text;
     @FXML  //识别结果内容提取
-    public TextField bro_id_remote_extract_regex_text;
+    public TextField bro_id_remote_ident_result_extract_regex_text;
 
     //操作模式选择
     @FXML
@@ -239,10 +239,11 @@ public class FXMLDocumentController implements Initializable {
                 return null;
             }
             //获取响应判断条件
-            String ident_expected_status = this.bro_id_remote_expected_status_text.getText(); //期望状态码
-            String ident_expected_keywords = this.bro_id_remote_expected_keywords_text.getText(); //期望响应
+            String remote_resp_is_ok_status = this.bro_id_remote_resp_is_ok_status_text.getText(); //期望的 远程OCR接口  正常响应状态码 如 200
+            String remote_resp_is_ok_keywords = this.bro_id_remote_resp_is_ok_keywords_text.getText(); //期望的 远程OCR接口 正常响应关键字 默认空
+
             //响应结果正则提取
-            String ident_extract_regex = this.bro_id_remote_extract_regex_text.getText(); //提取数据
+            String ident_result_extract_regex = this.bro_id_remote_ident_result_extract_regex_text.getText(); //从响应中提取验证码结果的正则 默认获取全部
 
             try {
                 //识别图片地址
@@ -250,18 +251,18 @@ public class FXMLDocumentController implements Initializable {
                     captcha_indent_text = remoteIndentCaptcha(
                             imagePath,
                             remote_ident_url_text,
-                            ident_expected_status,
-                            ident_expected_keywords,
-                            ident_extract_regex,
+                            remote_resp_is_ok_status,
+                            remote_resp_is_ok_keywords,
+                            ident_result_extract_regex,
                             ident_format_length,
                             ident_time_out
                     );
                 } else {
                     captcha_indent_text = remoteIndentCaptcha(imageBytes,
                             remote_ident_url_text,
-                            ident_expected_status,
-                            ident_expected_keywords,
-                            ident_extract_regex,
+                            remote_resp_is_ok_status,
+                            remote_resp_is_ok_keywords,
+                            ident_result_extract_regex,
                             ident_format_length,
                             ident_time_out
                     );
@@ -650,9 +651,9 @@ public class FXMLDocumentController implements Initializable {
         setWithCheck(this.bro_id_ident_format_regex_text, default_ident_format_regex);
         setWithCheck(this.bro_id_ident_format_length_text, default_ident_format_length);
         setWithCheck(this.bro_id_remote_ident_url_text, default_remote_ident_url);
-        setWithCheck(this.bro_id_remote_extract_regex_text, default_remote_extract_regex);
-        setWithCheck(this.bro_id_remote_expected_status_text, default_remote_expected_status);
-        setWithCheck(this.bro_id_remote_expected_keywords_text, default_remote_expected_keywords);
+        setWithCheck(this.bro_id_remote_ident_result_extract_regex_text, default_remote_extract_regex);
+        setWithCheck(this.bro_id_remote_resp_is_ok_status_text, default_remote_expected_status);
+        setWithCheck(this.bro_id_remote_resp_is_ok_keywords_text, default_remote_expected_keywords);
 
         //模拟禁用动作
         this.bro_id_captcha_identify_action(null);
