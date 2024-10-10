@@ -20,7 +20,7 @@ public class MyConst {
     public static String globalErrorCaptchaFilePath = null;   //记录验证错误的记录
 
     //设置配置参数名称
-    public static String globalProgramVersion = "NOVASEC 3.8 20241010" ;
+    public static String globalProgramVersion = "NOVASEC 3.8.1 20241010" ;
 
     //JxBrowser相关配置参数
     public static String globalBrowserProxy = null;
@@ -36,9 +36,9 @@ public class MyConst {
 
     public static String default_dict_compo_mode = null;      //指定字典组合方式 cartesian  pitchfork pair_file
 
-    public static final String const_pair_file = "pair_file";
-    public static final String const_pitchfork = "pitchfork";
-    public static final String const_cartesian = "cartesian"; //默认
+    public static final String const_pair_file = "pair_file"; //账号密码对文件
+    public static final String const_pitchfork = "pitchfork"; //账号密码对应模式，要求账号和密码文件数量相同，一般不用
+    public static final String const_cartesian = "cartesian"; //默认 交叉模式 常用
 
     public static String globalUserMarkInPass = "%USER%";  //密码内的用户名变量
     public static boolean globalExcludeHistorySwitch = false;    //是否排除历史爆破记录
