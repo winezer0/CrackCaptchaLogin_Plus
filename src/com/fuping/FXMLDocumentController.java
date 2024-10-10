@@ -373,7 +373,7 @@ public class FXMLDocumentController implements Initializable {
                         public void run() {
                             //输出加载中记录输出两次 UI重复,不是错误,是浏览器实际进行了主页和登录请求两次
                             String validatedURL = event.getValidatedURL();
-                            loading_status= String.format("%s<->%s", const_loading_start, validatedURL);
+                            loading_status = String.format("%s<->%s", const_loading_start, validatedURL);
                             printlnInfoOnUIAndConsole(String.format("Loading Status: %s %s", const_loading_start, validatedURL));
                             progressIndicator.setProgress(-1.0D);
                         }
@@ -387,7 +387,7 @@ public class FXMLDocumentController implements Initializable {
                     Platform.runLater(new Runnable() {
                         public void run() {
                             String validatedURL = event.getValidatedURL();
-                            loading_status= String.format("%s<->%s", const_loading_failed, validatedURL);
+                            loading_status = String.format("%s<->%s", const_loading_failed, validatedURL);
                             printlnErrorOnUIAndConsole(String.format("Loading Status: %s %s", const_loading_failed, validatedURL));
                             progressIndicator.setProgress(1.0D);
                         }
@@ -400,7 +400,7 @@ public class FXMLDocumentController implements Initializable {
                     Platform.runLater(new Runnable() {
                         public void run() {
                             String validatedURL = event.getValidatedURL();
-                            loading_status= String.format("%s<->%s", const_loading_finish, validatedURL);
+                            loading_status = String.format("%s<->%s", const_loading_finish, validatedURL);
                             printlnInfoOnUIAndConsole(String.format("Loading Status: %s %s", const_loading_finish, validatedURL));
                             progressIndicator.setProgress(1.0D);
                         }
@@ -489,7 +489,7 @@ public class FXMLDocumentController implements Initializable {
                     e.printStackTrace();
                 }
 
-                if( this.captchaBytes.isEmpty()){
+                if(this.captchaBytes.isEmpty()){
                     print_info(String.format("获取验证码数据失败 onDataReceived From [%s]", getReqURL));
                 }
             }
@@ -502,19 +502,28 @@ public class FXMLDocumentController implements Initializable {
                 String success_key = FXMLDocumentController.this.bro_id_success_regex_text.getText();
                 if(containsMatchingSubString(receive, success_key)){
                     crack_status = String.format("%s<->%s", const_login_success, paramDataReceivedParams.getURL());
-                    printlnInfoOnUIAndConsole(String.format("响应内容匹配: 登录成功 %s [Find:%s]",crack_status, success_key));
+                    printlnInfoOnUIAndConsole(String.format("响应内容匹配: 登录成功 %s [Find:%s]", crack_status, success_key));
+
+                    //自动指定当前页面加载状态为已完成
+                    loading_status = const_loading_finish;
                 }
 
                 String failure_key = FXMLDocumentController.this.bro_id_failure_regex_text.getText();
                 if(containsMatchingSubString(receive, failure_key)){
                     crack_status = String.format("%s<->%s", const_login_failure, paramDataReceivedParams.getURL());
-                    printlnErrorOnUIAndConsole(String.format("响应内容匹配: 登录失败 %s [Find:%s]",crack_status, failure_key));
+                    printlnErrorOnUIAndConsole(String.format("响应内容匹配: 登录失败 %s [Find:%s]", crack_status, failure_key));
+
+                    //自动指定当前页面加载状态为已完成
+                    loading_status = const_loading_finish;
                 }
 
                 String captcha_fail = FXMLDocumentController.this.bro_id_captcha_regex_text.getText();
                 if(containsMatchingSubString(receive, captcha_fail)){
                     crack_status = String.format("%s<->%s", const_error_captcha, paramDataReceivedParams.getURL());
-                    printlnErrorOnUIAndConsole(String.format("响应内容匹配: 验证码错误 %s [Find:%s]",crack_status, captcha_fail));
+                    printlnErrorOnUIAndConsole(String.format("响应内容匹配: 验证码错误 %s [Find:%s]", crack_status, captcha_fail));
+
+                    //自动指定当前页面加载状态为已完成
+                    loading_status = const_loading_finish;
                 }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -806,6 +815,7 @@ public class FXMLDocumentController implements Initializable {
                             //当验证码是错误的时候也需要重新加载页面，不然总是重新识别不出来,死循环
                             if(global_login_page_reload_per_time || !base_login_url.equals(browser.getURL()) || captcha_ident_was_error){
                                 try {
+                                    printlnInfoOnUIAndConsole("等待加载登录页面 By global_login_page_reload_per_time || !base_login_url.equals(browser.getURL()) || captcha_ident_was_error");
                                     Browser.invokeAndWaitFinishLoadingMainFrame(browser, new Callback<Browser>() {
                                         public void invoke(Browser browser) {
                                             browser.loadURL(base_login_url);
@@ -855,7 +865,7 @@ public class FXMLDocumentController implements Initializable {
                             if (FXMLDocumentController.this.bro_id_captcha_switch_check.isSelected()) {
                                 //captcha_data不存在
                                 if (FXMLDocumentController.this.captcha_data == null) {
-                                    printlnErrorOnUIAndConsole("获取验证码失败 (captcha数据为空)");
+                                    printlnErrorOnUIAndConsole("获取验证码失败 (数据为空) 重新测试...");
                                     captcha_ident_was_error = true;
                                     continue;
                                 }
@@ -864,6 +874,7 @@ public class FXMLDocumentController implements Initializable {
                                 String bro_captcha_ele_text = FXMLDocumentController.this.bro_id_captcha_ele_text.getText().trim();
                                 String bro_captcha_ele_type = FXMLDocumentController.this.bro_id_captcha_ele_type_combo.getValue();
                                 if (isEmptyIfStr(bro_captcha_ele_text)) {
+                                    printlnErrorOnUIAndConsole("验证码定位元素表单内容为空 请输入...");
                                     FXMLDocumentController.this.bro_id_user_ele_text.requestFocus();
                                     return;
                                 }
@@ -872,7 +883,7 @@ public class FXMLDocumentController implements Initializable {
                                 String captchaText = identCaptcha(bro_id_yzm_remote_ident_radio.isSelected(), null, FXMLDocumentController.this.captcha_data);
                                 //判断验证码 是否是否正确
                                 if(isEmptyIfStr(captchaText)){
-                                    printlnErrorOnUIAndConsole(String.format("跳过操作 验证码识别错误...", captchaText));
+                                    printlnErrorOnUIAndConsole(String.format("识别验证码失败 (结果为空) 重新测试...", captchaText));
                                     captcha_ident_was_error = true;
                                     continue;
                                 }
@@ -919,8 +930,8 @@ public class FXMLDocumentController implements Initializable {
                             //browser.executeCommand(EditorCommand.INSERT_NEW_LINE);
 
                             //点击按钮前先重置页面加载状态
-                            loading_status="";
-                            crack_status="";
+                            loading_status ="";
+                            crack_status ="";
 
                             //需要等待页面加载完毕
                             if (bro_id_submit_auto_wait_check.isSelected()){
@@ -939,8 +950,12 @@ public class FXMLDocumentController implements Initializable {
                                 }
                             } else {Thread.sleep((bro_submit_fixed_wait_time>0)?bro_submit_fixed_wait_time:2000);}
 
+
                             //设置 loading_status 为 const_loading_unknown
-                            if(isEmptyIfStr(loading_status)) loading_status = const_loading_unknown;
+                            if(isEmptyIfStr(loading_status)) {
+                                loading_status = const_loading_unknown;
+                                printlnErrorOnUIAndConsole(String.format("最终页面状态异常: [%s] 保留: [%s]", loading_status, bro_id_store_unknown_status_check.isSelected()));
+                            }
 
                             //输出加载状态
                             String cur_url = browser.getURL();
@@ -966,7 +981,7 @@ public class FXMLDocumentController implements Initializable {
                             );
                             writeLineToFile(globalCrackLogRecodeFilePath, content);
 
-                            print_info(String.format("crack_status:%s", crack_status));
+                            print_info(String.format("本次 Crack Login 状态: %s", crack_status));
 
                             //添加一个条件, 动态判断对于 const_loading_unknown 状态的是响应是否保存到结果中
                             if(loading_status.contains(const_loading_finish) || (bro_id_store_unknown_status_check.isSelected() && loading_status.contains(const_loading_unknown))){
