@@ -488,6 +488,10 @@ public class FXMLDocumentController implements Initializable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                if( this.captchaBytes.isEmpty()){
+                    print_info(String.format("获取验证码数据失败 onDataReceived From [%s]", getReqURL));
+                }
             }
 
             //检查登录关键字匹配状态
