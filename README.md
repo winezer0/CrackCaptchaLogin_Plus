@@ -117,6 +117,10 @@ java -Dconfig=xxx.prop -jar CrackCaptchaLogin.jar
 
 验证码时长度固定4位 并且都是数字字符 可以改为 [\w]{4}
 
+#### 保存异常识别状态
+
+当 提示密码错误和加载失败时，勾选
+
 
 ## 工具缺陷
 
