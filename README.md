@@ -117,9 +117,27 @@ java -Dconfig=xxx.prop -jar CrackCaptchaLogin.jar
 
 验证码时长度固定4位 并且都是数字字符 可以改为 [\w]{4}
 
-#### 保存异常识别状态
 
-当 提示密码错误和加载失败时，勾选
+## 一些特殊场景配置
+
+### 死循环提示密码错误和加载失败
+
+表明此时无法判断当前网页是否加载完毕、但是响应中提示了密码错误，
+
+解决方案： 勾选 保存异常识别状态 强制保存当前的结果
+
+### 需要cookie才能访问的登录页面
+直接访问 login.html 由于没有Cookie会失败的场景
+
+解决方案1： 配置文件中配置初始 Cookie
+```
+init_cookies=Cookie: PHPSESSID=cde568e4057972b8f1f1e7afae4baad1
+```
+解决方案2： 输入多个登录URL
+```
+login_url=http://1.1.1.1/admin||http://1.1.1.1/admin/login.html
+直接访问 login.html 由于没有Cookie会失败，访问/admin服务端会设置cookie然后跳转登录 /login.html
+```
 
 
 ## 工具缺陷
@@ -127,10 +145,5 @@ java -Dconfig=xxx.prop -jar CrackCaptchaLogin.jar
 目前仅实现单线程及单进程爆破，由于jxBrowser版本问题, 没有办法进行太多的自定义配置。
 
 如果需要多开爆破任务，就多开几个虚拟机操作
-
-
-## TODO
-
-实现全自动的浏览器卡顿重试，防止出现加载未成功就停止
 
 
