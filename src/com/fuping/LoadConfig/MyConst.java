@@ -20,12 +20,13 @@ public class MyConst {
     public static String globalErrorCaptchaFilePath = null;   //记录验证错误的记录
 
     //设置配置参数名称
-    public static String globalProgramVersion = "NOVASEC 3.8.4 20241011" ;
+    public static String globalProgramVersion = "NOVASEC 3.8.7 20241011" ;
 
     //JxBrowser相关配置参数
     public static String globalBrowserProxy = null;
     public static String globalBrowserUserAgent = null;
     public static boolean globalClearCookiesSwitch = false;
+    public static String globalBrowserInitCookies = null;
 
     //字典文件相关参数
     public static String globalUserNameFile = null;
@@ -66,8 +67,12 @@ public class MyConst {
     public static int global_login_page_load_time = 30;  //登录页面加载超时时间
     public static boolean global_login_page_load_timeout_rework = true; //登录页面加载超时是否重头再来
 
-
     public static int default_login_page_wait_time = 1000;  //登录页面加载后的等待时间
+
+    //查找定位元素的配置
+    public static Integer globalFindEleRetryTimes = null;
+    public static Integer globalFindEleDelayTime = null;
+
     //登录按钮点击后的等待时间
     public static boolean default_submit_auto_wait_switch = true; //是否自动等待模式常量
     public static int default_submit_fixed_wait_time = 2000; //常规模式下点击提交按钮后的 固定的等待时间
@@ -105,10 +110,10 @@ public class MyConst {
 
 
     //定义查找元素失败后的操作
-    public static String const_browser_close_action;     //浏览器关闭后的动作  break
-    public static String const_find_Ele_illegal_action;  //查找到不合法的动作时 continue
-    public static String const_find_Ele_null_action;     //没有找到元素对应的操作 continue
-    public static String const_find_Ele_exception_action; //发生其他异常时的动作 continue
+    public static String BROWSER_CLOSE_ACTION;     //浏览器关闭后的动作  break
+    public static String FIND_ELE_ILLEGAL_ACTION;  //查找到不合法的动作时 continue
+    public static String FIND_ELE_NULL_ACTION;     //没有找到元素对应的操作 continue
+    public static String FIND_ELE_EXCEPTION_ACTION; //发生其他异常时的动作 continue
 
 
     public MyConst(){
@@ -119,6 +124,8 @@ public class MyConst {
         globalBrowserUserAgent = configReader.getString("browser_ua", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36");
         //是否清理Cookie
         globalClearCookiesSwitch = configReader.isTrue("clear_cookies", false);
+        //浏览器初次打开时配置的Cookies数据
+        globalBrowserInitCookies = configReader.getString("init_cookies", null);
         //加载账号密码、文件路径
         globalUserNameFile = configReader.getString("user_name_file", null);
         globalPassWordFile = configReader.getString("pass_word_file", null);
@@ -178,10 +185,13 @@ public class MyConst {
         globalLocaleTessDataName = configReader.getString("locale_tess_data_name", null);
 
         //指定对应的操作
-        const_browser_close_action = configReader.getString("browser_close_action", "break");
-        const_find_Ele_illegal_action = configReader.getString("find_ele_illegal_action", "continue");
-        const_find_Ele_null_action = configReader.getString("find_ele_null_action", "continue");
-        const_find_Ele_exception_action = configReader.getString("find_ele_exception_action", "continue");
+        BROWSER_CLOSE_ACTION = configReader.getString("browser_close_action", "break");
+        FIND_ELE_ILLEGAL_ACTION = configReader.getString("find_ele_illegal_action", "continue");
+        FIND_ELE_NULL_ACTION = configReader.getString("find_ele_null_action", "continue");
+        FIND_ELE_EXCEPTION_ACTION = configReader.getString("find_ele_exception_action", "continue");
+
+        globalFindEleDelayTime = Integer.parseInt(configReader.getString("find_ele_delay_time", "500"));
+        globalFindEleRetryTimes = Integer.parseInt(configReader.getString("find_ele_retry_times", "6"));
 
         print_info("Loaded Config Finish...");
     }

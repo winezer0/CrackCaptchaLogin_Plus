@@ -5,6 +5,7 @@ import com.fuping.LoadDict.UserPassPair;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -252,6 +253,10 @@ public class Utils {
 
         //匹配失败
         return false;
+    }
+
+    public static boolean isEqualsOneKey(String stringFormat, List<String> elementsFormat) {
+        return elementsFormat.stream().anyMatch(stringFormat::equals);
     }
 
     public static void main(String[] args) {

@@ -149,6 +149,7 @@
                                        </value>
                                        <items>
                                           <FXCollections fx:factory="observableArrayList">
+                                             <Integer fx:value="100" />
                                              <Integer fx:value="500" />
                                              <Integer fx:value="1000" />
                                              <Integer fx:value="1500" />

@@ -8,6 +8,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -42,6 +43,10 @@ public class CrackCaptchaLogin extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(CrackCaptchaLogin.class.getResource("FXMLDocument.fxml"));
+
+        // 获取 ComboBox 控件
+
+
         primaryStage.setScene(new Scene(root, 1069, 652));
         primaryStage.setTitle(String.format("小米范验证码登录爆破工具(%s)", globalProgramVersion));
         primaryStage.setResizable(false);

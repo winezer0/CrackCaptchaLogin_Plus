@@ -33,9 +33,8 @@ import org.apache.http.util.ByteArrayBuffer;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.BrowserUtils.BrowserUtils.*;
@@ -55,8 +54,6 @@ public class FXMLDocumentController implements Initializable {
     public TextField bro_id_ident_format_regex_text;
     @FXML  //识别超时配置
     public ComboBox<Integer> bro_id_ident_time_out_combo;
-
-
     @FXML //远程识别接口地址
     public TextField bro_id_remote_ident_url_text;
     @FXML  //识别结果判断条件
@@ -148,6 +145,8 @@ public class FXMLDocumentController implements Initializable {
     private final String ERROR_CAPTCHA = "error_captcha";  //验证码错误常量
 
     private String base_login_url = null;  //设置当前登录url的全局变量用于后续调用
+    private List<String> login_about_urls = null;  //存储当前URL相关的多个URl
+
     private String base_captcha_url = null;  //设置当前登录验证码url用于后续调用
     private boolean captcha_ident_was_error = false; //设置当前验证码识别错误状态
 
@@ -191,7 +190,18 @@ public class FXMLDocumentController implements Initializable {
             }
         });
     }
-    //查找元素并输入
+
+    /**
+     * 查找元素并输入
+     * @ browser_close_action 浏览器关闭时的异常动作
+     * @ find_ele_illegal_action 页面中元素操作异常的动作
+     * @ find_ele_null_action 页面中没有找到元素的动作
+     * @ find_ele_exception_action 页面中元素操作其他异常的动作
+     * @param document 页面的文档对象
+     * @param locate_info 定位信息
+     * @param selectedOption 定位选项
+     * @param input_string 输入值
+     */
     private String findElementAndInput(DOMDocument document, String locate_info, String selectedOption, String input_string) {
         String action_string = "success";
         try {
@@ -205,20 +215,51 @@ public class FXMLDocumentController implements Initializable {
             String eMessage = illegalStateException.getMessage();
             System.out.println(eMessage);
             if (eMessage.contains("Channel is already closed")) {
-                printlnErrorOnUIAndConsole("浏览器已关闭 (IllegalStateException) 停止测试...");
-                action_string = const_browser_close_action;
+                action_string = BROWSER_CLOSE_ACTION;
+                printlnErrorOnUIAndConsole(String.format("浏览器已关闭 (IllegalStateException) 动作:[%s]", action_string));
             }else {
                 illegalStateException.printStackTrace();
-                action_string = const_find_Ele_illegal_action ;
+                action_string = FIND_ELE_ILLEGAL_ACTION;
+                printlnErrorOnUIAndConsole(String.format("illegal State Exception 动作:[%s]", action_string));
             }
         } catch (NullPointerException nullPointerException) {
-            printlnErrorOnUIAndConsole("定位元素失败 (nullPointerException) 停止测试...");
-            action_string = const_find_Ele_null_action;
+            action_string = FIND_ELE_NULL_ACTION;
+            printlnErrorOnUIAndConsole(String.format("定位元素失败 (nullPointerException) 动作:[%s]", action_string));
         } catch (Exception exception) {
             exception.printStackTrace();
-            action_string = const_find_Ele_exception_action;
+            action_string = FIND_ELE_EXCEPTION_ACTION;
+            printlnErrorOnUIAndConsole(String.format("未知定位异常 (unknown exception) 动作:[%s]", action_string));
         }
         return action_string;
+    }
+
+
+    /***
+     * 支持重试的元素查找方案
+     * maxRetries 尝试次数
+     * retryInterval 重试间隔时间，单位：毫秒
+     * @return
+     */
+    private String findElementAndInputWithRetries(DOMDocument document, String locateInfo, String selectedOption, String inputString, int maxRetries, long retryInterval) {
+
+        int retries = 0;
+        String action_status = "failure";
+
+        while (!"success".equalsIgnoreCase(action_status) && retries < maxRetries) {
+            action_status = findElementAndInput(document, locateInfo, selectedOption, inputString);
+            if ("success".equalsIgnoreCase(action_status)) { break; }
+
+            // 延迟500毫秒后重试
+            try {
+                TimeUnit.MILLISECONDS.sleep(retryInterval);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.out.println("Thread was interrupted during sleep.");
+            }
+
+            retries++;
+        }
+        return action_status;
     }
 
     //识别验证码的函数, 便于合并
@@ -432,6 +473,7 @@ public class FXMLDocumentController implements Initializable {
         }else {
             print_info("Browser Proxy Not Configured ...");
         }
+
         return browser;
     }
 
@@ -617,39 +659,65 @@ public class FXMLDocumentController implements Initializable {
         //设置登录框
         setWithCheck(this.bro_id_user_ele_text, default_name_ele_value);
         setWithCheck(this.bro_id_user_ele_type_combo, default_name_ele_type);
+        this.bro_id_user_ele_text.setTooltip(new Tooltip("账号框元素定位方式和对应值"));
+        this.bro_id_user_ele_type_combo.setTooltip(new Tooltip("账号框元素定位方式和对应值"));
+
         //设置密码框
         setWithCheck(this.bro_id_pass_ele_text, default_pass_ele_value);
         setWithCheck(this.bro_id_pass_ele_type_combo, default_pass_ele_type);
+        this.bro_id_pass_ele_text.setTooltip(new Tooltip("密码框元素定位方式和对应值"));
+        this.bro_id_pass_ele_type_combo.setTooltip(new Tooltip("密码框元素定位方式和对应值"));
+
         //设置提交按钮
         setWithCheck(this.bro_id_submit_ele_text, default_submit_ele_value);
         setWithCheck(this.bro_id_submit_ele_type_combo, default_submit_ele_type);
+        this.bro_id_submit_ele_text.setTooltip(new Tooltip("提交按钮元素定位方式和对应值"));
+        this.bro_id_submit_ele_type_combo.setTooltip(new Tooltip("提交按钮元素定位方式和对应值"));
+
         //设置浏览器选项
         setWithCheck(this.bro_id_show_browser_check, default_show_browser_switch);
+        this.bro_id_exclude_history_check.setTooltip(new Tooltip("显示浏览器到窗口"));
         setWithCheck(this.bro_id_exclude_history_check, globalExcludeHistorySwitch);
+        this.bro_id_exclude_history_check.setTooltip(new Tooltip("排除已测试的历史账号密码"));
 
         //设置是否保存默认状态
         setWithCheck(this.bro_id_store_unknown_status_check, default_store_unknown_load_status);
+        this.bro_id_store_unknown_status_check.setTooltip(new Tooltip("保存响应状态未知（程序无法确定登录结果）的结果"));
+
 
         setWithCheck(this.bro_id_login_page_wait_time_combo, default_login_page_wait_time);
+        // 创建并设置 Tooltip
+        this.bro_id_login_page_wait_time_combo.setTooltip(new Tooltip("请求间隔时间（毫秒）"));
+
         setWithCheck(this.bro_id_submit_fixed_wait_time_combo, default_submit_fixed_wait_time);
+        this.bro_id_submit_fixed_wait_time_combo.setTooltip(new Tooltip("提交等待时间（毫秒）"));
+
         setWithCheck(this.bro_id_submit_auto_wait_check, default_submit_auto_wait_switch);
+        this.bro_id_submit_auto_wait_check.setTooltip(new Tooltip("自动等待页面加载完成"));
 
         setWithCheck(this.bro_id_dict_compo_mode_combo, default_dict_compo_mode);
+        this.bro_id_dict_compo_mode_combo.setTooltip(new Tooltip("字典组合方式"));
+
         //设置关键字匹配
         setWithCheck(this.bro_id_success_regex_text, default_resp_key_success_regex);
         setWithCheck(this.bro_id_failure_regex_text, default_resp_key_failure_regex);
         setWithCheck(this.bro_id_captcha_regex_text, default_resp_key_captcha_regex);
         //设置验证码识别开关
         setWithCheck(this.bro_id_captcha_switch_check, default_ident_captcha_switch);
-        //设置验证码识别方式
+        this.bro_id_captcha_switch_check.setTooltip(new Tooltip("开启验证码识别功能"));
+//设置验证码识别方式
         setWithCheck(default_locale_identify_switch ? this.bro_id_locale_ident_flag_radio : this.bro_id_yzm_remote_ident_radio, true);
         //设置验证码属性
         setWithCheck(this.bro_id_captcha_url_text, default_captcha_url);
         setWithCheck(this.bro_id_captcha_ele_text, default_captcha_ele_value);
         setWithCheck(this.bro_id_captcha_ele_type_combo, default_captcha_ele_type);
+        this.bro_id_captcha_ele_text.setTooltip(new Tooltip("验证码输入框元素定位方式和对应值"));
+        this.bro_id_captcha_ele_type_combo.setTooltip(new Tooltip("验证码输入框元素定位方式和对应值"));
 
         //设置验证码配置细节
         setWithCheck(this.bro_id_ident_time_out_combo, default_ident_time_out);
+        this.bro_id_ident_time_out_combo.setTooltip(new Tooltip("验证码识别超时（毫秒）"));
+
         setWithCheck(this.bro_id_ident_format_regex_text, default_ident_format_regex);
         setWithCheck(this.bro_id_ident_format_length_text, default_ident_format_length);
         setWithCheck(this.bro_id_remote_ident_url_text, default_remote_ident_url);
@@ -715,6 +783,14 @@ public class FXMLDocumentController implements Initializable {
 
         //读取登录 URL
         base_login_url = this.id_login_url_text.getText().trim();
+
+        //支持在登录URL处输入多个URL,第一个URL用于登录访问,其他URL用于判断
+        if (base_login_url.contains("||")){
+            login_about_urls = Arrays.asList(base_login_url.split("\\|\\|"));
+            printlnInfoOnUIAndConsole(String.format("已指定多个登录相关URL:%s 访问URL为:%s", base_login_url, login_about_urls.get(0)));
+            base_login_url = login_about_urls.get(0);
+        }
+
         //登陆 URL 检查
         if (isEmptyIfStr(base_login_url) || !base_login_url.startsWith("http")) {
             new Alert(Alert.AlertType.NONE, "请输入完整的登录页面URL", new ButtonType[]{ButtonType.CLOSE}).show();
@@ -788,8 +864,7 @@ public class FXMLDocumentController implements Initializable {
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        //请求间隔设置
-                        Integer bro_login_page_wait_time = FXMLDocumentController.this.bro_id_login_page_wait_time_combo.getValue();
+                        //提交等待时间
                         Integer bro_submit_fixed_wait_time = FXMLDocumentController.this.bro_id_submit_fixed_wait_time_combo.getValue();
 
                         //遍历账号密码字典
@@ -805,18 +880,26 @@ public class FXMLDocumentController implements Initializable {
                             //输出当前即将测试的数据
                             printlnInfoOnUIAndConsole(String.format("当前进度 [%s/%s] <--> [%s] [%s]", index+1, globalUserPassPairsArray.length, userPassPair, base_login_url));
 
+                            //请求间隔设置
+                            Integer bro_login_page_wait_time = FXMLDocumentController.this.bro_id_login_page_wait_time_combo.getValue();
+
+                            //设置初始化Cookies字符串 用于满足Cookie不存在时不能直接访问登录页面的情况
+                            if (index==0 && globalBrowserInitCookies != null && !globalBrowserInitCookies.trim().isEmpty()){
+                                setBrowserCookies(browser, base_login_url, globalBrowserInitCookies);
+                            }
+
                             //清理所有Cookie //可能存在问题,比如验证码, 没有Cookie会怎么样呢?
-                            AutoClearAllCookies(browser);
+                            if (index>0 && globalClearCookiesSwitch){clearCookieStorage(browser); }
 
                             //清空上一次记录的的验证码数据 //清空的话会导致没有加载页面的时候验证码图片没有值
                             //FXMLDocumentController.this.captcha_data = null;
 
 
                             //加载登录URL
-                            //判断当前页面是不是登录页面 当前页面不是登录页时重新加载登录页面
+                            //判断当前页面是不是登录页面 当前页面不是登录页[或登录相关]时重新加载登录页面
                             //当用户指定了 global_login_page_reload_per_time 时，重新加载页面
                             //当验证码是错误的时候也需要重新加载页面，不然总是重新识别不出来,死循环
-                            if(global_login_page_reload_per_time || !base_login_url.equals(browser.getURL()) || captcha_ident_was_error){
+                            if(global_login_page_reload_per_time ||!isEqualsOneKey(browser.getURL(),login_about_urls)|| captcha_ident_was_error){
                                 try {
                                     printlnInfoOnUIAndConsole("等待加载登录页面 By global_login_page_reload_per_time || !base_login_url.equals(browser.getURL()) || captcha_ident_was_error");
                                     Browser.invokeAndWaitFinishLoadingMainFrame(browser, new Callback<Browser>() {
@@ -850,17 +933,21 @@ public class FXMLDocumentController implements Initializable {
                                 }
 
                                 //进行线程延迟 //等待页面加载完毕//原则上是可以不需要的
-                                Thread.sleep((bro_login_page_wait_time>0)?bro_login_page_wait_time:0);
+                                Thread.sleep(bro_login_page_wait_time);
+                            }else {
+                                //进行线程延迟
+                                Thread.sleep(bro_login_page_wait_time + 1000);
                             }
 
                             //加载URl文档
                             DOMDocument document = browser.getDocument();
                             //输入用户名
                             String action_status;
-                            action_status = findElementAndInput(document, bro_user_ele_text, bro_user_ele_type, userPassPair.getUsername());
+                            action_status = findElementAndInputWithRetries(document, bro_user_ele_text, bro_user_ele_type, userPassPair.getUsername(), globalFindEleRetryTimes, globalFindEleDelayTime);
                             //处理资源寻找状态
                             if(!"success".equalsIgnoreCase(action_status)){
                                 printlnErrorOnUIAndConsole(String.format("Error For Location [USERNAME] [%s] <--> Action: [%s]", bro_user_ele_text, action_status));
+
                                 //查找元素错误时的处理 继续还是中断
                                 if("break".equalsIgnoreCase(action_status)) {break;} else if("continue".equalsIgnoreCase(action_status)){continue;} else {continue;}
                             }else{
@@ -868,7 +955,7 @@ public class FXMLDocumentController implements Initializable {
                             }
 
                             //查找密码输入框
-                            action_status = findElementAndInput(document, bro_pass_ele_text, bro_pass_ele_type, userPassPair.getPassword());
+                            action_status = findElementAndInputWithRetries(document, bro_pass_ele_text, bro_pass_ele_type, userPassPair.getPassword(), globalFindEleRetryTimes, globalFindEleDelayTime);
                             //处理资源寻找状态
                             if(!"success".equalsIgnoreCase(action_status)){
                                 printlnErrorOnUIAndConsole(String.format("Error For Location [PASSWORD] [%s] <--> Action: [%s]", bro_pass_ele_text, action_status));
@@ -906,7 +993,8 @@ public class FXMLDocumentController implements Initializable {
                                 }
 
                                 //输入验证码元素 并检查输入状态
-                                action_status = findElementAndInput(document,bro_captcha_ele_text, bro_captcha_ele_type, captchaText);
+                                action_status = findElementAndInputWithRetries(document,bro_captcha_ele_text, bro_captcha_ele_type, captchaText, globalFindEleRetryTimes, globalFindEleDelayTime);
+
                                 //处理资源寻找状态
                                 if(!"success".equalsIgnoreCase(action_status)){
                                     printlnErrorOnUIAndConsole(String.format("Error For Location [CAPTCHA] [%s] <--> Action: [%s]", bro_captcha_ele_text, action_status));
@@ -932,7 +1020,7 @@ public class FXMLDocumentController implements Initializable {
                                 } catch (IllegalStateException illegalStateException) {
                                     illegalStateException.printStackTrace();
                                     printlnErrorOnUIAndConsole("Error For document.findElement(By.cssSelector(\"[type=submit]\")).click()");
-                                    submit_status = const_find_Ele_null_action;
+                                    submit_status = FIND_ELE_NULL_ACTION;
                                 }
                             } finally {
                                 //处理按钮点击状态
