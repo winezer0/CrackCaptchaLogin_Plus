@@ -789,7 +789,10 @@ public class FXMLDocumentController implements Initializable {
             login_about_urls = Arrays.asList(base_login_url.split("\\|\\|"));
             printlnInfoOnUIAndConsole(String.format("已指定多个登录相关URL:%s 访问URL为:%s", base_login_url, login_about_urls.get(0)));
             base_login_url = login_about_urls.get(0);
+        } else{
+            login_about_urls = Collections.singletonList(base_login_url);
         }
+
 
         //登陆 URL 检查
         if (isEmptyIfStr(base_login_url) || !base_login_url.startsWith("http")) {
