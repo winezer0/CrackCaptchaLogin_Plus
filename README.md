@@ -129,7 +129,8 @@ java -Dconfig=xxx.prop -jar CrackCaptchaLogin.jar
 如果需要多开爆破任务，就多开几个虚拟机操作
 
 
+## TODO
 
-
+实现全自动的浏览器卡顿重试，防止出现加载未成功就停止
 
 

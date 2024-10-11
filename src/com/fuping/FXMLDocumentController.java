@@ -826,15 +826,27 @@ public class FXMLDocumentController implements Initializable {
                                     }, global_login_page_load_time);
                                 } catch (IllegalStateException illegalStateException) {
                                     String illegalStateExceptionMessage = illegalStateException.getMessage();
-                                    System.out.println(illegalStateExceptionMessage);
+
+                                    //状态异常是否重新开始
                                     if (illegalStateExceptionMessage.contains("Channel is already closed")) {
                                         printlnErrorOnUIAndConsole("停止测试, 请点击按钮重新开始");
                                         break;
+                                    } else {
+                                        printlnErrorOnUIAndConsole(String.format("重新测试, %s", illegalStateExceptionMessage));
+                                        continue;
                                     }
+
                                 } catch (Exception exception) {
-                                    printlnErrorOnUIAndConsole("访问超时, 请检查网络设置状态");
                                     exception.printStackTrace();
-                                    if(global_login_page_load_timeout_rework) continue;
+
+                                    //登录页面加载超时是否重头再来
+                                    if(global_login_page_load_timeout_rework) {
+                                        printlnErrorOnUIAndConsole("访问超时-重新测试, 请检查网络设置状态");
+                                        continue;
+                                    } else {
+                                        printlnErrorOnUIAndConsole("访问超时-停止测试, 请检查网络设置状态");
+                                        break;
+                                    }
                                 }
 
                                 //进行线程延迟 //等待页面加载完毕//原则上是可以不需要的
@@ -849,7 +861,8 @@ public class FXMLDocumentController implements Initializable {
                             //处理资源寻找状态
                             if(!"success".equalsIgnoreCase(action_status)){
                                 printlnErrorOnUIAndConsole(String.format("Error For Location [USERNAME] [%s] <--> Action: [%s]", bro_user_ele_text, action_status));
-                                if("break".equalsIgnoreCase(action_status)) break; else if("continue".equalsIgnoreCase(action_status)) continue;
+                                //查找元素错误时的处理 继续还是中断
+                                if("break".equalsIgnoreCase(action_status)) {break;} else if("continue".equalsIgnoreCase(action_status)){continue;} else {continue;}
                             }else{
                                 print_info("find [USERNAME] Element And Input Success ...");
                             }
@@ -859,7 +872,8 @@ public class FXMLDocumentController implements Initializable {
                             //处理资源寻找状态
                             if(!"success".equalsIgnoreCase(action_status)){
                                 printlnErrorOnUIAndConsole(String.format("Error For Location [PASSWORD] [%s] <--> Action: [%s]", bro_pass_ele_text, action_status));
-                                if("break".equalsIgnoreCase(action_status)) break; else if("continue".equalsIgnoreCase(action_status)) continue;
+                                //查找元素错误时的处理 继续还是中断
+                                if("break".equalsIgnoreCase(action_status)) {break;} else if("continue".equalsIgnoreCase(action_status)){continue;} else {continue;}
                             }else{
                                 print_info("find [PASSWORD] Element And Input Success ...");
                             }
@@ -896,7 +910,8 @@ public class FXMLDocumentController implements Initializable {
                                 //处理资源寻找状态
                                 if(!"success".equalsIgnoreCase(action_status)){
                                     printlnErrorOnUIAndConsole(String.format("Error For Location [CAPTCHA] [%s] <--> Action: [%s]", bro_captcha_ele_text, action_status));
-                                    if("break".equalsIgnoreCase(action_status)) break; else if("continue".equalsIgnoreCase(action_status)) continue;
+                                    //查找元素错误时的处理 继续还是中断
+                                    if("break".equalsIgnoreCase(action_status)) {break;} else if("continue".equalsIgnoreCase(action_status)){continue;} else {continue;}
                                 }else{
                                     print_info("find [CAPTCHA] Element And Input Success ...");
                                 }
@@ -923,7 +938,8 @@ public class FXMLDocumentController implements Initializable {
                                 //处理按钮点击状态
                                 if(!"success".equalsIgnoreCase(submit_status)){
                                     printlnErrorOnUIAndConsole(String.format("Error For Location [SUBMIT] [%s] <--> Action: [%s]", bro_submit_ele_text, submit_status));
-                                    if("break".equalsIgnoreCase(submit_status)) break; else if("continue".equalsIgnoreCase(submit_status)) continue;
+                                    //查找元素错误时的处理 继续还是中断
+                                    if("break".equalsIgnoreCase(action_status)) {break;} else if("continue".equalsIgnoreCase(action_status)){continue;} else {continue;}
                                 }else{
                                     print_info("find [SUBMIT] Element And Input Success ...");
                                 }
