@@ -121,7 +121,7 @@ public class Utils {
             String userMarkInPass){
         //读取 history 文件,排除历史扫描记录 ，
         if (exclude_history) {
-            pairsHashSet = excludeHistoryPairs(pairsHashSet,  historyFile, separator);
+            pairsHashSet = excludeHistoryPairs(pairsHashSet, historyFile, separator);
             print_info(String.format("Pairs Count After Exclude History [%s] From [%s]", pairsHashSet.size(), historyFile));
         }
 

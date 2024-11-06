@@ -115,13 +115,13 @@ public class LoadDictUtils {
         return userPassPairs;
     }
 
-    public static HashSet<UserPassPair> excludeHistoryPairs(HashSet<UserPassPair> rawPairs, String historyFile, String separator) {
-        HashSet<UserPassPair> userPassPairs = rawPairs;
+    public static HashSet<UserPassPair> excludeHistoryPairs(HashSet<UserPassPair> rawUserPassPairs, String historyFile, String separator) {
+        HashSet<UserPassPair> userPassPairs = rawUserPassPairs;
         //处理历史账号密码对文件
         if (isNotEmptyFile(historyFile)){
             List<String> hisUserPassPairList =  readDictFile(historyFile);
             HashSet<UserPassPair> hisUserPassPairs = splitAndCreatUserPassPairs(hisUserPassPairList, separator);
-            userPassPairs = subtractHashSet(rawPairs, hisUserPassPairs);
+            userPassPairs = subtractHashSet(rawUserPassPairs, hisUserPassPairs);
         }
         return userPassPairs;
     }
