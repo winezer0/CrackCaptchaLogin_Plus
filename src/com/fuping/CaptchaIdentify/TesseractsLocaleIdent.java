@@ -1,5 +1,7 @@
 package com.fuping.CaptchaIdentify;
 
+import com.fuping.CommonUtils.MyFileUtils;
+import com.fuping.CommonUtils.ElementUtils;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
@@ -16,26 +18,26 @@ import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class TesseractsLocaleIdent {
     public static String localeIdentCaptcha(byte[] captcha_data, String expectedRegex, String expectedLength, String tessDataName) {
-        String imagePath = getFileStrAbsolutePath("captcha.png");
+        String imagePath = MyFileUtils.getFileStrAbsolutePath("captcha.png");
         imagePath = writeBytesToFile(imagePath, captcha_data);
         return localeIdentCaptcha(imagePath, expectedRegex, expectedLength, tessDataName);
     }
 
     public static String localeIdentCaptcha(String pngImagePath, String expectedRegex, String expectedLength, String tessDataName) {
-        pngImagePath = getFileStrAbsolutePath(pngImagePath);
+        pngImagePath = MyFileUtils.getFileStrAbsolutePath(pngImagePath);
         //将保存的图片转换为jpg
         try {
             BufferedImage img = ImageIO.read(new File(pngImagePath));
-            String jpgImagePath = getFileStrAbsolutePath("captcha.jpg");
+            String jpgImagePath = MyFileUtils.getFileStrAbsolutePath("captcha.jpg");
             ImageIO.write(img, "JPG", new File(jpgImagePath));
             img = ImageIO.read(new File(jpgImagePath));
             //创建 TesseractsOcr 实例
             ITesseract tesseracts = new Tesseract();
 
             //设置识别数据集的路径
-            if(isNotEmptyIfStr(tessDataName)){
-                String dataAbsolutePat = getFileStrAbsolutePath(String.format("tessdata%s%s.traineddata", File.separator, tessDataName));
-                if( isNotEmptyFile(dataAbsolutePat)){
+            if(ElementUtils.isNotEmptyIfStr(tessDataName)){
+                String dataAbsolutePat = MyFileUtils.getFileStrAbsolutePath(String.format("tessdata%s%s.traineddata", File.separator, tessDataName));
+                if( MyFileUtils.isNotEmptyFile(dataAbsolutePat)){
                     //tesseracts.setDatapath(tessDataPath);  //存在依赖,提示要设置环境变量, 弃用
                     tesseracts.setLanguage(tessDataName); //直接设置语言前缀
                     print_info(String.format("Use Found TessData From Name:[%s] On Path:[%s]", tessDataName, dataAbsolutePat));
@@ -46,7 +48,7 @@ public class TesseractsLocaleIdent {
 
             String captchaResult = tesseracts.doOCR(img).replace(" ", "").replace("\n", "");
             //当前 ExpectedRegex 不为空时, 判断验证码是否符合正则
-            if (isNotEmptyIfStr(expectedRegex) && !containsMatchingSubString(captchaResult, expectedRegex)) {
+            if (ElementUtils.isNotEmptyIfStr(expectedRegex) && !ElementUtils.isContainOneKeyByRegex(captchaResult, expectedRegex)) {
                 print_error(String.format("格式错误: [%s] <--> [%s]", expectedRegex, captchaResult));
                 return null;
             }

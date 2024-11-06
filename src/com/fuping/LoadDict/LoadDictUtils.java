@@ -1,6 +1,7 @@
 package com.fuping.LoadDict;
 
 import cn.hutool.core.io.FileUtil;
+import com.fuping.CommonUtils.MyFileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -9,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
-import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.LoadConfig.MyConst.const_pair_file;
 import static com.fuping.LoadConfig.MyConst.const_pitchfork;
 import static com.fuping.PrintLog.PrintLog.print_error;
@@ -18,17 +18,17 @@ import static com.fuping.PrintLog.PrintLog.print_info;
 public class LoadDictUtils {
     public static List<String> readDictFile(String filePath) {
         // 读取文件内容到列表
-        String absolutePath = getFileStrAbsolutePath(filePath);
+        String absolutePath = MyFileUtils.getFileStrAbsolutePath(filePath);
 
         //判断文件是否存在
-        if (isEmptyFile(absolutePath)){
+        if (MyFileUtils.isEmptyFile(absolutePath)){
             print_error(String.format("File Not Found Or Read Empty From [%s]", absolutePath));
             System.exit(0);
             return null;
         }
 
         //检查文件编码
-        String checkEncode = checkFileEncode(absolutePath, "UTF-8");
+        String checkEncode = MyFileUtils.checkFileEncode(absolutePath, "UTF-8");
         // 读取文件内容到列表
         List<String> baseLines = FileUtil.readLines(absolutePath, checkEncode);
         List<String> newLines = new ArrayList<>();
@@ -118,7 +118,7 @@ public class LoadDictUtils {
     public static HashSet<UserPassPair> excludeHistoryPairs(HashSet<UserPassPair> rawUserPassPairs, String historyFile, String separator) {
         HashSet<UserPassPair> userPassPairs = rawUserPassPairs;
         //处理历史账号密码对文件
-        if (isNotEmptyFile(historyFile)){
+        if (MyFileUtils.isNotEmptyFile(historyFile)){
             List<String> hisUserPassPairList =  readDictFile(historyFile);
             HashSet<UserPassPair> hisUserPassPairs = splitAndCreatUserPassPairs(hisUserPassPairList, separator);
             userPassPairs = subtractHashSet(rawUserPassPairs, hisUserPassPairs);

@@ -3,6 +3,8 @@ package com.fuping.CaptchaIdentify;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
+import com.fuping.CommonUtils.MyFileUtils;
+import com.fuping.CommonUtils.ElementUtils;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.CaptchaIdentify.CaptchaUtils.imageToBase64;
@@ -29,12 +31,12 @@ public class RemoteApiIdent {
             String responseBody = response.body();
 
             //当前 ExpectedStatus 不为空时, 判断响应状态码是否包含关键字正则
-            if (isNotEmptyIfStr(ExpectedStatus) && !containsMatchingSubString(String.valueOf(statusCode), ExpectedStatus)) {
+            if (ElementUtils.isNotEmptyIfStr(ExpectedStatus) && !ElementUtils.isContainOneKeyByRegex(String.valueOf(statusCode), ExpectedStatus)) {
                 print_error(String.format("异常状态: [%s] <--> [%s]", ExpectedStatus, statusCode));
                 return null;
             }
             //当前 ExpectedKeywords 不为空时, 判断响应体是否包含关键字正则
-            if (isNotEmptyIfStr(ExpectedKeywords) && !containsMatchingSubString(responseBody, ExpectedKeywords)) {
+            if (ElementUtils.isNotEmptyIfStr(ExpectedKeywords) && !ElementUtils.isContainOneKeyByRegex(responseBody, ExpectedKeywords)) {
                 print_error(String.format("异常内容: [%s] <--> [%s]", ExpectedKeywords, responseBody));
                 return null;
             }
@@ -52,7 +54,7 @@ public class RemoteApiIdent {
                                              String expectedRegex, String expectedLength,
                                              Integer ident_time_out){
 
-        String imagePath = getFileStrAbsolutePath("captcha.png");
+        String imagePath = MyFileUtils.getFileStrAbsolutePath("captcha.png");
         imagePath = writeBytesToFile(imagePath, captcha_data);
         return remoteIndentCaptcha(imagePath, remoteApi, expectedStatus, expectedKeywords, extractRegex, expectedRegex, expectedLength, ident_time_out);
     }
@@ -75,7 +77,7 @@ public class RemoteApiIdent {
                                              Integer ident_time_out){
 
         //从绝地路径提取
-        imagePath = getFileStrAbsolutePath(imagePath);
+        imagePath = MyFileUtils.getFileStrAbsolutePath(imagePath);
 
         //转base64处理
         String base64Image = imageToBase64(imagePath);
@@ -99,7 +101,7 @@ public class RemoteApiIdent {
         }
 
         //当前 ExpectedRegex 不为空时, 判断验证码是否符合正则
-        if (isNotEmptyIfStr(expectedRegex) && !containsMatchingSubString(captchaResult, expectedRegex)) {
+        if (ElementUtils.isNotEmptyIfStr(expectedRegex) && !ElementUtils.isContainOneKeyByRegex(captchaResult, expectedRegex)) {
             print_error(String.format("识别错误: 结果[%s] <--> 期望格式:[%s]", captchaResult, expectedRegex));
             return null;
         }

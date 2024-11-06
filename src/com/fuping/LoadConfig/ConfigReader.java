@@ -2,12 +2,13 @@ package com.fuping.LoadConfig;
 
 
 import cn.hutool.core.io.FileUtil;
+import com.fuping.CommonUtils.MyFileUtils;
+import com.fuping.CommonUtils.ElementUtils;
 
 import java.io.*;
 import java.util.Properties;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
-import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.PrintLog.PrintLog.print_error;
 import static com.fuping.PrintLog.PrintLog.print_info;
 
@@ -19,7 +20,7 @@ public class ConfigReader {
         //properties = new Properties();
         properties = new Properties();
         //获取配置文件的物理路径
-        String absolutePath = getFileStrAbsolutePath(configFile);
+        String absolutePath = MyFileUtils.getFileStrAbsolutePath(configFile);
 
         //判断文件是否存在 //不存在就进行创建
         if (FileUtil.exist(absolutePath)) {
@@ -31,7 +32,7 @@ public class ConfigReader {
 
         try {
             //监测文件编码
-            String checkEncode = checkFileEncode(absolutePath, "UTF-8");
+            String checkEncode = MyFileUtils.checkFileEncode(absolutePath, "UTF-8");
             //读取文件内容
             InputStream input = new FileInputStream(absolutePath);
             InputStreamReader reader = new InputStreamReader(input, checkEncode);
@@ -72,14 +73,14 @@ public class ConfigReader {
     public String getString(String paramString, String defaultValue) {
         //先从系统参数中文件获取
         String ParamValue =  getSystemString(paramString);
-        if (isNotEmptyIfStr(ParamValue)){
+        if (ElementUtils.isNotEmptyIfStr(ParamValue)){
             print_info(String.format("Get Param Value From [System Property]: %s=%s", paramString, ParamValue));
             return ParamValue;
         }
 
         //再从配置文件中获取
         ParamValue = getPropString(paramString);
-        if (isNotEmptyIfStr(ParamValue) && !"null".equalsIgnoreCase(ParamValue)){
+        if (ElementUtils.isNotEmptyIfStr(ParamValue) && !"null".equalsIgnoreCase(ParamValue)){
             print_info(String.format("Get Param Value From [Config Property]: %s=%s", paramString, ParamValue));
             return ParamValue;
         }

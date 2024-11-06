@@ -1,7 +1,8 @@
 package com.fuping;
 
 import com.fuping.BrowserUtils.MyDialogHandler;
-import com.fuping.CommonUtils.Utils;
+import com.fuping.CommonUtils.MyFileUtils;
+import com.fuping.CommonUtils.ElementUtils;
 import com.fuping.LoadDict.UserPassPair;
 import com.teamdev.jxbrowser.chromium.Callback;
 import com.teamdev.jxbrowser.chromium.*;
@@ -288,7 +289,7 @@ public class FXMLDocumentController implements Initializable {
 
             try {
                 //识别图片地址
-                if (isNotEmptyIfStr(imagePath)){
+                if (ElementUtils.isNotEmptyIfStr(imagePath)){
                     captcha_indent_text = remoteIndentCaptcha(
                             imagePath,
                             remote_ident_url_text,
@@ -317,7 +318,7 @@ public class FXMLDocumentController implements Initializable {
             }
         } else {
             try {
-                if (isNotEmptyIfStr(imagePath)){
+                if (ElementUtils.isNotEmptyIfStr(imagePath)){
                     captcha_indent_text = localeIdentCaptcha(imagePath, ident_format_regex, ident_format_length, globalLocaleTessDataName);
                 } else {
                     captcha_indent_text = localeIdentCaptcha(imageBytes, ident_format_regex, ident_format_length, globalLocaleTessDataName);
@@ -464,7 +465,7 @@ public class FXMLDocumentController implements Initializable {
        //添加响应这状态码监听事件 //addStatusListener 没有获取到任何数据 //放弃使用
 
         //浏览器代理设置
-        if (isNotEmptyIfStr(browserProxyString)) {
+        if (ElementUtils.isNotEmptyIfStr(browserProxyString)) {
             //参考 使用代理 https://www.kancloud.cn/neoman/ui/802531
             //转换输入的代理格式
             browserProxyString = browserProxyString.replace("://","=");
@@ -511,7 +512,7 @@ public class FXMLDocumentController implements Initializable {
             //发送请求前动作
             String getReqURL = paramBeforeSendHeadersParams.getURL();
             //需要判断那think php的情况，baseurl都是一样的，不能作为验证码图片URL
-            if (base_captcha_url != null && Utils.isSimilarLink(getReqURL, base_captcha_url)) {
+            if (base_captcha_url != null && ElementUtils.isSimilarLink(getReqURL, base_captcha_url)) {
                 this.captchaBytes.clear();
                 paramBeforeSendHeadersParams.getHeadersEx().setHeader("Accept-Encoding", "");
                 print_info(String.format("正在发起验证码请求 BeforeSendHeaders:%s", getReqURL));
@@ -523,7 +524,7 @@ public class FXMLDocumentController implements Initializable {
 
             //存储验证码数据
             String getReqURL = paramDataReceivedParams.getURL();
-            if (base_captcha_url != null && Utils.isSimilarLink(getReqURL, base_captcha_url)) {
+            if (base_captcha_url != null && ElementUtils.isSimilarLink(getReqURL, base_captcha_url)) {
                 try {
                     FXMLDocumentController.this.captcha_data = paramDataReceivedParams.getData();
                     this.captchaBytes.append(FXMLDocumentController.this.captcha_data, 0, FXMLDocumentController.this.captcha_data.length);
@@ -545,8 +546,7 @@ public class FXMLDocumentController implements Initializable {
             try {
                 String receive = new String(paramDataReceivedParams.getData(), charset);
                 String success_key = FXMLDocumentController.this.bro_id_success_regex_text.getText();
-                if(containsMatchingSubString(receive, success_key)){
-                if(isContainOneKey(receive, success_key, false)){
+                if(ElementUtils.isContainOneKeyByEach(receive, success_key, false)){
                     crack_status = String.format("%s<->%s", LOGIN_SUCCESS, paramDataReceivedParams.getURL());
                     printlnInfoOnUIAndConsole(String.format("响应内容匹配: 登录成功 %s [Find:%s]", crack_status, success_key));
 
@@ -555,7 +555,7 @@ public class FXMLDocumentController implements Initializable {
                 }
 
                 String failure_key = FXMLDocumentController.this.bro_id_failure_regex_text.getText();
-                if(isContainOneKey(receive, failure_key, false)){
+                if(ElementUtils.isContainOneKeyByEach(receive, failure_key, false)){
                     crack_status = String.format("%s<->%s", LOGIN_FAILURE, paramDataReceivedParams.getURL());
                     printlnErrorOnUIAndConsole(String.format("响应内容匹配: 登录失败 %s [Find:%s]", crack_status, failure_key));
 
@@ -564,7 +564,7 @@ public class FXMLDocumentController implements Initializable {
                 }
 
                 String captcha_fail = FXMLDocumentController.this.bro_id_captcha_regex_text.getText();
-                if(isContainOneKey(receive, captcha_fail, false)){
+                if(ElementUtils.isContainOneKeyByEach(receive, captcha_fail, false)){
                     crack_status = String.format("%s<->%s", ERROR_CAPTCHA, paramDataReceivedParams.getURL());
                     printlnErrorOnUIAndConsole(String.format("响应内容匹配: 验证码错误 %s [Find:%s]", crack_status, captcha_fail));
 
@@ -801,19 +801,19 @@ public class FXMLDocumentController implements Initializable {
             return;
         }
         //基于登录URL初始化|URL更新|日志文件配置
-        initBaseOnLoginUrlFile(base_login_url);
+        MyFileUtils.initBaseOnLoginUrlFile(base_login_url);
 
         //检查是否存在关键按钮信息修改,(都需要更新到全局变量做记录),并且重新更新加载字典
-        boolean isModifiedAuthFile = isModifiedAuthFile(); //字典文件是否修改
+        boolean isModifiedAuthFile = MyFileUtils.isModifiedAuthFile(); //字典文件是否修改
         //print_info(String.format("isModifiedAuthFile %s", isModifiedAuthFile));
 
-        boolean isModifiedLoginUrl = isModifiedLoginUrl(base_login_url); //登录URL是否修改
+        boolean isModifiedLoginUrl = MyFileUtils.isModifiedLoginUrl(base_login_url); //登录URL是否修改
         //print_info(String.format("isModifiedLoginUrl %s", isModifiedLoginUrl));
 
-        boolean isModifiedDictMode = isModifiedDictMode(this.bro_id_dict_compo_mode_combo.getValue()); //字典模式是否修改
+        boolean isModifiedDictMode = MyFileUtils.isModifiedDictMode(this.bro_id_dict_compo_mode_combo.getValue()); //字典模式是否修改
         //print_info(String.format("isModifiedDictMode %s", isModifiedDictMode));
 
-        boolean isModifiedExcludeHistory = isModifiedExcludeHistory(this.bro_id_exclude_history_check.isSelected());//排除历史状态是否修改
+        boolean isModifiedExcludeHistory = MyFileUtils.isModifiedExcludeHistory(this.bro_id_exclude_history_check.isSelected());//排除历史状态是否修改
         //print_info(String.format("isModifiedExcludeHistory %s", isModifiedExcludeHistory));
 
         if(globalExcludeHistorySwitch ||isModifiedAuthFile||isModifiedLoginUrl||isModifiedDictMode||isModifiedExcludeHistory){
@@ -903,7 +903,7 @@ public class FXMLDocumentController implements Initializable {
                             //判断当前页面是不是登录页面 当前页面不是登录页[或登录相关]时重新加载登录页面
                             //当用户指定了 global_login_page_reload_per_time 时，重新加载页面
                             //当验证码是错误的时候也需要重新加载页面，不然总是重新识别不出来,死循环
-                            if(global_login_page_reload_per_time ||!isEqualsOneKey(browser.getURL(),login_about_urls)|| captcha_ident_was_error){
+                            if(global_login_page_reload_per_time ||!ElementUtils.isEqualsOneKey(browser.getURL(),login_about_urls)|| captcha_ident_was_error){
                                 try {
                                     printlnInfoOnUIAndConsole("等待加载登录页面 By global_login_page_reload_per_time || !base_login_url.equals(browser.getURL()) || captcha_ident_was_error");
                                     Browser.invokeAndWaitFinishLoadingMainFrame(browser, new Callback<Browser>() {
@@ -1079,7 +1079,7 @@ public class FXMLDocumentController implements Initializable {
                             boolean isPageForward = !urlRemoveQuery(base_login_url).equalsIgnoreCase(urlRemoveQuery(cur_url));
                             //进行日志记录
                             String title = "是否跳转,登录URL,测试账号,测试密码,跳转URL,网页标题,内容长度,爆破状态,加载状态";
-                            writeTitleToFile(globalCrackLogRecodeFilePath, title);
+                            MyFileUtils.writeTitleToFile(globalCrackLogRecodeFilePath, title);
 
                             String content = String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"",
                                     escapeString(isPageForward),
@@ -1092,7 +1092,7 @@ public class FXMLDocumentController implements Initializable {
                                     escapeString(crack_status),
                                     escapeString(loading_status)
                             );
-                            writeLineToFile(globalCrackLogRecodeFilePath, content);
+                            MyFileUtils.writeLineToFile(globalCrackLogRecodeFilePath, content);
 
                             print_info(String.format("本次 Crack Login 状态: %s", crack_status));
 
@@ -1101,16 +1101,16 @@ public class FXMLDocumentController implements Initializable {
                                 //判断登录状态是否时验证码码错误,是的话,就不能记录到爆破历史中
                                 if(crack_status.contains(ERROR_CAPTCHA)){
                                     captcha_ident_was_error = true;
-                                    writeUserPassPairToFile(globalErrorCaptchaFilePath, globalPairSeparator, userPassPair);
+                                    MyFileUtils.writeUserPassPairToFile(globalErrorCaptchaFilePath, globalPairSeparator, userPassPair);
                                     printlnErrorOnUIAndConsole(String.format("验证码错误|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", base_login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
                                 }else {
                                     //进行爆破历史记录
-                                    writeUserPassPairToFile(globalCrackHistoryFilePath, globalPairSeparator, userPassPair);
+                                    MyFileUtils.writeUserPassPairToFile(globalCrackHistoryFilePath, globalPairSeparator, userPassPair);
                                     if(crack_status.contains(LOGIN_SUCCESS)){
-                                        writeUserPassPairToFile(globalLoginSuccessFilePath, globalPairSeparator, userPassPair);
+                                        MyFileUtils.writeUserPassPairToFile(globalLoginSuccessFilePath, globalPairSeparator, userPassPair);
                                         printlnInfoOnUIAndConsole(String.format("登录成功|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", base_login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
                                     } else if(crack_status.contains(LOGIN_FAILURE)){
-                                        writeUserPassPairToFile(globalLoginFailureFilePath, globalPairSeparator, userPassPair);
+                                        MyFileUtils.writeUserPassPairToFile(globalLoginFailureFilePath, globalPairSeparator, userPassPair);
                                         printlnErrorOnUIAndConsole(String.format("登录失败|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", base_login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));
                                     } else {
                                         printlnInfoOnUIAndConsole(String.format("未知状态|||登录URL: %s\n是否跳转: %s\n测试账号: %s\n测试密码: %s\n跳转URL: %s\n网页标题: %s\n内容长度: %s\n", base_login_url, isPageForward, userPassPair.getUsername(), userPassPair.getPassword(), cur_url, cur_title, cur_length));

@@ -10,7 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 
-import static com.fuping.CommonUtils.Utils.getFileStrAbsolutePath;
+import static com.fuping.CommonUtils.MyFileUtils.getFileStrAbsolutePath;
 import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class CaptchaUtils {
