@@ -104,7 +104,7 @@
                                  <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
                                     <children>
                                        <Label prefHeight="34.0" prefWidth="108.0" text="登录成功匹配" />
-                                       <TextField fx:id="bro_id_success_regex_text" prefHeight="31.0" prefWidth="729.0" promptText="登录成功元素匹配关键字" text="" HBox.hgrow="ALWAYS" />
+                                       <TextField fx:id="bro_id_success_regex_text" prefHeight="31.0" prefWidth="729.0" promptText="示例: 欢迎登录|登录成功" text="" HBox.hgrow="ALWAYS" />
                                     </children>
                                     <VBox.margin>
                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -116,7 +116,7 @@
                                  <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="843.0" spacing="2.0">
                                     <children>
                                        <Label prefHeight="34.0" prefWidth="108.0" text="登录失败匹配" />
-                                       <TextField fx:id="bro_id_failure_regex_text" prefHeight="31.0" prefWidth="729.0" promptText="登录失败元素匹配关键字" text="" HBox.hgrow="ALWAYS" />
+                                       <TextField fx:id="bro_id_failure_regex_text" prefHeight="31.0" prefWidth="729.0" promptText="示例: 登录失败|密码错误|\u8d26\u53f7\u6216\u5bc6\u7801\u9519\u8bef" text="" HBox.hgrow="ALWAYS" />
                                     </children>
                                     <VBox.margin>
                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -242,7 +242,7 @@
                                  <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                     <children>
                                        <Label prefHeight="23.0" prefWidth="108" text="验证码图片地址" />
-                                       <TextField fx:id="bro_id_captcha_url_text" prefHeight="23.0" prefWidth="79.0" promptText="请输入验证码图片URL" text="" HBox.hgrow="ALWAYS" />
+                                       <TextField fx:id="bro_id_captcha_url_text" prefHeight="23.0" prefWidth="79.0" promptText="示例: 使用URL https://xxx/Login/captcha.html 或 使用正则 .*captcha.html.*" text="" HBox.hgrow="ALWAYS" />
                                     </children>
                                     <padding>
                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -277,7 +277,7 @@
                                  <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="634.0" spacing="2.0">
                                     <children>
                                        <Label prefHeight="23.0" prefWidth="108" text="验证码错误匹配" />
-                                       <TextField fx:id="bro_id_captcha_regex_text" prefHeight="23.0" prefWidth="79.0" promptText="验证码错误元素匹配" text="" HBox.hgrow="ALWAYS" />
+                                       <TextField fx:id="bro_id_captcha_regex_text" prefHeight="23.0" prefWidth="79.0" promptText="示例: 验证码不正确|验证码错误|\u9a8c\u8bc1\u7801\u9519\u8bef" text="" HBox.hgrow="ALWAYS" />
                                     </children>
                                     <padding>
                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
