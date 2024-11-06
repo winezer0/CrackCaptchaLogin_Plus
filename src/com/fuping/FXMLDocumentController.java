@@ -546,6 +546,7 @@ public class FXMLDocumentController implements Initializable {
                 String receive = new String(paramDataReceivedParams.getData(), charset);
                 String success_key = FXMLDocumentController.this.bro_id_success_regex_text.getText();
                 if(containsMatchingSubString(receive, success_key)){
+                if(isContainOneKey(receive, success_key, false)){
                     crack_status = String.format("%s<->%s", LOGIN_SUCCESS, paramDataReceivedParams.getURL());
                     printlnInfoOnUIAndConsole(String.format("响应内容匹配: 登录成功 %s [Find:%s]", crack_status, success_key));
 
@@ -554,7 +555,7 @@ public class FXMLDocumentController implements Initializable {
                 }
 
                 String failure_key = FXMLDocumentController.this.bro_id_failure_regex_text.getText();
-                if(containsMatchingSubString(receive, failure_key)){
+                if(isContainOneKey(receive, failure_key, false)){
                     crack_status = String.format("%s<->%s", LOGIN_FAILURE, paramDataReceivedParams.getURL());
                     printlnErrorOnUIAndConsole(String.format("响应内容匹配: 登录失败 %s [Find:%s]", crack_status, failure_key));
 
@@ -563,7 +564,7 @@ public class FXMLDocumentController implements Initializable {
                 }
 
                 String captcha_fail = FXMLDocumentController.this.bro_id_captcha_regex_text.getText();
-                if(containsMatchingSubString(receive, captcha_fail)){
+                if(isContainOneKey(receive, captcha_fail, false)){
                     crack_status = String.format("%s<->%s", ERROR_CAPTCHA, paramDataReceivedParams.getURL());
                     printlnErrorOnUIAndConsole(String.format("响应内容匹配: 验证码错误 %s [Find:%s]", crack_status, captcha_fail));
 

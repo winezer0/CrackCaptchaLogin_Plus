@@ -4,8 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import com.fuping.LoadDict.UserPassPair;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -134,6 +133,55 @@ public class Utils {
         //将账号密码字典格式从 HashSet 转为 数组,便于索引统计
         UserPassPair[] userPassPairsArray = pairsHashSet.toArray(new UserPassPair[0]);
         return userPassPairsArray;
+    }
+
+
+    /**
+     * 判断字符串|集合|Map类型 是否为null||为空
+     */
+    public static boolean isEmptyObj(Object obj) {
+        if (obj == null) {
+            return true;
+        } else if (obj instanceof String && ((String) obj).trim().isEmpty()) {
+            return true;
+        } else if (obj instanceof Collection && ((Collection<?>) obj).isEmpty()) {
+            return true;
+        } else if (obj instanceof Map && ((Map<?, ?>) obj).isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+
+    private static boolean isContainOneKey(String stringFormat, List<String> elementsFormat) {
+        for (String element : elementsFormat) {
+            if (element.length()>0 && stringFormat.contains(element)){
+                return true;
+            }
+        }
+        return false;
+
+//        // 使用 Stream API anyMatch 检查是否包含任意一個元素
+//        return elementsFormat.stream().anyMatch(stringFormat::contains);
+    }
+
+    /**
+     * 判断字符串 是否 包含 列表中的任意元素
+     *
+     * @param string 单个字符串。
+     * @param elementsString 允许的字符串，用'|'分隔。
+     * @param defaultBool 当 elementsString 为空时应该返回的响应码
+     * @return 如果 elementStrings 的任意子元素 在 string 内 则返回true，否则返回false。
+     */
+    public static boolean isContainOneKey(String string, String elementsString, boolean defaultBool) {
+        //当元素为空时,返回默认值
+        if (isEmptyObj(string) || isEmptyObj(elementsString)) return defaultBool;
+
+        //预先格式化处理
+        String stringFormat = string.toLowerCase();
+        String[] elementsFormat = elementsString.toLowerCase().split("\\|");
+
+        return isContainOneKey(stringFormat, Arrays.asList(elementsFormat));
     }
 
     public static boolean containsMatchingSubString(String receive, String keyRegex) {
