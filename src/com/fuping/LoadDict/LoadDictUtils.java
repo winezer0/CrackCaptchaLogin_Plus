@@ -54,7 +54,7 @@ public class LoadDictUtils {
             String password = passwords.get(i);
             userPassPairs.add(new UserPassPair(username.trim(), password.trim()));
         }
-        print_info(String.format("Create Pitchfork User Pass Pairs [%s]", userPassPairs.size()));
+        print_info(String.format("Create Pitchfork (pairs=min[m,n]) User Pass Pairs [%s]", userPassPairs.size()));
         return userPassPairs;
     }
 
@@ -67,7 +67,7 @@ public class LoadDictUtils {
                 userPassPairs.add(new UserPassPair(username.trim(), password.trim()));
             }
         }
-        print_info(String.format("Create Cartesian User Pass Pairs [%s]", userPassPairs.size()));
+        print_info(String.format("Create Cartesian (pairs=max[m*n]) User Pass Pairs [%s]", userPassPairs.size()));
         return userPassPairs;
     }
 
