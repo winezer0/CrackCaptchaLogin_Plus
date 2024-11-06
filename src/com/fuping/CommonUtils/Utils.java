@@ -119,15 +119,17 @@ public class Utils {
             String separator,
             boolean exclude_history,
             String userMarkInPass){
+
+
+        //替换密码中的用户名变量
+        pairsHashSet = replaceUserMarkInPass(pairsHashSet, userMarkInPass);
+        print_info(String.format("Pairs Count After Replace Mark Str [%s]", pairsHashSet.size()));
+
         //读取 history 文件,排除历史扫描记录 ，
         if (exclude_history) {
             pairsHashSet = excludeHistoryPairs(pairsHashSet, historyFile, separator);
             print_info(String.format("Pairs Count After Exclude History [%s] From [%s]", pairsHashSet.size(), historyFile));
         }
-
-        //替换密码中的用户名变量
-        replaceUserMarkInPass(pairsHashSet, userMarkInPass);
-        print_info(String.format("Pairs Count After Replace Mark Str [%s]", pairsHashSet.size()));
 
         //将账号密码字典格式从 HashSet 转为 数组,便于索引统计
         UserPassPair[] userPassPairsArray = pairsHashSet.toArray(new UserPassPair[0]);
