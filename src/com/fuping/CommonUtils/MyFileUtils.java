@@ -43,7 +43,7 @@ public class MyFileUtils {
     public static String genFileNameByUrl(String urlString, String defaultPath, String suffix, boolean useAbsolutePath){
         String filename = defaultPath;
 
-        if (ElementUtils.isNotEmptyIfStr(urlString)){
+        if (ElementUtils.isNotEmptyObj(urlString)){
             filename = urlString.split("[\\\\\"*?<>|%'#]")[0]; // 按照 # 或 ? 进行切割
             filename = filename.replaceAll("[/:]", "_"); // 对URL的特殊字符进行替换
             filename = String.format("%s%s", filename, suffix);

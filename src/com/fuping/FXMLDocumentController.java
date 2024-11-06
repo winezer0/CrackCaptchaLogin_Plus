@@ -289,7 +289,7 @@ public class FXMLDocumentController implements Initializable {
 
             try {
                 //识别图片地址
-                if (ElementUtils.isNotEmptyIfStr(imagePath)){
+                if (ElementUtils.isNotEmptyObj(imagePath)){
                     captcha_indent_text = remoteIndentCaptcha(
                             imagePath,
                             remote_ident_url_text,
@@ -318,7 +318,7 @@ public class FXMLDocumentController implements Initializable {
             }
         } else {
             try {
-                if (ElementUtils.isNotEmptyIfStr(imagePath)){
+                if (ElementUtils.isNotEmptyObj(imagePath)){
                     captcha_indent_text = localeIdentCaptcha(imagePath, ident_format_regex, ident_format_length, globalLocaleTessDataName);
                 } else {
                     captcha_indent_text = localeIdentCaptcha(imageBytes, ident_format_regex, ident_format_length, globalLocaleTessDataName);
@@ -465,7 +465,7 @@ public class FXMLDocumentController implements Initializable {
        //添加响应这状态码监听事件 //addStatusListener 没有获取到任何数据 //放弃使用
 
         //浏览器代理设置
-        if (ElementUtils.isNotEmptyIfStr(browserProxyString)) {
+        if (ElementUtils.isNotEmptyObj(browserProxyString)) {
             //参考 使用代理 https://www.kancloud.cn/neoman/ui/802531
             //转换输入的代理格式
             browserProxyString = browserProxyString.replace("://","=");
@@ -545,6 +545,8 @@ public class FXMLDocumentController implements Initializable {
             if (isEmptyIfStr(charset)) { charset = "utf-8"; }
             try {
                 String receive = new String(paramDataReceivedParams.getData(), charset);
+                //print_info(String.format("receive data size: %s from %s", receive.length(), paramDataReceivedParams.getURL()));
+
                 String success_key = FXMLDocumentController.this.bro_id_success_regex_text.getText();
                 if(ElementUtils.isContainOneKeyByEach(receive, success_key, false)){
                     crack_status = String.format("%s<->%s", LOGIN_SUCCESS, paramDataReceivedParams.getURL());

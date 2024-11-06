@@ -73,14 +73,14 @@ public class ConfigReader {
     public String getString(String paramString, String defaultValue) {
         //先从系统参数中文件获取
         String ParamValue =  getSystemString(paramString);
-        if (ElementUtils.isNotEmptyIfStr(ParamValue)){
+        if (ElementUtils.isNotEmptyObj(ParamValue)){
             print_info(String.format("Get Param Value From [System Property]: %s=%s", paramString, ParamValue));
             return ParamValue;
         }
 
         //再从配置文件中获取
         ParamValue = getPropString(paramString);
-        if (ElementUtils.isNotEmptyIfStr(ParamValue) && !"null".equalsIgnoreCase(ParamValue)){
+        if (ElementUtils.isNotEmptyObj(ParamValue) && !"null".equalsIgnoreCase(ParamValue)){
             print_info(String.format("Get Param Value From [Config Property]: %s=%s", paramString, ParamValue));
             return ParamValue;
         }

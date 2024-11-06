@@ -1,16 +1,33 @@
 package com.fuping.CommonUtils;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
-
 public class ElementUtils {
-    public static boolean isNotEmptyIfStr(String string) {
+    /**
+     * 判断字符串|集合|Map类型 是否为null||为空
+     */
+    public static boolean isEmptyObj(Object obj) {
+        if (obj == null) {
+            return true;
+        } else if (obj instanceof String && ((String) obj).trim().isEmpty()) {
+            return true;
+        } else if (obj instanceof Collection && ((Collection<?>) obj).isEmpty()) {
+            return true;
+        } else if (obj instanceof Map && ((Map<?, ?>) obj).isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+
+    public static boolean isNotEmptyObj(String string) {
         //判断字符串是否不为空
-        return !isEmptyIfStr(string);
+        return !isEmptyObj(string);
     }
 
     private static boolean isContainOneKeyByEach(String stringFormat, List<String> elementsFormat) {
@@ -32,7 +49,7 @@ public class ElementUtils {
      */
     public static boolean isContainOneKeyByEach(String string, String elementsString, boolean defaultBool) {
         //当元素为空时,返回默认值
-        if (isNotEmptyIfStr(string) || isNotEmptyIfStr(elementsString)) return defaultBool;
+        if (isEmptyObj(string) || isEmptyObj(elementsString)) return defaultBool;
 
         //预先格式化处理
         String stringFormat = string.toLowerCase();
@@ -42,7 +59,7 @@ public class ElementUtils {
     }
 
     public static boolean isContainOneKeyByRegex(String receive, String keyRegex) {
-        if(isEmptyIfStr(keyRegex)){return false;}
+        if(isEmptyObj(keyRegex)||isEmptyObj(receive)) return false;
         // 编译正则表达式 //忽略大小写
         Pattern pattern = Pattern.compile(keyRegex, Pattern.CASE_INSENSITIVE);
         // 创建匹配器对象
@@ -52,6 +69,8 @@ public class ElementUtils {
     }
 
     public static boolean isSimilarLink(String cur_captcha_url, String raw_captcha_url){
+        if(isEmptyObj(cur_captcha_url)||isEmptyObj(raw_captcha_url)) return false;
+
         //使用字符串匹配
         if(raw_captcha_url.equalsIgnoreCase(cur_captcha_url)){
             return true;

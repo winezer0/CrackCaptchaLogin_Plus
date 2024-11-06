@@ -31,12 +31,12 @@ public class RemoteApiIdent {
             String responseBody = response.body();
 
             //当前 ExpectedStatus 不为空时, 判断响应状态码是否包含关键字正则
-            if (ElementUtils.isNotEmptyIfStr(ExpectedStatus) && !ElementUtils.isContainOneKeyByRegex(String.valueOf(statusCode), ExpectedStatus)) {
+            if (ElementUtils.isNotEmptyObj(ExpectedStatus) && !ElementUtils.isContainOneKeyByRegex(String.valueOf(statusCode), ExpectedStatus)) {
                 print_error(String.format("异常状态: [%s] <--> [%s]", ExpectedStatus, statusCode));
                 return null;
             }
             //当前 ExpectedKeywords 不为空时, 判断响应体是否包含关键字正则
-            if (ElementUtils.isNotEmptyIfStr(ExpectedKeywords) && !ElementUtils.isContainOneKeyByRegex(responseBody, ExpectedKeywords)) {
+            if (ElementUtils.isNotEmptyObj(ExpectedKeywords) && !ElementUtils.isContainOneKeyByRegex(responseBody, ExpectedKeywords)) {
                 print_error(String.format("异常内容: [%s] <--> [%s]", ExpectedKeywords, responseBody));
                 return null;
             }
@@ -101,7 +101,7 @@ public class RemoteApiIdent {
         }
 
         //当前 ExpectedRegex 不为空时, 判断验证码是否符合正则
-        if (ElementUtils.isNotEmptyIfStr(expectedRegex) && !ElementUtils.isContainOneKeyByRegex(captchaResult, expectedRegex)) {
+        if (ElementUtils.isNotEmptyObj(expectedRegex) && !ElementUtils.isContainOneKeyByRegex(captchaResult, expectedRegex)) {
             print_error(String.format("识别错误: 结果[%s] <--> 期望格式:[%s]", captchaResult, expectedRegex));
             return null;
         }

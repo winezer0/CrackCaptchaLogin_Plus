@@ -35,7 +35,7 @@ public class TesseractsLocaleIdent {
             ITesseract tesseracts = new Tesseract();
 
             //设置识别数据集的路径
-            if(ElementUtils.isNotEmptyIfStr(tessDataName)){
+            if(ElementUtils.isNotEmptyObj(tessDataName)){
                 String dataAbsolutePat = MyFileUtils.getFileStrAbsolutePath(String.format("tessdata%s%s.traineddata", File.separator, tessDataName));
                 if( MyFileUtils.isNotEmptyFile(dataAbsolutePat)){
                     //tesseracts.setDatapath(tessDataPath);  //存在依赖,提示要设置环境变量, 弃用
@@ -48,7 +48,7 @@ public class TesseractsLocaleIdent {
 
             String captchaResult = tesseracts.doOCR(img).replace(" ", "").replace("\n", "");
             //当前 ExpectedRegex 不为空时, 判断验证码是否符合正则
-            if (ElementUtils.isNotEmptyIfStr(expectedRegex) && !ElementUtils.isContainOneKeyByRegex(captchaResult, expectedRegex)) {
+            if (ElementUtils.isNotEmptyObj(expectedRegex) && !ElementUtils.isContainOneKeyByRegex(captchaResult, expectedRegex)) {
                 print_error(String.format("格式错误: [%s] <--> [%s]", expectedRegex, captchaResult));
                 return null;
             }
