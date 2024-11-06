@@ -20,7 +20,7 @@ public class MyConst {
     public static String globalErrorCaptchaFilePath = null;   //记录验证错误的记录
 
     //设置配置参数名称
-    public static String globalProgramVersion = "NOVASEC 3.8.8 20241106" ;
+    public static String globalProgramVersion = "NOVASEC 3.8.9 20241106" ;
 
     //JxBrowser相关配置参数
     public static String globalBrowserProxy = null;
