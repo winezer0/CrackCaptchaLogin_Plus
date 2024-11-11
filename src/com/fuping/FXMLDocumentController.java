@@ -45,7 +45,7 @@ import static com.fuping.CaptchaIdentify.RemoteApiIdent.remoteIndentCaptcha;
 import static com.fuping.CaptchaIdentify.TesseractsLocaleIdent.localeIdentCaptcha;
 import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.LoadConfig.MyConst.*;
-import static com.fuping.LoadDict.LoadDictUtils.loadUserPassFile;
+import static com.fuping.LoadDict.LoadDictUtils.*;
 import static com.fuping.PrintLog.PrintLog.*;
 
 public class FXMLDocumentController implements Initializable {
@@ -841,8 +841,19 @@ public class FXMLDocumentController implements Initializable {
                 printlnDebugOnUIAndConsole("加载账号密码文件开始...");
                 //点击登录后加载字典文件
                 HashSet<UserPassPair> UserPassPairsHashSet = loadUserPassFile(globalUserNameFile, globalPassWordFile, globalUserPassFile, globalPairSeparator, default_dict_compo_mode);
-                //过滤历史字典记录,并转换为Array格式
-                globalUserPassPairsArray = processedUserPassHashSet(UserPassPairsHashSet, globalCrackHistoryFilePath, globalPairSeparator, globalExcludeHistorySwitch, globalUserMarkInPass);
+
+                //替换密码中的用户名变量
+                UserPassPairsHashSet = replaceUserMarkInPass(UserPassPairsHashSet, globalUserMarkInPass);
+                print_debug(String.format("Pairs Count After Replace Mark Str [%s]", UserPassPairsHashSet.size()));
+
+                //读取 history 文件,排除历史扫描记录 ，
+                if (globalExcludeHistorySwitch) {
+                    UserPassPairsHashSet = excludeHistoryPairs(UserPassPairsHashSet, globalCrackHistoryFilePath, globalPairSeparator);
+                    print_debug(String.format("Pairs Count After Exclude History [%s] From [%s]", UserPassPairsHashSet.size(), globalCrackHistoryFilePath));
+                }
+
+                //将账号密码字典格式从 HashSet 转为 数组,便于索引统计
+                globalUserPassPairsArray = UserPassPairsHashSet.toArray(new UserPassPair[0]);
             }
 
             //判断字典列表数量是否大于0

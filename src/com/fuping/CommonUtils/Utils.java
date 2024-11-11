@@ -13,30 +13,6 @@ import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class Utils {
 
-    public static UserPassPair[] processedUserPassHashSet(
-            HashSet<UserPassPair> pairsHashSet,
-            String historyFile,
-            String separator,
-            boolean exclude_history,
-            String userMarkInPass){
-
-
-        //替换密码中的用户名变量
-        pairsHashSet = replaceUserMarkInPass(pairsHashSet, userMarkInPass);
-        print_debug(String.format("Pairs Count After Replace Mark Str [%s]", pairsHashSet.size()));
-
-        //读取 history 文件,排除历史扫描记录 ，
-        if (exclude_history) {
-            pairsHashSet = excludeHistoryPairs(pairsHashSet, historyFile, separator);
-            print_debug(String.format("Pairs Count After Exclude History [%s] From [%s]", pairsHashSet.size(), historyFile));
-        }
-
-        //将账号密码字典格式从 HashSet 转为 数组,便于索引统计
-        UserPassPair[] userPassPairsArray = pairsHashSet.toArray(new UserPassPair[0]);
-        return userPassPairsArray;
-    }
-
-
     public static String regexExtract(String string, String regex) {
         //忽略匹配空值
         if(isEmptyIfStr(string)) return null;
