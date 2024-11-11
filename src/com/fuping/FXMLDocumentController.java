@@ -904,6 +904,9 @@ public class FXMLDocumentController implements Initializable {
 
                         //遍历账号密码字典
                         for (int index = 0; index < globalUserPassPairsArray.length; ) {
+                            // 记录程序开始时间
+                            long startTime = System.currentTimeMillis();
+
                             UserPassPair userPassPair = globalUserPassPairsArray[index];
                             String cur_user = userPassPair.getUsername();
                             String cur_pass = userPassPair.getPassword();
@@ -1139,7 +1142,7 @@ public class FXMLDocumentController implements Initializable {
                                                     "跳转情况:%s -> %s->%s\n" +
                                                     "网页标题:%s -> 长度:%s\n",
                                             cur_user, cur_pass, isPageForward, base_login_url, cur_url, cur_title, cur_length));
-                                }else {
+                                } else {
                                     //进行爆破历史记录
                                     MyFileUtils.writeUserPassPairToFile(globalCrackHistoryFilePath, globalPairSeparator, userPassPair);
                                     if(crack_status.contains(LOGIN_SUCCESS)){
@@ -1164,7 +1167,7 @@ public class FXMLDocumentController implements Initializable {
                                     //对统计计数进行增加
                                     index ++;
                                 }
-                            }else {
+                            } else {
                                 printlnErrorOnUIAndConsole(String.format("加载失败|||账号:密码【%s:%s】\n" +
                                                 "跳转情况:%s -> %s->%s\n" +
                                                 "网页标题:%s -> 长度:%s\n",
@@ -1179,13 +1182,16 @@ public class FXMLDocumentController implements Initializable {
                                 //对于未知加载状态的数据进行跳过，但是不保存，防止死循环的发生
                                 index ++;
                             }
+
+                            // 输出预计剩余运行时间
+                            long elapsedTime = (System.currentTimeMillis() - startTime) / 1000; //单位 秒
+                            long residueTime = (globalUserPassPairsArray.length - index - 1) * elapsedTime / 60; //单位 分
+                            print_debug(String.format("本次运行时间:[%s]秒, 预计剩余时间:[%s]分钟 ==> [%s]小时...\n", elapsedTime, residueTime, residueTime/60));
                         }
 
                         //停止所有请求,防止影响到下一次的使用 //6.15版本没有办法处理关闭浏览器
                         printlnInfoOnUIAndConsole("所有爆破任务正常结束...");
                         stopCrackStatus=true;
-
-
                     } catch (Exception e) {
                         // 处理特定的 IllegalStateException
                         if (e.getMessage().contains("stream was closed")) {
