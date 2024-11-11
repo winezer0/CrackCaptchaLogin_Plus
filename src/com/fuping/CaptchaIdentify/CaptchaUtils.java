@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Base64;
 
 import static com.fuping.CommonUtils.MyFileUtils.getFileStrAbsolutePath;
-import static com.fuping.PrintLog.PrintLog.print_info;
+import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class CaptchaUtils {
 
@@ -41,7 +41,7 @@ public class CaptchaUtils {
         int statusCode = response.getStatus();
         byte[] responseBodyBytes = response.bodyBytes();
         imagePath = writeBytesToFile(imagePath, responseBodyBytes);
-        print_info(String.format("imageUrl:%s  statusCode:%s  imagePath:%s ", imageUrl, statusCode, imagePath));
+        print_debug(String.format("imageUrl:%s  statusCode:%s  imagePath:%s ", imageUrl, statusCode, imagePath));
         return imagePath;
     }
 

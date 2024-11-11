@@ -7,7 +7,7 @@ import java.io.File;
 
 import static cn.hutool.core.io.CharsetDetector.detect;
 import static com.fuping.LoadConfig.MyConst.*;
-import static com.fuping.PrintLog.PrintLog.print_info;
+import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class MyFileUtils {
     public static String getFileStrAbsolutePath(String fileStr) {
@@ -32,7 +32,7 @@ public class MyFileUtils {
         if (isNotEmptyFile(absolutePath)){
             try {
                 encoding = detect(new File(absolutePath)).name();
-                print_info(String.format("Detect File Encoding [%s] From [%s]", encoding, absolutePath));
+                print_debug(String.format("Detect File Encoding [%s] From [%s]", encoding, absolutePath));
             } catch (Exception e){
                 encoding = defaultEncode;
             }
@@ -127,7 +127,7 @@ public class MyFileUtils {
         if(login_url.equalsIgnoreCase(default_login_url)) {
             return false;
         } else{
-            print_info(String.format("The login URL has been modified from [%s] to [%s]", default_login_url, login_url));
+            print_debug(String.format("The login URL has been modified from [%s] to [%s]", default_login_url, login_url));
             default_login_url = login_url;
             return true;
         }
@@ -138,7 +138,7 @@ public class MyFileUtils {
         if(dict_mode.equalsIgnoreCase(default_dict_compo_mode)) {
             return false;
         } else{
-            print_info(String.format("The dict mode has been modified from [%s] to [%s]", default_dict_compo_mode, dict_mode));
+            print_debug(String.format("The dict mode has been modified from [%s] to [%s]", default_dict_compo_mode, dict_mode));
             default_dict_compo_mode = dict_mode;
             return true;
         }
@@ -149,7 +149,7 @@ public class MyFileUtils {
         if(exclude_history == globalExcludeHistorySwitch){
             return false;
         } else {
-            print_info(String.format("The Exclude History has been modified from [%s] to [%s]", globalExcludeHistorySwitch, exclude_history));
+            print_debug(String.format("The Exclude History has been modified from [%s] to [%s]", globalExcludeHistorySwitch, exclude_history));
             globalExcludeHistorySwitch = exclude_history;
             return true;
         }

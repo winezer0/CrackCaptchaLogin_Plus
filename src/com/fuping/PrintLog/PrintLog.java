@@ -6,8 +6,12 @@ public class PrintLog {
         return var0 == null ? null : var0.replace('\u001b', '.');
     }
 
-    public static final void print_info(String var0) {
+    public static final void print_debug(String var0) {
         System.out.println("[*] " + scrub(var0));
+    }
+
+    public static final void print_info(String var0) {
+        System.out.println("[+] " + scrub(var0));
     }
 
     public static final void print_error(String var0) {

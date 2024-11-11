@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.LoadDict.LoadDictUtils.excludeHistoryPairs;
 import static com.fuping.LoadDict.LoadDictUtils.replaceUserMarkInPass;
-import static com.fuping.PrintLog.PrintLog.print_info;
+import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class Utils {
 
@@ -23,12 +23,12 @@ public class Utils {
 
         //替换密码中的用户名变量
         pairsHashSet = replaceUserMarkInPass(pairsHashSet, userMarkInPass);
-        print_info(String.format("Pairs Count After Replace Mark Str [%s]", pairsHashSet.size()));
+        print_debug(String.format("Pairs Count After Replace Mark Str [%s]", pairsHashSet.size()));
 
         //读取 history 文件,排除历史扫描记录 ，
         if (exclude_history) {
             pairsHashSet = excludeHistoryPairs(pairsHashSet, historyFile, separator);
-            print_info(String.format("Pairs Count After Exclude History [%s] From [%s]", pairsHashSet.size(), historyFile));
+            print_debug(String.format("Pairs Count After Exclude History [%s] From [%s]", pairsHashSet.size(), historyFile));
         }
 
         //将账号密码字典格式从 HashSet 转为 数组,便于索引统计

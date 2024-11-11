@@ -10,7 +10,7 @@ import java.util.Properties;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.PrintLog.PrintLog.print_error;
-import static com.fuping.PrintLog.PrintLog.print_info;
+import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class ConfigReader {
     private final Properties properties;
@@ -24,10 +24,10 @@ public class ConfigReader {
 
         //判断文件是否存在 //不存在就进行创建
         if (FileUtil.exist(absolutePath)) {
-            print_info(String.format("Found Config File [%s]", absolutePath));
+            print_debug(String.format("Found Config File [%s]", absolutePath));
         }else{
             print_error(String.format("Not Found File [%s]", absolutePath));
-            print_info(String.format("Auto Touch File [%s]", FileUtil.touch(absolutePath).getAbsolutePath()));
+            print_debug(String.format("Auto Touch File [%s]", FileUtil.touch(absolutePath).getAbsolutePath()));
         }
 
         try {
@@ -74,19 +74,19 @@ public class ConfigReader {
         //先从系统参数中文件获取
         String ParamValue =  getSystemString(paramString);
         if (ElementUtils.isNotEmptyObj(ParamValue)){
-            print_info(String.format("Get Param Value From [System Property]: %s=%s", paramString, ParamValue));
+            print_debug(String.format("Get Param Value From [System Property]: %s=%s", paramString, ParamValue));
             return ParamValue;
         }
 
         //再从配置文件中获取
         ParamValue = getPropString(paramString);
         if (ElementUtils.isNotEmptyObj(ParamValue) && !"null".equalsIgnoreCase(ParamValue)){
-            print_info(String.format("Get Param Value From [Config Property]: %s=%s", paramString, ParamValue));
+            print_debug(String.format("Get Param Value From [Config Property]: %s=%s", paramString, ParamValue));
             return ParamValue;
         }
 
         //两种情况都没有获取到,返回默认值
-        print_info(String.format("Get Param Value From [Default Value]: %s=%s", paramString, defaultValue));
+        print_debug(String.format("Get Param Value From [Default Value]: %s=%s", paramString, defaultValue));
         return defaultValue;
     }
 

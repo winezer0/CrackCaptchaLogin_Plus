@@ -8,7 +8,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -17,7 +16,7 @@ import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 
 import static com.fuping.LoadConfig.MyConst.globalProgramVersion;
-import static com.fuping.PrintLog.PrintLog.print_info;
+import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class CrackCaptchaLogin extends Application {
 
@@ -56,7 +55,7 @@ public class CrackCaptchaLogin extends Application {
 
 
     public static void main(String[] args) {
-        print_info("Inner JxBrowser Version: " + ProductInfo.getVersion());
+        print_debug("Inner JxBrowser Version: " + ProductInfo.getVersion());
         //初始化配置文件读取
         MyConst.initialize();
         //启动UI

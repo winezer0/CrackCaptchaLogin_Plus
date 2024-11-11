@@ -2,7 +2,7 @@ package com.fuping.LoadConfig;
 
 import com.fuping.LoadDict.UserPassPair;
 
-import static com.fuping.PrintLog.PrintLog.print_info;
+import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class MyConst {
     // 私有静态成员变量，用于保存单例实例
@@ -20,7 +20,7 @@ public class MyConst {
     public static String globalErrorCaptchaFilePath = null;   //记录验证错误的记录
 
     //设置配置参数名称
-    public static String globalProgramVersion = "NOVASEC 3.8.10 20241106" ;
+    public static String globalProgramVersion = "NOVASEC 3.8.11 20241111" ;
 
     //JxBrowser相关配置参数
     public static String globalBrowserProxy = null;
@@ -193,7 +193,7 @@ public class MyConst {
         globalFindEleDelayTime = Integer.parseInt(configReader.getString("find_ele_delay_time", "500"));
         globalFindEleRetryTimes = Integer.parseInt(configReader.getString("find_ele_retry_times", "6"));
 
-        print_info("Loaded Config Finish...");
+        print_debug("Loaded Config Finish...");
     }
 
 

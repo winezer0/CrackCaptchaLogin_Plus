@@ -13,7 +13,7 @@ import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.LoadConfig.MyConst.const_pair_file;
 import static com.fuping.LoadConfig.MyConst.const_pitchfork;
 import static com.fuping.PrintLog.PrintLog.print_error;
-import static com.fuping.PrintLog.PrintLog.print_info;
+import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class LoadDictUtils {
     public static List<String> readDictFile(String filePath) {
@@ -41,7 +41,7 @@ public class LoadDictUtils {
             }
         }
 
-        print_info(String.format("Read Lines [%s] From File [%s]", newLines.size(), absolutePath));
+        print_debug(String.format("Read Lines [%s] From File [%s]", newLines.size(), absolutePath));
         return newLines;
     }
 
@@ -54,7 +54,7 @@ public class LoadDictUtils {
             String password = passwords.get(i);
             userPassPairs.add(new UserPassPair(username.trim(), password.trim()));
         }
-        print_info(String.format("Create Pitchfork (pairs=min[m,n]) User Pass Pairs [%s]", userPassPairs.size()));
+        print_debug(String.format("Create Pitchfork (pairs=min[m,n]) User Pass Pairs [%s]", userPassPairs.size()));
         return userPassPairs;
     }
 
@@ -67,7 +67,7 @@ public class LoadDictUtils {
                 userPassPairs.add(new UserPassPair(username.trim(), password.trim()));
             }
         }
-        print_info(String.format("Create Cartesian (pairs=max[m*n]) User Pass Pairs [%s]", userPassPairs.size()));
+        print_debug(String.format("Create Cartesian (pairs=max[m*n]) User Pass Pairs [%s]", userPassPairs.size()));
         return userPassPairs;
     }
 
@@ -83,7 +83,7 @@ public class LoadDictUtils {
                 userPassPairs.add(new UserPassPair(username.trim(), password.trim()));
             }
         }
-        print_info(String.format("Split And Creat User Pass Pairs [%s]", userPassPairs.size()));
+        print_debug(String.format("Split And Creat User Pass Pairs [%s]", userPassPairs.size()));
         return userPassPairs;
     }
 
@@ -180,7 +180,7 @@ public class LoadDictUtils {
 
         //遍历
         for (UserPassPair userPassPair: userPassPairs){
-            print_info(String.format("write %s", userPassPair.toString(":")));
+            print_debug(String.format("write %s", userPassPair.toString(":")));
         }
     }
 

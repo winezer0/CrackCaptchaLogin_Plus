@@ -14,7 +14,7 @@ import java.io.IOException;
 import static com.fuping.CaptchaIdentify.CaptchaUtils.writeBytesToFile;
 import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.PrintLog.PrintLog.print_error;
-import static com.fuping.PrintLog.PrintLog.print_info;
+import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class TesseractsLocaleIdent {
     public static String localeIdentCaptcha(byte[] captcha_data, String expectedRegex, String expectedLength, String tessDataName) {
@@ -40,7 +40,7 @@ public class TesseractsLocaleIdent {
                 if( MyFileUtils.isNotEmptyFile(dataAbsolutePat)){
                     //tesseracts.setDatapath(tessDataPath);  //存在依赖,提示要设置环境变量, 弃用
                     tesseracts.setLanguage(tessDataName); //直接设置语言前缀
-                    print_info(String.format("Use Found TessData From Name:[%s] On Path:[%s]", tessDataName, dataAbsolutePat));
+                    print_debug(String.format("Use Found TessData From Name:[%s] On Path:[%s]", tessDataName, dataAbsolutePat));
                 }else {
                     print_error(String.format("Not Found TessData From Name:[%s]!!! Please Move [%s.raineddata] To [%s]",tessDataName, tessDataName, dataAbsolutePat));
                 }

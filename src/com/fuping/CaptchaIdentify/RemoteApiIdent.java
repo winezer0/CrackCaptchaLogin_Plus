@@ -11,7 +11,7 @@ import static com.fuping.CaptchaIdentify.CaptchaUtils.imageToBase64;
 import static com.fuping.CaptchaIdentify.CaptchaUtils.writeBytesToFile;
 import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.PrintLog.PrintLog.print_error;
-import static com.fuping.PrintLog.PrintLog.print_info;
+import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class RemoteApiIdent {
 
@@ -40,7 +40,7 @@ public class RemoteApiIdent {
                 print_error(String.format("异常内容: [%s] <--> [%s]", ExpectedKeywords, responseBody));
                 return null;
             }
-            print_info(String.format("Remote OCR API Access Status: [%s]<-->[%s]", statusCode, responseBody));
+            print_debug(String.format("Remote OCR API Access Status: [%s]<-->[%s]", statusCode, responseBody));
             return responseBody;
         } catch (Exception exception){
             print_error("Remote OCR API Access Error, Please Check API Is Normal?");
@@ -121,6 +121,6 @@ public class RemoteApiIdent {
         String imagePath = "TestRemote.jpg";
         String remoteApi = "http://127.0.0.1:5000/base64ocr"; // POST 请求的 URL
         String result = remoteIndentCaptcha(imagePath, remoteApi, "200", null, null, "", "4", 5000);
-        print_info(String.format("result:%s", result));
+        print_debug(String.format("result:%s", result));
     }
 }
