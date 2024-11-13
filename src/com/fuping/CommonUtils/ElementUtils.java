@@ -58,6 +58,34 @@ public class ElementUtils {
         return isContainOneKeyByEach(stringFormat, Arrays.asList(elementsFormat));
     }
 
+    private static String isContainOneKeyByEachStr(String stringFormat, List<String> elementsFormat) {
+        for (String element : elementsFormat) {
+            if (element.length()>0 && stringFormat.contains(element)){
+                return element;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 判断字符串 是否 包含 列表中的任意元素
+     *
+     * @param string 单个字符串。
+     * @param elementsString 允许的字符串，用'|'分隔。
+     * @return 如果 elementStrings 的任意 子元素 在 string 内 则返回 子元素 内容，否则返回 null
+     */
+    public static String isContainOneKeyByEachStr(String string, String elementsString) {
+        //当元素为空时,返回默认值
+        if (isEmptyObj(string) || isEmptyObj(elementsString)) return null;
+
+        //预先格式化处理
+        String stringFormat = string.toLowerCase();
+        String[] elementsFormat = elementsString.toLowerCase().split("\\|");
+
+        return isContainOneKeyByEachStr(stringFormat, Arrays.asList(elementsFormat));
+    }
+
+
     public static boolean isContainOneKeyByRegex(String receive, String keyRegex) {
         if(isEmptyObj(keyRegex)||isEmptyObj(receive)) return false;
         // 编译正则表达式 //忽略大小写

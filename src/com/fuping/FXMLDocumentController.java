@@ -560,28 +560,31 @@ public class FXMLDocumentController implements Initializable {
                 String receive = new String(paramDataReceivedParams.getData(), charset);
                 //print_info(String.format("receive data size: %s from %s", receive.length(), paramDataReceivedParams.getURL()));
 
-                String success_key = FXMLDocumentController.this.bro_id_success_regex_text.getText();
-                if(ElementUtils.isContainOneKeyByEach(receive, success_key, false)){
+                String login_success_key = FXMLDocumentController.this.bro_id_success_regex_text.getText();
+                String foundStrForLoginSuccess = ElementUtils.isContainOneKeyByEachStr(receive, login_success_key);
+                if(foundStrForLoginSuccess != null){
                     crack_status = String.format("%s<->%s", LOGIN_SUCCESS, paramDataReceivedParams.getURL());
-                    printlnInfoOnUIAndConsole(String.format("响应内容匹配: 登录成功 %s [匹配:%s]", crack_status, success_key));
+                    printlnInfoOnUIAndConsole(String.format("响应内容匹配: 登录成功 %s [匹配:%s]", crack_status, foundStrForLoginSuccess));
 
                     //自动指定当前页面加载状态为已完成
                     loading_status = LOADING_FINISH;
                 }
 
-                String failure_key = FXMLDocumentController.this.bro_id_failure_regex_text.getText();
-                if(ElementUtils.isContainOneKeyByEach(receive, failure_key, false)){
+                String login_failure_key = FXMLDocumentController.this.bro_id_failure_regex_text.getText();
+                String foundStrForLoginFailure = ElementUtils.isContainOneKeyByEachStr(receive, login_failure_key);
+                if(foundStrForLoginFailure != null){
                     crack_status = String.format("%s<->%s", LOGIN_FAILURE, paramDataReceivedParams.getURL());
-                    printlnErrorOnUIAndConsole(String.format("响应内容匹配: 登录失败 %s [匹配:%s]", crack_status, failure_key));
+                    printlnErrorOnUIAndConsole(String.format("响应内容匹配: 登录失败 %s [匹配:%s]", crack_status, foundStrForLoginFailure));
 
                     //自动指定当前页面加载状态为已完成
                     loading_status = LOADING_FINISH;
                 }
 
-                String captcha_fail = FXMLDocumentController.this.bro_id_captcha_regex_text.getText();
-                if(ElementUtils.isContainOneKeyByEach(receive, captcha_fail, false)){
+                String captcha_fail_key = FXMLDocumentController.this.bro_id_captcha_regex_text.getText();
+                String foundStrForCaptchaFail = ElementUtils.isContainOneKeyByEachStr(receive, captcha_fail_key);
+                if(foundStrForCaptchaFail != null){
                     crack_status = String.format("%s<->%s", ERROR_CAPTCHA, paramDataReceivedParams.getURL());
-                    printlnErrorOnUIAndConsole(String.format("响应内容匹配: 验证码错误 %s [匹配:%s]", crack_status, captcha_fail));
+                    printlnErrorOnUIAndConsole(String.format("响应内容匹配: 验证码错误 %s [匹配:%s]", crack_status, foundStrForCaptchaFail));
 
                     //自动指定当前页面加载状态为已完成
                     loading_status = LOADING_FINISH;
