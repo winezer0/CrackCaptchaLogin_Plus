@@ -58,7 +58,7 @@ public class ElementUtils {
         return isContainOneKeyByEach(stringFormat, Arrays.asList(elementsFormat));
     }
 
-    private static String isContainOneKeyByEachStr(String stringFormat, List<String> elementsFormat) {
+    private static String FoundContainSubString(String stringFormat, List<String> elementsFormat) {
         for (String element : elementsFormat) {
             if (element.length()>0 && stringFormat.contains(element)){
                 return element;
@@ -74,7 +74,7 @@ public class ElementUtils {
      * @param elementsString 允许的字符串，用'|'分隔。
      * @return 如果 elementStrings 的任意 子元素 在 string 内 则返回 子元素 内容，否则返回 null
      */
-    public static String isContainOneKeyByEachStr(String string, String elementsString) {
+    public static String FoundContainSubString(String string, String elementsString) {
         //当元素为空时,返回默认值
         if (isEmptyObj(string) || isEmptyObj(elementsString)) return null;
 
@@ -82,7 +82,7 @@ public class ElementUtils {
         String stringFormat = string.toLowerCase();
         String[] elementsFormat = elementsString.toLowerCase().split("\\|");
 
-        return isContainOneKeyByEachStr(stringFormat, Arrays.asList(elementsFormat));
+        return FoundContainSubString(stringFormat, Arrays.asList(elementsFormat));
     }
 
 

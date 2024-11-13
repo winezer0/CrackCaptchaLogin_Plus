@@ -561,7 +561,7 @@ public class FXMLDocumentController implements Initializable {
                 //print_info(String.format("receive data size: %s from %s", receive.length(), paramDataReceivedParams.getURL()));
 
                 String login_success_key = FXMLDocumentController.this.bro_id_success_regex_text.getText();
-                String foundStrForLoginSuccess = ElementUtils.isContainOneKeyByEachStr(receive, login_success_key);
+                String foundStrForLoginSuccess = ElementUtils.FoundContainSubString(receive, login_success_key);
                 if(foundStrForLoginSuccess != null){
                     crack_status = String.format("%s<->%s", LOGIN_SUCCESS, paramDataReceivedParams.getURL());
                     printlnInfoOnUIAndConsole(String.format("响应内容匹配: 登录成功 %s [匹配:%s]", crack_status, foundStrForLoginSuccess));
@@ -571,7 +571,7 @@ public class FXMLDocumentController implements Initializable {
                 }
 
                 String login_failure_key = FXMLDocumentController.this.bro_id_failure_regex_text.getText();
-                String foundStrForLoginFailure = ElementUtils.isContainOneKeyByEachStr(receive, login_failure_key);
+                String foundStrForLoginFailure = ElementUtils.FoundContainSubString(receive, login_failure_key);
                 if(foundStrForLoginFailure != null){
                     crack_status = String.format("%s<->%s", LOGIN_FAILURE, paramDataReceivedParams.getURL());
                     printlnErrorOnUIAndConsole(String.format("响应内容匹配: 登录失败 %s [匹配:%s]", crack_status, foundStrForLoginFailure));
@@ -581,7 +581,7 @@ public class FXMLDocumentController implements Initializable {
                 }
 
                 String captcha_fail_key = FXMLDocumentController.this.bro_id_captcha_regex_text.getText();
-                String foundStrForCaptchaFail = ElementUtils.isContainOneKeyByEachStr(receive, captcha_fail_key);
+                String foundStrForCaptchaFail = ElementUtils.FoundContainSubString(receive, captcha_fail_key);
                 if(foundStrForCaptchaFail != null){
                     crack_status = String.format("%s<->%s", ERROR_CAPTCHA, paramDataReceivedParams.getURL());
                     printlnErrorOnUIAndConsole(String.format("响应内容匹配: 验证码错误 %s [匹配:%s]", crack_status, foundStrForCaptchaFail));
