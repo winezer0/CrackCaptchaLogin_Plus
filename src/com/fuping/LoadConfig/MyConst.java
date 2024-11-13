@@ -20,10 +20,10 @@ public class MyConst {
     public static String globalErrorCaptchaFilePath = null;   //记录验证错误的记录
 
     //设置配置参数名称
-    public static String globalProgramVersion = "NOVASEC 3.8.11 20241111" ;
+    public static String globalProgramVersion = "NOVASEC 3.8.13 20241113" ;
 
     //JxBrowser相关配置参数
-    public static String globalBrowserProxy = null;
+    public static String globalBrowserProxyStr = null;
     public static String globalBrowserUserAgent = null;
     public static boolean globalClearCookiesSwitch = false;
     public static String globalBrowserInitCookies = null;
@@ -119,7 +119,7 @@ public class MyConst {
     public MyConst(){
         ConfigReader configReader = ConfigReader.getInstance();
         //读取代理配置参数
-        globalBrowserProxy = configReader.getString("browser_proxy", null);
+        globalBrowserProxyStr = configReader.getString("browser_proxy", null);
         //浏览器UA设置
         globalBrowserUserAgent = configReader.getString("browser_ua", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36");
         //是否清理Cookie

@@ -64,9 +64,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML  //识别结果内容提取
     public TextField bro_id_remote_ident_result_extract_regex_text;
 
-    //操作模式选择
-    @FXML
-    private Tab id_browser_op_mode_tab;
     //登录相关元素
     @FXML
     private TextField id_login_url_text;
@@ -110,6 +107,8 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private CheckBox bro_id_store_unknown_status_check;
     @FXML
+    private CheckBox bro_id_use_browser_proxy;
+    @FXML
     private TextField bro_id_captcha_url_text;
     @FXML
     private ComboBox<String> bro_id_captcha_ele_type_combo;
@@ -150,6 +149,8 @@ public class FXMLDocumentController implements Initializable {
 
     private String base_captcha_url = null;  //设置当前登录验证码url用于后续调用
     private boolean captcha_ident_was_error = false; //设置当前验证码识别错误状态
+
+    private Browser browser = null;
 
     //一些工具类方法
     public void setWithCheck(Object eleObj, Object Value) {
@@ -252,7 +253,6 @@ public class FXMLDocumentController implements Initializable {
      * 支持重试的元素查找方案
      * maxRetries 尝试次数
      * retryInterval 重试间隔时间，单位：毫秒
-     * @return
      */
     private String findElementAndInputWithRetries(DOMDocument document, String locateInfo, String selectedOption, String inputString, int maxRetries, long retryInterval) {
 
@@ -346,7 +346,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     //浏览器动作配置
-    private Browser initJxBrowserInstance(String browserProxyString) {
+    private Browser initJxBrowserInstance() {
         //创建窗口对象 JavaFX的Stage类是JavaFX应用程序创建窗口的基础
         this.primaryStage = new Stage();
 
@@ -476,28 +476,22 @@ public class FXMLDocumentController implements Initializable {
 //            }
         });
        //添加响应这状态码监听事件 //addStatusListener 没有获取到任何数据 //放弃使用
-
-        //浏览器代理设置
-        if (ElementUtils.isNotEmptyObj(browserProxyString)) {
-            //参考 使用代理 https://www.kancloud.cn/neoman/ui/802531
-            //转换输入的代理格式
-            browserProxyString = browserProxyString.replace("://","=");
-            browser.getContext().getProxyService().setProxyConfig(new CustomProxyConfig(browserProxyString));
-            print_debug(String.format("Browser Proxy Was Configured [%s]", browserProxyString));
-        }else {
-            print_debug("Browser Proxy Not Configured ...");
-        }
-
         return browser;
     }
 
     //定义是否停止所有爆破动作
-    public static boolean stopCrackStatus = false;
-
+    private boolean stopCrackStatus = false;
     @FXML //停止爆破动作
     public void stopCrack(ActionEvent actionEvent) {
-        stopCrackStatus = true;
-        printlnErrorOnUIAndConsole("已点击停止按钮,请等待停止信号传递...");
+        stopCrackStatus=true;
+        printlnInfoOnUIAndConsole("已点击停止按钮,请等待停止信号传递...");
+    }
+
+    //修改浏览器代理配置
+    @FXML
+    public void change_browser_proxy_action(ActionEvent actionEvent) {
+        printlnInfoOnUIAndConsole("已点击修改浏览器代理配置,请等待修改信号传递...");
+        setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), globalBrowserProxyStr);
     }
 
     public class MyNetworkDelegate extends DefaultNetworkDelegate {
@@ -703,9 +697,11 @@ public class FXMLDocumentController implements Initializable {
         setWithCheck(this.bro_id_store_unknown_status_check, default_store_unknown_load_status);
         this.bro_id_store_unknown_status_check.setTooltip(new Tooltip("保存响应状态未知（程序无法确定登录结果）的结果"));
 
+        //设置是否使用浏览器代理
+        setWithCheck(this.bro_id_use_browser_proxy, true);
+        this.bro_id_use_browser_proxy.setTooltip(new Tooltip("启用浏览器代理用于访问调试"));
 
         setWithCheck(this.bro_id_login_page_wait_time_combo, default_login_page_wait_time);
-        // 创建并设置 Tooltip
         this.bro_id_login_page_wait_time_combo.setTooltip(new Tooltip("请求间隔时间（毫秒）"));
 
         setWithCheck(this.bro_id_submit_fixed_wait_time_combo, default_submit_fixed_wait_time);
@@ -745,23 +741,12 @@ public class FXMLDocumentController implements Initializable {
         setWithCheck(this.bro_id_remote_resp_is_ok_keywords_text, default_remote_expected_keywords);
 
         //模拟禁用动作
-        this.bro_id_captcha_identify_action(null);
+        this.captcha_identify_action(null);
 
-    }
-
-    @FXML  //浏览器窗口显示设置,不需要管理
-    private void bro_id_show_browser_action(ActionEvent event) {
-        if (this.primaryStage == null) {
-            return;
-        }
-        if (this.bro_id_show_browser_check.isSelected())
-            this.primaryStage.show();
-        else
-            this.primaryStage.hide();
     }
 
     @FXML  //点击 验证码识别开关需要 禁用|开启 的按钮
-    private void bro_id_captcha_identify_action(ActionEvent event) {
+    private void captcha_identify_action(ActionEvent event) {
         if (this.bro_id_captcha_switch_check.isSelected()) {
             this.bro_id_captcha_set_vbox.setDisable(false);
             this.bro_id_remote_index_set_vbox.setDisable(false);
@@ -793,6 +778,16 @@ public class FXMLDocumentController implements Initializable {
         }).start();
     }
 
+    @FXML  //浏览器窗口显示设置,不需要管理
+    private void show_browser_action(ActionEvent event) {
+        if (this.primaryStage == null) {
+            return;
+        }
+        if (this.bro_id_show_browser_check.isSelected())
+            this.primaryStage.show();
+        else
+            this.primaryStage.hide();
+    }
 
     //主要爆破函数的修改
     @FXML
@@ -889,8 +884,11 @@ public class FXMLDocumentController implements Initializable {
                 return;
             }
 
-            //初始化浏览器
-            Browser browser = initJxBrowserInstance(globalBrowserProxy);
+            //初始化浏览器 //尝试将 Browser 设置为全局时,将导致无法停止
+            browser = initJxBrowserInstance();
+
+            //浏览器代理设置
+            setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), globalBrowserProxyStr);
 
             //设置JxBrowser中网络委托的对象，以实现对浏览器的网络请求和响应的控制和处理。 //更详细的请求和响应处理,含保存验证码图片
             if (this.bro_id_captcha_switch_check.isSelected()){
@@ -906,7 +904,7 @@ public class FXMLDocumentController implements Initializable {
                         Integer bro_submit_fixed_wait_time = FXMLDocumentController.this.bro_id_submit_fixed_wait_time_combo.getValue();
 
                         //遍历账号密码字典
-                        for (int index = 0; index < globalUserPassPairsArray.length; ) {
+                        for (int index = 0; index < globalUserPassPairsArray.length;) {
                             // 记录程序开始时间
                             long startTime = System.currentTimeMillis();
 

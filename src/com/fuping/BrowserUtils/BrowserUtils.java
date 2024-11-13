@@ -1,8 +1,7 @@
 package com.fuping.BrowserUtils;
 
-import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.Cookie;
-import com.teamdev.jxbrowser.chromium.CookieStorage;
+import com.fuping.CommonUtils.ElementUtils;
+import com.teamdev.jxbrowser.chromium.*;
 import com.teamdev.jxbrowser.chromium.dom.By;
 import com.teamdev.jxbrowser.chromium.dom.DOMDocument;
 import com.teamdev.jxbrowser.chromium.dom.internal.Element;
@@ -18,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class BrowserUtils {
     //清除浏览器当前 Cookies
@@ -218,6 +219,22 @@ public class BrowserUtils {
                 element = (Element) doc.findElement(By.xpath(elementValue));
         }
         return element;
+    }
+
+
+    public static void setBrowserProxyMode(Browser browser, boolean useProxy, String browserProxyStr) {
+        //浏览器代理设置
+        if (browser != null) {
+            if (useProxy && ElementUtils.isNotEmptyObj(browserProxyStr)) {
+                //参考 使用代理 https://www.kancloud.cn/neoman/ui/802531
+                browserProxyStr=browserProxyStr.replace("://", "=");
+                browser.getContext().getProxyService().setProxyConfig(new CustomProxyConfig(browserProxyStr));
+                print_debug(String.format("Browser Proxy Was Configured [%s]", browserProxyStr));
+            } else {
+                browser.getContext().getProxyService().setProxyConfig(new DirectProxyConfig());
+                print_debug("Browser Proxy Was Configured Direct Proxy mode");
+            }
+        }
     }
 
 }
