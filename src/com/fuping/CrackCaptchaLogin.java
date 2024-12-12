@@ -43,16 +43,13 @@ public class CrackCaptchaLogin extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(CrackCaptchaLogin.class.getResource("FXMLDocument.fxml"));
 
-        // 获取 ComboBox 控件
-
-
-        primaryStage.setScene(new Scene(root, 1069, 652));
+        primaryStage.setScene(new Scene(root, 1000, 700));
         primaryStage.setTitle(String.format("小米范验证码登录爆破工具(%s)", globalProgramVersion));
-        primaryStage.setResizable(false);
+        // 确保 Stage 是可调整大小的
+        primaryStage.setResizable(true);
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icon.jpg")));
         primaryStage.show();
     }
-
 
     public static void main(String[] args) {
         print_debug("Inner JxBrowser Version: " + ProductInfo.getVersion());

@@ -127,10 +127,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextArea bro_id_output_text_area;
 
-    //远程验证码识别功能相关
-    @FXML
-    public VBox bro_id_remote_index_set_vbox;
-
     private Stage primaryStage;
     private byte[] captcha_data;
 
@@ -858,10 +854,8 @@ public class FXMLDocumentController implements Initializable {
     private void captcha_identify_action(ActionEvent event) {
         if (this.bro_id_captcha_switch_check.isSelected()) {
             this.bro_id_captcha_set_vbox.setDisable(false);
-            this.bro_id_remote_index_set_vbox.setDisable(false);
         } else {
             this.bro_id_captcha_set_vbox.setDisable(true);
-            this.bro_id_remote_index_set_vbox.setDisable(true);
         }
     }
 
