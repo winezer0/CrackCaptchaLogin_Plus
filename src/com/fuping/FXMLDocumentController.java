@@ -264,7 +264,7 @@ public class FXMLDocumentController implements Initializable {
      * @return
      */
     public ActionStatus setInputValueByJS(Browser browser, String locateInfo, String locateType, String inputText) {
-        ActionStatus action_string = null;
+        ActionStatus action_string;
         String jsCode = null;
         switch (locateType.toLowerCase()) {
             case "css":
@@ -319,36 +319,41 @@ public class FXMLDocumentController implements Initializable {
             return BREAK;
         }
 
-        // Execute the JavaScript code in the context of the currently loaded web page and get the return value.
-        JSValue jsValue = browser.executeJavaScriptAndReturnValue(jsCode);
-
-        // Check if the returned JSValue is an object and contains expected properties.
-        if (jsValue.isObject()) {
-            JSValue success = jsValue.asObject().getProperty("success");
-            JSValue message = jsValue.asObject().getProperty("message");
-            if (success.isBoolean() && message.isString()) {
-                JSBoolean isSuccess = success.asBoolean();
-                // Print the message for debugging purposes.
-                // System.out.println(isSuccess.getValue(), msg);
-                if (isSuccess.getValue()) {
-                    //定位并输入元素成功
-                    action_string = SUCCESS;
+        try {
+            // Execute the JavaScript code in the context of the currently loaded web page and get the return value.
+            JSValue jsValue = browser.executeJavaScriptAndReturnValue(jsCode);
+            // Check if the returned JSValue is an object and contains expected properties.
+            if (jsValue.isObject()) {
+                JSValue success = jsValue.asObject().getProperty("success");
+                JSValue message = jsValue.asObject().getProperty("message");
+                if (success.isBoolean() && message.isString()) {
+                    JSBoolean isSuccess = success.asBoolean();
+                    // Print the message for debugging purposes.
+                    // System.out.println(isSuccess.getValue(), msg);
+                    if (isSuccess.getValue()) {
+                        //定位并输入元素成功
+                        action_string = SUCCESS;
+                    } else {
+                        action_string = fromString(FIND_ELE_NULL_ACTION);
+                        String msg = message.asString().getValue();
+                        printlnErrorOnUIAndConsole(String.format("定位元素失败 (影响结果false) 动作:[%s] MSG[%s]", action_string, msg));
+                    }
                 } else {
                     action_string = fromString(FIND_ELE_NULL_ACTION);
                     String msg = message.asString().getValue();
-                    printlnErrorOnUIAndConsole(String.format("定位元素失败 (影响结果false) 动作:[%s] MSG[%s]", action_string, msg));
+                    printlnErrorOnUIAndConsole(String.format("定位元素失败 (响应格式非预期) 动作:[%s] MSG[%s]", action_string, msg));
                 }
-            } else {
-                action_string = fromString(FIND_ELE_NULL_ACTION);
-                String msg = message.asString().getValue();
-                printlnErrorOnUIAndConsole(String.format("定位元素失败 (响应格式非预期) 动作:[%s] MSG[%s]", action_string, msg));
+                return action_string;
             }
-            return action_string;
-        }
 
-        // If we reach here, something unexpected happened.
-        action_string = ActionStatus.fromString(FIND_ELE_EXCEPTION_ACTION);
-        printlnErrorOnUIAndConsole(String.format("未知定位异常 (执行时发生未知错误) 动作:[%s]", action_string));
+            // If we reach here, something unexpected happened.
+            action_string = ActionStatus.fromString(FIND_ELE_NULL_ACTION);
+            printlnErrorOnUIAndConsole(String.format("未知定位异常 (JS执行结果格式未知) 动作:[%s]", action_string));
+        } catch (Exception e){
+            // If we reach here, something unexpected happened.
+            action_string = CONTINUE;
+            printlnErrorOnUIAndConsole(String.format("未知定位异常 (JS执行发生未知错误) 动作:[%s] ERROR:[%s]", action_string, e.getMessage()));
+        }
         return action_string;
     }
 
@@ -1309,7 +1314,7 @@ public class FXMLDocumentController implements Initializable {
                         stopCrackStatus=true;
                     } catch (Exception e) {
                         // 处理特定的 IllegalStateException
-                        if (e.getMessage().contains("stream was closed")) {
+                        if (e.getMessage().contains("stream was closed") || e.getMessage().contains("Failed to send message")) {
                             printlnDebugOnUIAndConsole("发生已知异常|即将重试: Channel stream was closed !!!");
                             stopCrackStatus=false;
                         } else {
