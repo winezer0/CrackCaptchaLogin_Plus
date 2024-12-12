@@ -153,6 +153,8 @@ public class FXMLDocumentController implements Initializable {
 
     private Browser browser = null;
 
+    private String login_url_protocol = null; //记录当前登录URL的协议类型,用于后续http/https的纠正使用
+
     //元素查找方法
     private boolean executeJavaScriptMode = false;
 
@@ -599,7 +601,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     public void change_browser_proxy_action(ActionEvent actionEvent) {
         printlnInfoOnUIAndConsole("已点击修改浏览器代理配置,请等待修改信号传递...");
-        setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), globalBrowserProxyStr);
+        setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), globalBrowserProxyStr, login_url_protocol);
     }
 
     @FXML
@@ -1003,7 +1005,8 @@ public class FXMLDocumentController implements Initializable {
             browser = initJxBrowserInstance();
 
             //浏览器代理设置
-            setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), globalBrowserProxyStr);
+            login_url_protocol = base_login_url.toLowerCase().startsWith("http://") ? "http" : "https";
+            setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), globalBrowserProxyStr, login_url_protocol);
 
             //设置JxBrowser中网络委托的对象，以实现对浏览器的网络请求和响应的控制和处理。 //更详细的请求和响应处理,含保存验证码图片
             if (this.bro_id_captcha_switch_check.isSelected()){

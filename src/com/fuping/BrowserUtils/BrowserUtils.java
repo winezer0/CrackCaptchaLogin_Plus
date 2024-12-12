@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.fuping.CommonUtils.ElementUtils.isContainOneKeyByEach;
 import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class BrowserUtils {
@@ -222,12 +223,17 @@ public class BrowserUtils {
     }
 
 
-    public static void setBrowserProxyMode(Browser browser, boolean useProxy, String browserProxyStr) {
+    public static void setBrowserProxyMode(Browser browser, boolean useProxy, String browserProxyStr, String loginProto) {
         //浏览器代理设置
         if (browser != null) {
             if (useProxy && ElementUtils.isNotEmptyObj(browserProxyStr)) {
+                //输入的不是完整的格式 127.0.0.1:8080 需要配置代理协议
+                if (!isContainOneKeyByEach(browserProxyStr, "http://|socks://|https://", false)){
+                    browserProxyStr = String.format("%s://%s", loginProto, browserProxyStr);
+                }
+
                 //参考 使用代理 https://www.kancloud.cn/neoman/ui/802531
-                browserProxyStr=browserProxyStr.replace("://", "=");
+                browserProxyStr = browserProxyStr.replace("://", "=");
                 browser.getContext().getProxyService().setProxyConfig(new CustomProxyConfig(browserProxyStr));
                 print_debug(String.format("Browser Proxy Was Configured [%s]", browserProxyStr));
             } else {
