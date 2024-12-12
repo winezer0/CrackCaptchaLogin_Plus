@@ -5,6 +5,23 @@ import com.fuping.LoadDict.UserPassPair;
 import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class MyConst {
+    // 定义 ActionStatus 枚举
+    public enum ActionStatus {
+        SUCCESS, FAILURE, BREAK, CONTINUE;
+
+        // 自定义从字符串创建枚举的方法，处理大小写不敏感的情况
+        public static ActionStatus fromString(String text) {
+            if (text != null) {
+                for (ActionStatus b : ActionStatus.values()) {
+                    if (text.equalsIgnoreCase(b.name())) {
+                        return b;
+                    }
+                }
+            }
+            throw new IllegalArgumentException("No matching enum found for text: " + text);
+        }
+    }
+
     // 私有静态成员变量，用于保存单例实例
     private static MyConst MyConstInstance;
 
@@ -20,7 +37,7 @@ public class MyConst {
     public static String globalErrorCaptchaFilePath = null;   //记录验证错误的记录
 
     //设置配置参数名称
-    public static String globalProgramVersion = "NOVASEC 3.8.13 20241113" ;
+    public static String globalProgramVersion = "NOVASEC 3.8.14 20241212" ;
 
     //JxBrowser相关配置参数
     public static String globalBrowserProxyStr = null;
@@ -87,7 +104,6 @@ public class MyConst {
     public static String default_resp_key_failure_regex = null;
     public static String default_resp_key_captcha_regex = null;
 
-
     public static String default_captcha_url = null;
     public static String default_captcha_ele_value = null;
     public static String default_captcha_ele_type = null;
@@ -108,13 +124,14 @@ public class MyConst {
 
     public static String globalLocaleTessDataName =null; //默认调用的数据集名称, 实际上就是tessdata目录下的文件名前缀
 
-
     //定义查找元素失败后的操作
     public static String BROWSER_CLOSE_ACTION;     //浏览器关闭后的动作  break
     public static String FIND_ELE_ILLEGAL_ACTION;  //查找到不合法的动作时 continue
     public static String FIND_ELE_NULL_ACTION;     //没有找到元素对应的操作 continue
     public static String FIND_ELE_EXCEPTION_ACTION; //发生其他异常时的动作 continue
 
+    //定义查找元素的方案
+    public static boolean default_js_mode_switch = false; //是否使用JS模式进行元素查找 仅支持CSS和XPATH
 
     public MyConst(){
         ConfigReader configReader = ConfigReader.getInstance();
@@ -193,9 +210,10 @@ public class MyConst {
         globalFindEleDelayTime = Integer.parseInt(configReader.getString("find_ele_delay_time", "500"));
         globalFindEleRetryTimes = Integer.parseInt(configReader.getString("find_ele_retry_times", "6"));
 
+        default_js_mode_switch = configReader.isTrue("js_mode_switch", false);
+
         print_debug("Loaded Config Finish...");
     }
-
 
     public static MyConst initialize() {
         // 如果实例为null，则创建一个新的实例

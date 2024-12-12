@@ -1,8 +1,8 @@
 package com.fuping;
 
 import com.fuping.BrowserUtils.MyDialogHandler;
-import com.fuping.CommonUtils.MyFileUtils;
 import com.fuping.CommonUtils.ElementUtils;
+import com.fuping.CommonUtils.MyFileUtils;
 import com.fuping.CommonUtils.SystemUtilization;
 import com.fuping.LoadDict.UserPassPair;
 import com.teamdev.jxbrowser.chromium.Callback;
@@ -43,8 +43,10 @@ import static com.fuping.BrowserUtils.BrowserUtils.*;
 import static com.fuping.CaptchaIdentify.CaptchaUtils.LoadImageToFile;
 import static com.fuping.CaptchaIdentify.RemoteApiIdent.remoteIndentCaptcha;
 import static com.fuping.CaptchaIdentify.TesseractsLocaleIdent.localeIdentCaptcha;
-import static com.fuping.CommonUtils.Utils.*;
+import static com.fuping.CommonUtils.Utils.escapeString;
+import static com.fuping.CommonUtils.Utils.urlRemoveQuery;
 import static com.fuping.LoadConfig.MyConst.*;
+import static com.fuping.LoadConfig.MyConst.ActionStatus.*;
 import static com.fuping.LoadDict.LoadDictUtils.*;
 import static com.fuping.PrintLog.PrintLog.*;
 
@@ -152,6 +154,9 @@ public class FXMLDocumentController implements Initializable {
 
     private Browser browser = null;
 
+    //元素查找方法
+    boolean executeJavaScriptMode = default_js_mode_switch;
+
     //一些工具类方法
     public void setWithCheck(Object eleObj, Object Value) {
         if (Value != null) {
@@ -216,13 +221,14 @@ public class FXMLDocumentController implements Initializable {
      * @param locate_info 定位信息
      * @param selectedOption 定位选项
      * @param input_string 输入值
+     * @return
      */
-    private String findElementAndInput(DOMDocument document, String locate_info, String selectedOption, String input_string) {
-        String action_string = "success";
+    private ActionStatus findElementAndInput(DOMDocument document, String locate_info, String selectedOption, String input_string) {
+        ActionStatus action_string = SUCCESS;
         try {
             InputElement findElement = findInputElementByOption(document, locate_info, selectedOption);
             Map<String, String> attributes = findElement.getAttributes();
-
+            //findElement.click(); // 尝试前后新增 .click() 解决部分场景内容输入后提示没有内容的问题 无效果
             findElement.setValue(input_string);
             // for (String attrName : attributes.keySet()) { System.out.println(attrName + " = " + attributes.get(attrName)); }
         }
@@ -230,21 +236,119 @@ public class FXMLDocumentController implements Initializable {
             String eMessage = illegalStateException.getMessage();
             System.out.println(eMessage);
             if (eMessage.contains("Channel is already closed")) {
-                action_string = BROWSER_CLOSE_ACTION;
+                action_string = ActionStatus.fromString(BROWSER_CLOSE_ACTION);
                 printlnErrorOnUIAndConsole(String.format("浏览器已关闭 (IllegalStateException) 动作:[%s]", action_string));
             }else {
                 illegalStateException.printStackTrace();
-                action_string = FIND_ELE_ILLEGAL_ACTION;
+                action_string = ActionStatus.fromString(FIND_ELE_ILLEGAL_ACTION);
                 printlnErrorOnUIAndConsole(String.format("illegal State Exception 动作:[%s]", action_string));
             }
         } catch (NullPointerException nullPointerException) {
-            action_string = FIND_ELE_NULL_ACTION;
+            action_string = ActionStatus.fromString(FIND_ELE_NULL_ACTION);
             printlnErrorOnUIAndConsole(String.format("定位元素失败 (nullPointerException) 动作:[%s]", action_string));
         } catch (Exception exception) {
             exception.printStackTrace();
-            action_string = FIND_ELE_EXCEPTION_ACTION;
+            action_string = ActionStatus.fromString(FIND_ELE_EXCEPTION_ACTION);
             printlnErrorOnUIAndConsole(String.format("未知定位异常 (unknown exception) 动作:[%s]", action_string));
         }
+        return action_string;
+    }
+
+
+    /**
+     * 通过浏览器JS代码执行器来输入元素操作
+     * @param browser
+     * @param locateInfo
+     * @param locateType
+     * @param inputText
+     * @return
+     */
+    public ActionStatus setInputValueByJS(Browser browser, String locateInfo, String locateType, String inputText) {
+        ActionStatus action_string = null;
+        String jsCode = null;
+        switch (locateType.toLowerCase()) {
+            case "css":
+                // JavaScript code to find an element by CSS selector and set its value.
+                jsCode = "function setInputValueByCSS(cssSelector, value) {" +
+                        "   try {" +
+                        "       var node = document.querySelector(cssSelector);" +
+                        "       if (node && node instanceof HTMLElement) {" +
+                        "           node.value = value;" +
+                        "           var event = new Event('input', { 'bubbles': true, 'cancelable': true });" +
+                        "           node.dispatchEvent(event);" +
+                        "           return { success: true, message: 'Input successful.' };" +
+                        "       } else {" +
+                        "           return { success: false, message: 'Element not found or not an HTML element.' };" +
+                        "       }" +
+                        "   } catch (error) {" +
+                        "       return { success: false, message: error.message };" +
+                        "   }" +
+                        "}" +
+                        "setInputValueByCSS('" + locateInfo.replace("'", "\\'") + "', '" + inputText.replace("'", "\\'") + "');";
+                break;
+            case "xpath":
+                // JavaScript code to find an element by XPath and set its value.
+                jsCode = "function setInputValueByXPath(xpath, value) {" +
+                        "   try {" +
+                        "       var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);" +
+                        "       var node = result.singleNodeValue;" +
+                        "       if (node && node instanceof HTMLElement) {" +
+                        "           node.value = value;" +
+                        "           var event = new Event('input', { 'bubbles': true, 'cancelable': true });" +
+                        "           node.dispatchEvent(event);" +
+                        "           return { success: true, message: 'Input successful.' };" +
+                        "       } else {" +
+                        "           return { success: false, message: 'Element not found or not an HTML element.' };" +
+                        "       }" +
+                        "   } catch (error) {" +
+                        "       return { success: false, message: error.message };" +
+                        "   }" +
+                        "}" +
+                        "setInputValueByXPath('" + locateInfo.replace("'", "\\'") + "', '" + inputText.replace("'", "\\'") + "');";
+                break;
+            case "id":
+            case "name":
+            case "class":
+            default:
+                printlnErrorOnUIAndConsole("Js Mode Not Support [id|name|class] Mode!!! Please Input [CSS] or [XPATH] Locate Info Again.");
+                break;
+        }
+
+        if (jsCode == null){
+            printlnErrorOnUIAndConsole(String.format("Js Mode Only Support [css|xpath] Mode!!! You Input Mode is [%s]", locateType));
+            return BREAK;
+        }
+
+        // Execute the JavaScript code in the context of the currently loaded web page and get the return value.
+        JSValue jsValue = browser.executeJavaScriptAndReturnValue(jsCode);
+
+        // Check if the returned JSValue is an object and contains expected properties.
+        if (jsValue.isObject()) {
+            JSValue success = jsValue.asObject().getProperty("success");
+            JSValue message = jsValue.asObject().getProperty("message");
+            if (success.isBoolean() && message.isString()) {
+                JSBoolean isSuccess = success.asBoolean();
+                // Print the message for debugging purposes.
+                // System.out.println(isSuccess.getValue(), msg);
+                if (isSuccess.getValue()) {
+                    //定位并输入元素成功
+                    action_string = SUCCESS;
+                } else {
+                    action_string = fromString(FIND_ELE_NULL_ACTION);
+                    String msg = message.asString().getValue();
+                    printlnErrorOnUIAndConsole(String.format("定位元素失败 (影响结果false) 动作:[%s] MSG[%s]", action_string, msg));
+                }
+            } else {
+                action_string = fromString(FIND_ELE_NULL_ACTION);
+                String msg = message.asString().getValue();
+                printlnErrorOnUIAndConsole(String.format("定位元素失败 (响应格式非预期) 动作:[%s] MSG[%s]", action_string, msg));
+            }
+            return action_string;
+        }
+
+        // If we reach here, something unexpected happened.
+        action_string = ActionStatus.fromString(FIND_ELE_EXCEPTION_ACTION);
+        printlnErrorOnUIAndConsole(String.format("未知定位异常 (执行时发生未知错误) 动作:[%s]", action_string));
         return action_string;
     }
 
@@ -254,14 +358,14 @@ public class FXMLDocumentController implements Initializable {
      * maxRetries 尝试次数
      * retryInterval 重试间隔时间，单位：毫秒
      */
-    private String findElementAndInputWithRetries(DOMDocument document, String locateInfo, String selectedOption, String inputString, int maxRetries, long retryInterval) {
+    private ActionStatus findElementAndInputWithRetries(DOMDocument document, String locateInfo, String selectedOption, String inputString, int maxRetries, long retryInterval) {
 
         int retries = 0;
-        String action_status = "failure";
+        ActionStatus action_status = ActionStatus.FAILURE;
 
-        while (!"success".equalsIgnoreCase(action_status) && retries < maxRetries) {
+        while (!SUCCESS.equals(action_status) && retries < maxRetries) {
             action_status = findElementAndInput(document, locateInfo, selectedOption, inputString);
-            if ("success".equalsIgnoreCase(action_status)) { break; }
+            if (SUCCESS.equals(action_status)) { break; }
 
             // 延迟500毫秒后重试
             try {
@@ -983,25 +1087,33 @@ public class FXMLDocumentController implements Initializable {
                             //加载URl文档
                             DOMDocument document = browser.getDocument();
                             //输入用户名
-                            String action_status;
-                            action_status = findElementAndInputWithRetries(document, bro_user_ele_text, bro_user_ele_type, cur_user, globalFindEleRetryTimes, globalFindEleDelayTime);
+                            ActionStatus action_status;
+                            if (executeJavaScriptMode){
+                                action_status = setInputValueByJS(browser, bro_user_ele_text, bro_user_ele_type,  cur_user);
+                            } else {
+                                action_status = findElementAndInputWithRetries(document, bro_user_ele_text, bro_user_ele_type, cur_user, globalFindEleRetryTimes, globalFindEleDelayTime);
+                            }
                             //处理资源寻找状态
-                            if(!"success".equalsIgnoreCase(action_status)){
+                            if(!SUCCESS.equals(action_status)){
                                 printlnErrorOnUIAndConsole(String.format("Error For Location [USERNAME] [%s] <--> Action: [%s]", bro_user_ele_text, action_status));
 
                                 //查找元素错误时的处理 继续还是中断
-                                if("break".equalsIgnoreCase(action_status)) {break;} else if("continue".equalsIgnoreCase(action_status)){continue;} else {continue;}
+                                if(BREAK.equals(action_status)) {break;} else if(CONTINUE.equals(action_status)){continue;} else {continue;}
                             }else{
                                 print_debug("find [USERNAME] Element And Input Success ...");
                             }
 
                             //查找密码输入框
-                            action_status = findElementAndInputWithRetries(document, bro_pass_ele_text, bro_pass_ele_type, cur_pass, globalFindEleRetryTimes, globalFindEleDelayTime);
+                            if (executeJavaScriptMode){
+                                action_status = setInputValueByJS(browser, bro_pass_ele_text, bro_pass_ele_type,  cur_pass);
+                            } else {
+                                action_status = findElementAndInputWithRetries(document, bro_pass_ele_text, bro_pass_ele_type, cur_pass, globalFindEleRetryTimes, globalFindEleDelayTime);
+                            }
                             //处理资源寻找状态
-                            if(!"success".equalsIgnoreCase(action_status)){
+                            if(!SUCCESS.equals(action_status)){
                                 printlnErrorOnUIAndConsole(String.format("Error For Location [PASSWORD] [%s] <--> Action: [%s]", bro_pass_ele_text, action_status));
                                 //查找元素错误时的处理 继续还是中断
-                                if("break".equalsIgnoreCase(action_status)) {break;} else if("continue".equalsIgnoreCase(action_status)){continue;} else {continue;}
+                                if(BREAK.equals(action_status)) {break;} else if(CONTINUE.equals(action_status)){continue;} else {continue;}
                             }else{
                                 print_debug("find [PASSWORD] Element And Input Success ...");
                             }
@@ -1034,22 +1146,24 @@ public class FXMLDocumentController implements Initializable {
                                 }
 
                                 //输入验证码元素 并检查输入状态
-                                action_status = findElementAndInputWithRetries(document,bro_captcha_ele_text, bro_captcha_ele_type, captchaText, globalFindEleRetryTimes, globalFindEleDelayTime);
-
+                                if (executeJavaScriptMode){
+                                    action_status = setInputValueByJS(browser, bro_captcha_ele_text, bro_captcha_ele_type,  captchaText);
+                                } else {
+                                    action_status = findElementAndInputWithRetries(document,bro_captcha_ele_text, bro_captcha_ele_type, captchaText, globalFindEleRetryTimes, globalFindEleDelayTime);
+                                }
                                 //处理资源寻找状态
-                                if(!"success".equalsIgnoreCase(action_status)){
+                                if(!SUCCESS.equals(action_status)){
                                     printlnErrorOnUIAndConsole(String.format("Error For Location [CAPTCHA] [%s] <--> Action: [%s]", bro_captcha_ele_text, action_status));
                                     //查找元素错误时的处理 继续还是中断
-                                    if("break".equalsIgnoreCase(action_status)) {break;} else if("continue".equalsIgnoreCase(action_status)){continue;} else {continue;}
+                                    if(BREAK.equals(action_status)) {break;} else if(CONTINUE.equals(action_status)){continue;} else {continue;}
                                 }else{
                                     print_debug("find [CAPTCHA] Element And Input Success ...");
                                 }
-
                                 captcha_ident_was_error = false;
                             }
 
                             //定位提交按钮, 并填写按钮
-                            String submit_status = "success";
+                            ActionStatus submit_status = SUCCESS;
                             try {
                                 Element submitElement = findElementByOption(document, bro_submit_ele_text, bro_id_submit_ele_type);
                                 submitElement.click();
@@ -1061,14 +1175,14 @@ public class FXMLDocumentController implements Initializable {
                                 } catch (IllegalStateException illegalStateException) {
                                     illegalStateException.printStackTrace();
                                     printlnErrorOnUIAndConsole("Error For document.findElement(By.cssSelector(\"[type=submit]\")).click()");
-                                    submit_status = FIND_ELE_NULL_ACTION;
+                                    submit_status = ActionStatus.fromString(FIND_ELE_NULL_ACTION);
                                 }
                             } finally {
                                 //处理按钮点击状态
-                                if(!"success".equalsIgnoreCase(submit_status)){
+                                if(!SUCCESS.equals(submit_status)){
                                     printlnErrorOnUIAndConsole(String.format("Error For Location [SUBMIT] [%s] <--> Action: [%s]", bro_submit_ele_text, submit_status));
                                     //查找元素错误时的处理 继续还是中断
-                                    if("break".equalsIgnoreCase(action_status)) {break;} else if("continue".equalsIgnoreCase(action_status)){continue;} else {continue;}
+                                    if(BREAK.equals(action_status)) {break;} else if(CONTINUE.equals(action_status)){continue;} else {continue;}
                                 }else{
                                     print_debug("find [SUBMIT] Element And Input Success ...");
                                 }
