@@ -94,6 +94,9 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     public CheckBox bro_id_submit_auto_wait_check;
 
+    @FXML
+    public CheckBox bro_id_default_js_mode_check;
+
     @FXML //设置字典组合模式
     private ComboBox<String> bro_id_dict_compo_mode_combo;
     @FXML
@@ -151,7 +154,7 @@ public class FXMLDocumentController implements Initializable {
     private Browser browser = null;
 
     //元素查找方法
-    boolean executeJavaScriptMode = default_js_mode_switch;
+    private boolean executeJavaScriptMode = false;
 
     //一些工具类方法
     public void setWithCheck(Object eleObj, Object Value) {
@@ -599,6 +602,12 @@ public class FXMLDocumentController implements Initializable {
         setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), globalBrowserProxyStr);
     }
 
+    @FXML
+    public void change_js_mode_action(ActionEvent actionEvent) {
+        printlnInfoOnUIAndConsole("已点击修改元素查找模式,请等待修改信号传递...");
+        executeJavaScriptMode = this.bro_id_default_js_mode_check.isSelected();
+    }
+
     public class MyNetworkDelegate extends DefaultNetworkDelegate {
         private boolean isCompleteAuth;
         private boolean isCancelAuth;
@@ -815,6 +824,9 @@ public class FXMLDocumentController implements Initializable {
         setWithCheck(this.bro_id_submit_auto_wait_check, default_submit_auto_wait_switch);
         this.bro_id_submit_auto_wait_check.setTooltip(new Tooltip("自动等待页面加载完成"));
 
+        setWithCheck(this.bro_id_default_js_mode_check, default_js_mode_switch);
+        this.bro_id_default_js_mode_check.setTooltip(new Tooltip("使用JS执行模式进行元素查找和输入 仅实现XPATH和CSS元素选择器"));
+
         setWithCheck(this.bro_id_dict_compo_mode_combo, default_dict_compo_mode);
         this.bro_id_dict_compo_mode_combo.setTooltip(new Tooltip("字典组合方式"));
 
@@ -825,7 +837,7 @@ public class FXMLDocumentController implements Initializable {
         //设置验证码识别开关
         setWithCheck(this.bro_id_captcha_switch_check, default_ident_captcha_switch);
         this.bro_id_captcha_switch_check.setTooltip(new Tooltip("开启验证码识别功能"));
-//设置验证码识别方式
+        //设置验证码识别方式
         setWithCheck(default_locale_identify_switch ? this.bro_id_locale_ident_flag_radio : this.bro_id_yzm_remote_ident_radio, true);
         //设置验证码属性
         setWithCheck(this.bro_id_captcha_url_text, default_captcha_url);
@@ -998,6 +1010,9 @@ public class FXMLDocumentController implements Initializable {
                 base_captcha_url = this.bro_id_captcha_url_text.getText().trim();
                 browser.getContext().getNetworkService().setNetworkDelegate(new MyNetworkDelegate(base_captcha_url));
             }
+
+            //初始化获取当前的元素选择模式
+            executeJavaScriptMode = this.bro_id_default_js_mode_check.isSelected();
 
             //开启一个新的线程进行爆破操作
             new Thread(new Runnable() {

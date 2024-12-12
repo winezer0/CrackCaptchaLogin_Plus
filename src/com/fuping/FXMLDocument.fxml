@@ -206,6 +206,7 @@
                                           </items>
                                        </ComboBox>
                                        <CheckBox fx:id="bro_id_submit_auto_wait_check" mnemonicParsing="false" prefHeight="23.0" prefWidth="108.0" text="自动等待模式" />
+                                       <CheckBox fx:id="bro_id_default_js_mode_check" mnemonicParsing="false" onAction="#change_js_mode_action" prefHeight="23.0" prefWidth="108.0" text="JS定位模式" />
                                     </children>
                                     <padding>
                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
