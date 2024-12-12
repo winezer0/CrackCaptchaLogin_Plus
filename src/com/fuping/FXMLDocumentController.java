@@ -610,6 +610,12 @@ public class FXMLDocumentController implements Initializable {
         executeJavaScriptMode = this.bro_id_default_js_mode_check.isSelected();
     }
 
+    @FXML
+    public void change_submit_auto_wait_action(ActionEvent actionEvent) {
+        //点击了自动等待就关闭手动设置等待的功能
+        this.bro_id_submit_fixed_wait_time_combo.setDisable(bro_id_submit_auto_wait_check.isSelected());
+    }
+
     public class MyNetworkDelegate extends DefaultNetworkDelegate {
         private boolean isCompleteAuth;
         private boolean isCancelAuth;
@@ -825,6 +831,7 @@ public class FXMLDocumentController implements Initializable {
 
         setWithCheck(this.bro_id_submit_auto_wait_check, default_submit_auto_wait_switch);
         this.bro_id_submit_auto_wait_check.setTooltip(new Tooltip("自动等待页面加载完成"));
+        this.change_submit_auto_wait_action(null);
 
         setWithCheck(this.bro_id_default_js_mode_check, default_js_mode_switch);
         this.bro_id_default_js_mode_check.setTooltip(new Tooltip("使用JS执行模式进行元素查找和输入 仅实现XPATH和CSS元素选择器"));
