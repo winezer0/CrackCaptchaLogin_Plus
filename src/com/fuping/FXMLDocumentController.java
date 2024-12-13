@@ -354,14 +354,14 @@ public class FXMLDocumentController implements Initializable {
             //主框架和子框架加载完成调用事件
             public void onDocumentLoadedInFrame(FrameLoadEvent event) {
                 //在页面中任何框架（包括主框架和嵌套的子框架如 iframe）的 DOM 文档加载完成后被调用。
-                printlnInfoOnUIAndConsole("Frame document is loaded.");
+                //printlnInfoOnUIAndConsole("Frame document is loaded.");
             }
 
             @Override
             //主框架加载完成调用事件
             public void onDocumentLoadedInMainFrame(LoadEvent event) {
                 //仅在主框架（即整个页面）的DOM文档加载完成后被调用，而不考虑其他嵌套的子框架。
-                printlnInfoOnUIAndConsole("Main frame document is loaded.");
+                //printlnInfoOnUIAndConsole("Main frame document is loaded.");
             }
 
         });
