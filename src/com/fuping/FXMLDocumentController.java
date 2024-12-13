@@ -526,7 +526,9 @@ public class FXMLDocumentController implements Initializable {
         //添加页面加载监听事件
         browser.addLoadListener(new LoadAdapter() {
             @Override
+            //预加载触发事件||表示加载即将开始
             public void onProvisionalLoadingFrame(ProvisionalLoadingEvent event) {
+                //页面首次加载|| 页面中的iframe或其他嵌入式框架开始加载新内容||用户点击链接、提交表单等操作导致页面或其部分重新加载。
                 if (event.isMainFrame())
                     Platform.runLater(new Runnable() {
                         public void run() {
@@ -534,8 +536,11 @@ public class FXMLDocumentController implements Initializable {
                         }
                     });
             }
+
             @Override
+            //加载中触发事件||在实际接收到数据时触发
             public void onStartLoadingFrame(StartLoadingEvent event) {
+                //在浏览器开始接收到框架的数据时被调用，意味着网络连接已经建立，并且服务器已经开始发送响应数据。
                 if (event.isMainFrame()){
                     Platform.runLater(new Runnable() {
                         public void run() {
@@ -549,8 +554,11 @@ public class FXMLDocumentController implements Initializable {
                 }
                 super.onStartLoadingFrame(event);
             }
+
             @Override
+            //加载失败触发事件
             public void onFailLoadingFrame(FailLoadingEvent event) {
+                //尝试加载某个框架的内容但未能成功时
                 if (event.isMainFrame())
                     Platform.runLater(new Runnable() {
                         public void run() {
@@ -562,8 +570,11 @@ public class FXMLDocumentController implements Initializable {
                     });
                 super.onFailLoadingFrame(event);
             }
+
             @Override
+            //加载完成触发事件
             public void onFinishLoadingFrame(FinishLoadingEvent event) {
+                //当浏览器成功加载完某个框架的所有内容时，包括HTML、CSS、JavaScript等资源时触发
                 if (event.isMainFrame()) {
                     Platform.runLater(new Runnable() {
                         public void run() {
@@ -576,16 +587,27 @@ public class FXMLDocumentController implements Initializable {
                 }
                 super.onFinishLoadingFrame(event);
             }
-//            @Override
-//            public void onDocumentLoadedInFrame(FrameLoadEvent event) {
-//                printlnInfoOnUIAndConsole("Frame document is loaded.");
-//            }
-//            @Override
-//            public void onDocumentLoadedInMainFrame(LoadEvent event) {
-//                printlnInfoOnUIAndConsole("Main frame document is loaded.");
-//            }
+
+            @Override
+            //主框架和子框架加载完成调用事件
+            public void onDocumentLoadedInFrame(FrameLoadEvent event) {
+                //在页面中任何框架（包括主框架和嵌套的子框架如 iframe）的 DOM 文档加载完成后被调用。
+                printlnInfoOnUIAndConsole("Frame document is loaded.");
+            }
+
+            @Override
+            //主框架加载完成调用事件
+            public void onDocumentLoadedInMainFrame(LoadEvent event) {
+                //仅在主框架（即整个页面）的DOM文档加载完成后被调用，而不考虑其他嵌套的子框架。
+                printlnInfoOnUIAndConsole("Main frame document is loaded.");
+            }
+
         });
-       //添加响应这状态码监听事件 //addStatusListener 没有获取到任何数据 //放弃使用
+
+        //addStatusListener状态监听器 允许开发者监听浏览器的各种状态变化、可以捕获到诸如导航开始、导航完成、加载进度更新等事件，
+        //这对于实现自定义的用户界面反馈（如显示加载进度条）或执行特定逻辑（如在页面加载完成后执行某些操作）非常有用。
+        //addStatusListener状态监听器 // 没有获取到任何数据 //放弃使用//
+
         return browser;
     }
 
