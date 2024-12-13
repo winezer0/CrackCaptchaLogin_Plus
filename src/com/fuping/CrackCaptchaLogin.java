@@ -41,7 +41,11 @@ public class CrackCaptchaLogin extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(CrackCaptchaLogin.class.getResource("FXMLDocument.fxml"));
+        // Parent root = FXMLLoader.load(CrackCaptchaLogin.class.getResource("FXMLDocument.fxml"));
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLDocument.fxml"));
+        loader.setControllerFactory(param -> FXMLDocumentController.getInstance());
+        Parent root = loader.load();
 
         primaryStage.setScene(new Scene(root, 1000, 700));
         primaryStage.setTitle(String.format("小米范验证码登录爆破工具(%s)", globalProgramVersion));

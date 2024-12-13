@@ -10,16 +10,13 @@ import com.teamdev.jxbrowser.chromium.*;
 import com.teamdev.jxbrowser.chromium.dom.By;
 import com.teamdev.jxbrowser.chromium.dom.DOMDocument;
 import com.teamdev.jxbrowser.chromium.dom.internal.Element;
-import com.teamdev.jxbrowser.chromium.dom.internal.InputElement;
 import com.teamdev.jxbrowser.chromium.events.*;
 import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
-import com.teamdev.jxbrowser.chromium.javafx.DefaultNetworkDelegate;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -28,15 +25,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.BrowserUtils.BrowserUtils.*;
@@ -134,11 +127,10 @@ public class FXMLDocumentController implements Initializable {
     private TextArea bro_id_output_text_area; // 注意：这里不应该使用static，除非有特殊需求
 
     private Stage primaryStage;
-    public static byte[] captchaPictureData; //存储验证码数据
 
-    //记录当前页面加载状态
-    private String CURR_LOADING_STATUS;
-    private String CURR_LOGIN_STATUS;
+    public static byte[] captchaPictureData; //存储验证码数据
+    public static String CURR_LOADING_STATUS; //记录当前页面加载状态
+    public static String CURR_LOGIN_STATUS; //记录当前登录爆破加载状态
 
     private List<String> login_about_urls = null;  //存储当前URL相关的多个URl
     private String login_access_url = null;  //设置当前登录url的全局变量用于后续调用
@@ -406,8 +398,26 @@ public class FXMLDocumentController implements Initializable {
         this.bro_id_submit_fixed_wait_time_combo.setDisable(bro_id_submit_auto_wait_check.isSelected());
     }
 
+
+    // 获取控制器实例的方法
+    private static FXMLDocumentController fxmlInstance;
+    public static synchronized FXMLDocumentController getInstance() {
+        if (fxmlInstance == null)
+            fxmlInstance = new FXMLDocumentController();
+        return fxmlInstance;
+    }
+
+    // 私有化构造函数
+    private FXMLDocumentController() {
+    }
+
     @Override //UI加载时的初始化操作
     public void initialize(URL url, ResourceBundle rb) {
+        // 确保只初始化一次
+        if (fxmlInstance == null) {
+            fxmlInstance = this;
+        }
+
         //通过代码修改复选框设置参考，已修改到FXML文件里面配置
         //ObservableList threads = FXCollections.observableArrayList(new Integer[]{Integer.valueOf(1), Integer.valueOf(3), Integer.valueOf(5), Integer.valueOf(10), Integer.valueOf(20), Integer.valueOf(30), Integer.valueOf(50), Integer.valueOf(60), Integer.valueOf(70), Integer.valueOf(80), Integer.valueOf(90), Integer.valueOf(100)});
         //this.nor_id_threads.setItems(threads);
@@ -534,27 +544,9 @@ public class FXMLDocumentController implements Initializable {
             this.primaryStage.hide();
     }
 
-    public void printlnDebugOnUIAndConsole(String appendText) {
-        if (appendText != null){
-            print_debug(appendText);
-            if (this.bro_id_output_text_area != null)
-                Platform.runLater(() -> bro_id_output_text_area.appendText(String.format("[*] %s\n", appendText)));
-        }
-    }
-
-    public void printlnInfoOnUIAndConsole(String appendText) {
-        if (appendText != null){
-            print_info(appendText);
-            if (this.bro_id_output_text_area != null)
-                Platform.runLater(() -> bro_id_output_text_area.appendText(String.format("[+] %s\n", appendText)));
-        }
-    }
-
-    public void printlnErrorOnUIAndConsole(String appendText) {
-        if (appendText != null){
-            print_error(appendText);
-            if (this.bro_id_output_text_area != null)
-                Platform.runLater(() -> bro_id_output_text_area.appendText(String.format("[-] %s\n", appendText)));
+    public void appendTextToTextArea(String appendText) {
+        if (bro_id_output_text_area != null && appendText != null) {
+            Platform.runLater(() -> bro_id_output_text_area.appendText(String.format("%s", appendText)));
         }
     }
 
@@ -667,6 +659,7 @@ public class FXMLDocumentController implements Initializable {
             if (this.bro_id_captcha_switch_check.isSelected()){
                 this.captcha_request_url = this.bro_id_captcha_url_text.getText().trim();
                 MyNetworkDelegate myNetworkDelegate = new MyNetworkDelegate(
+                        this,
                         this.captcha_request_url,
                         this.login_request_url,
                         true,
@@ -685,7 +678,7 @@ public class FXMLDocumentController implements Initializable {
                 public void run() {
                     try {
                         //提交等待时间
-                        Integer bro_submit_fixed_wait_time = FXMLDocumentController.this.bro_id_submit_fixed_wait_time_combo.getValue();
+                        Integer bro_submit_fixed_wait_time = fxmlInstance.bro_id_submit_fixed_wait_time_combo.getValue();
 
                         //遍历账号密码字典
                         for (int index = 0; index < globalUserPassPairsArray.length;) {
@@ -706,7 +699,7 @@ public class FXMLDocumentController implements Initializable {
                             printlnInfoOnUIAndConsole(String.format("当前进度 [%s/%s] <--> [%s] [%s]", index+1, globalUserPassPairsArray.length, userPassPair, login_access_url));
 
                             //请求间隔设置
-                            Integer bro_login_page_wait_time = FXMLDocumentController.this.bro_id_login_page_wait_time_combo.getValue();
+                            Integer bro_login_page_wait_time = fxmlInstance.bro_id_login_page_wait_time_combo.getValue();
 
                             //设置初始化Cookies字符串 用于满足Cookie不存在时不能直接访问登录页面的情况
                             if (index==0 && globalBrowserInitCookies != null && !globalBrowserInitCookies.trim().isEmpty()){
@@ -717,7 +710,7 @@ public class FXMLDocumentController implements Initializable {
                             if (index>0 && globalClearCookiesSwitch){clearCookieStorage(browser); }
 
                             //清空上一次记录的的验证码数据 //清空的话会导致没有加载页面的时候验证码图片没有值
-                            //FXMLDocumentController.this.captcha_data = null;
+                            //instance.captcha_data = null;
 
 
                             //加载登录URL
@@ -799,25 +792,25 @@ public class FXMLDocumentController implements Initializable {
                             }
 
                             //获取验证码并进行识别
-                            if (FXMLDocumentController.this.bro_id_captcha_switch_check.isSelected()) {
+                            if (fxmlInstance.bro_id_captcha_switch_check.isSelected()) {
                                 //captcha_data不存在
-                                if (FXMLDocumentController.this.captchaPictureData == null) {
+                                if (FXMLDocumentController.captchaPictureData == null) {
                                     printlnErrorOnUIAndConsole("获取验证码失败 (数据为空) 重新测试...");
                                     captcha_ident_was_error = true;
                                     continue;
                                 }
 
                                 //获取输入的验证码元素定位信息
-                                String bro_captcha_ele_text = FXMLDocumentController.this.bro_id_captcha_ele_text.getText().trim();
-                                String bro_captcha_ele_type = FXMLDocumentController.this.bro_id_captcha_ele_type_combo.getValue();
+                                String bro_captcha_ele_text = fxmlInstance.bro_id_captcha_ele_text.getText().trim();
+                                String bro_captcha_ele_type = fxmlInstance.bro_id_captcha_ele_type_combo.getValue();
                                 if (isEmptyIfStr(bro_captcha_ele_text)) {
                                     printlnErrorOnUIAndConsole("验证码定位元素表单内容为空 请输入...");
-                                    FXMLDocumentController.this.bro_id_user_ele_text.requestFocus();
+                                    fxmlInstance.bro_id_user_ele_text.requestFocus();
                                     return;
                                 }
 
                                 //开始验证码识别
-                                String captchaText = identCaptcha(bro_id_yzm_remote_ident_radio.isSelected(), null, FXMLDocumentController.this.captchaPictureData);
+                                String captchaText = identCaptcha(bro_id_yzm_remote_ident_radio.isSelected(), null, fxmlInstance.captchaPictureData);
                                 //判断验证码 是否是否正确
                                 if(isEmptyIfStr(captchaText)){
                                     printlnErrorOnUIAndConsole(String.format("识别验证码失败 (结果为空) 重新测试...", captchaText));
@@ -1017,510 +1010,4 @@ public class FXMLDocumentController implements Initializable {
     }
 
 
-    /**
-     * 查找元素并输入
-     * @ browser_close_action 浏览器关闭时的异常动作
-     * @ find_ele_illegal_action 页面中元素操作异常的动作
-     * @ find_ele_null_action 页面中没有找到元素的动作
-     * @ find_ele_exception_action 页面中元素操作其他异常的动作
-     * @param document 页面的文档对象
-     * @param locate_info 定位信息
-     * @param selectedOption 定位选项
-     * @param input_string 输入值
-     * @return
-     */
-    private EleFoundStatus findElementAndInput(DOMDocument document, String locate_info, String selectedOption, String input_string) {
-        EleFoundStatus action_string = EleFoundStatus.SUCCESS;
-        try {
-            InputElement findElement = findInputElementByOption(document, locate_info, selectedOption);
-            Map<String, String> attributes = findElement.getAttributes();
-            //findElement.click(); // 尝试前后新增 .click() 解决部分场景内容输入后提示没有内容的问题 无效果
-            findElement.setValue(input_string);
-            // for (String attrName : attributes.keySet()) { System.out.println(attrName + " = " + attributes.get(attrName)); }
-        }
-        catch (IllegalStateException illegalStateException) {
-            String eMessage = illegalStateException.getMessage();
-            System.out.println(eMessage);
-            if (eMessage.contains("Channel is already closed")) {
-                action_string = EleFoundStatus.fromString(BROWSER_CLOSE_ACTION);
-                printlnErrorOnUIAndConsole(String.format("浏览器已关闭 (IllegalStateException) 动作:[%s]", action_string));
-            }else {
-                illegalStateException.printStackTrace();
-                action_string = EleFoundStatus.fromString(FIND_ELE_ILLEGAL_ACTION);
-                printlnErrorOnUIAndConsole(String.format("illegal State Exception 动作:[%s]", action_string));
-            }
-        } catch (NullPointerException nullPointerException) {
-            action_string = EleFoundStatus.fromString(FIND_ELE_NULL_ACTION);
-            printlnErrorOnUIAndConsole(String.format("定位元素失败 (nullPointerException) 动作:[%s]", action_string));
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            action_string = EleFoundStatus.fromString(FIND_ELE_EXCEPTION_ACTION);
-            printlnErrorOnUIAndConsole(String.format("未知定位异常 (unknown exception) 动作:[%s]", action_string));
-        }
-        return action_string;
-    }
-
-    /***
-     * 支持重试的元素查找方案
-     * maxRetries 尝试次数
-     * retryInterval 重试间隔时间，单位：毫秒
-     */
-    private EleFoundStatus findElementAndInputWithRetries(DOMDocument document, String locateInfo, String selectedOption, String inputString, int maxRetries, long retryInterval) {
-
-        int retries = 0;
-        EleFoundStatus action_status = EleFoundStatus.FAILURE;
-
-        while (!EleFoundStatus.SUCCESS.equals(action_status) && retries < maxRetries) {
-            action_status = findElementAndInput(document, locateInfo, selectedOption, inputString);
-            if (EleFoundStatus.SUCCESS.equals(action_status)) { break; }
-
-            // 延迟500毫秒后重试
-            try {
-                TimeUnit.MILLISECONDS.sleep(retryInterval);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                System.out.println("Thread was interrupted during sleep.");
-            }
-
-            retries++;
-        }
-        return action_status;
-    }
-
-    /**
-     * 通过浏览器JS代码执行器来输入元素操作
-     * @param browser
-     * @param locateInfo
-     * @param locateType
-     * @param inputText
-     * @return
-     */
-    private EleFoundStatus setInputValueByJS(Browser browser, String locateInfo, String locateType, String inputText) {
-        EleFoundStatus action_string;
-        String jsCode = null;
-        switch (locateType.toLowerCase()) {
-            case "css":
-                // JavaScript code to find an element by CSS selector and set its value.
-                jsCode = "function setInputValueByCSS(cssSelector, value) {" +
-                        "   try {" +
-                        "       var node = document.querySelector(cssSelector);" +
-                        "       if (node && node instanceof HTMLElement) {" +
-                        "           node.value = value;" +
-                        "           var event = new Event('input', { 'bubbles': true, 'cancelable': true });" +
-                        "           node.dispatchEvent(event);" +
-                        "           return { success: true, message: 'Input successful.' };" +
-                        "       } else {" +
-                        "           return { success: false, message: 'Element not found or not an HTML element.' };" +
-                        "       }" +
-                        "   } catch (error) {" +
-                        "       return { success: false, message: error.message };" +
-                        "   }" +
-                        "}" +
-                        "setInputValueByCSS('" + locateInfo.replace("'", "\\'") + "', '" + inputText.replace("'", "\\'") + "');";
-                break;
-            case "xpath":
-                // JavaScript code to find an element by XPath and set its value.
-                jsCode = "function setInputValueByXPath(xpath, value) {" +
-                        "   try {" +
-                        "       var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);" +
-                        "       var node = result.singleNodeValue;" +
-                        "       if (node && node instanceof HTMLElement) {" +
-                        "           node.value = value;" +
-                        "           var event = new Event('input', { 'bubbles': true, 'cancelable': true });" +
-                        "           node.dispatchEvent(event);" +
-                        "           return { success: true, message: 'Input successful.' };" +
-                        "       } else {" +
-                        "           return { success: false, message: 'Element not found or not an HTML element.' };" +
-                        "       }" +
-                        "   } catch (error) {" +
-                        "       return { success: false, message: error.message };" +
-                        "   }" +
-                        "}" +
-                        "setInputValueByXPath('" + locateInfo.replace("'", "\\'") + "', '" + inputText.replace("'", "\\'") + "');";
-                break;
-            case "id":
-            case "name":
-            case "class":
-            default:
-                printlnErrorOnUIAndConsole("Js Mode Not Support [id|name|class] Mode!!! Please Input [CSS] or [XPATH] Locate Info Again.");
-                break;
-        }
-
-        if (jsCode == null){
-            printlnErrorOnUIAndConsole(String.format("Js Mode Only Support [css|xpath] Mode!!! You Input Mode is [%s]", locateType));
-            return BREAK;
-        }
-
-        try {
-            // Execute the JavaScript code in the context of the currently loaded web page and get the return value.
-            JSValue jsValue = browser.executeJavaScriptAndReturnValue(jsCode);
-            // Check if the returned JSValue is an object and contains expected properties.
-            if (jsValue.isObject()) {
-                JSValue success = jsValue.asObject().getProperty("success");
-                JSValue message = jsValue.asObject().getProperty("message");
-                if (success.isBoolean() && message.isString()) {
-                    JSBoolean isSuccess = success.asBoolean();
-                    // Print the message for debugging purposes.
-                    // System.out.println(isSuccess.getValue(), msg);
-                    if (isSuccess.getValue()) {
-                        //定位并输入元素成功
-                        action_string = SUCCESS;
-                    } else {
-                        action_string = fromString(FIND_ELE_NULL_ACTION);
-                        String msg = message.asString().getValue();
-                        printlnErrorOnUIAndConsole(String.format("定位元素失败 (影响结果false) 动作:[%s] MSG[%s]", action_string, msg));
-                    }
-                } else {
-                    action_string = fromString(FIND_ELE_NULL_ACTION);
-                    String msg = message.asString().getValue();
-                    printlnErrorOnUIAndConsole(String.format("定位元素失败 (响应格式非预期) 动作:[%s] MSG[%s]", action_string, msg));
-                }
-                return action_string;
-            }
-
-            // If we reach here, something unexpected happened.
-            action_string = EleFoundStatus.fromString(FIND_ELE_NULL_ACTION);
-            printlnErrorOnUIAndConsole(String.format("未知定位异常 (JS执行结果格式未知) 动作:[%s]", action_string));
-        } catch (Exception e){
-            // If we reach here, something unexpected happened.
-            action_string = CONTINUE;
-            printlnErrorOnUIAndConsole(String.format("未知定位异常 (JS执行发生未知错误) 动作:[%s] ERROR:[%s]", action_string, e.getMessage()));
-        }
-        return action_string;
-    }
-
-    public class MyNetworkDelegate extends DefaultNetworkDelegate {
-        private boolean isCompleteAuth;
-        private boolean isCancelAuth;
-        private String requestCaptchaUrl;  //验证码请求包URL
-        private String requestLoginUrl; //登录包请求URL
-        private boolean matchLoginUrl;
-        //private long current_id;
-
-        private byte[] tmpCaptchaBytes = new byte[0]; // 使用byte数组代替Appendable
-
-        private String loginFailureKey;  //登录失败匹配关键字
-        private String captchaFailKey;   //验证码错误匹配关键字
-        private String loginSuccessKey;  //登录成功匹配关键字
-
-        private AtomicBoolean isCapturingCaptcha = new AtomicBoolean(false); // 用于线程安全
-
-        /**
-         * @param requestCaptchaUrl 验证码相关URL 支持正则格式
-         * @param requestLoginUrl   登录包相关URL 支持正则格式
-         * @param matchLoginUrl     是否匹配登录包URL 否的话在所有请求中都取查找登录匹配结果关键字
-         */
-        public MyNetworkDelegate(String requestCaptchaUrl, String requestLoginUrl, boolean matchLoginUrl,
-                                 String captchaFailKey, String loginFailureKey, String loginSuccessKey) {
-            this.requestCaptchaUrl = requestCaptchaUrl;
-            this.requestLoginUrl = requestLoginUrl;
-            this.matchLoginUrl = matchLoginUrl;
-
-            this.captchaFailKey = captchaFailKey;
-            this.loginFailureKey = loginFailureKey;
-            this.loginSuccessKey = loginSuccessKey;
-
-        }
-
-        @Override
-        //在浏览器发出网络请求之前调用。
-        public void onBeforeURLRequest(BeforeURLRequestParams params) {
-           //BeforeURLRequestParams params：包含即将发出的请求信息。
-            //params.getRequestId()：获取请求的唯一标识符。
-            //params.getMethod()：获取HTTP请求方法（如GET、POST等）。
-            //params.getUrl()：获取请求的目标URL。
-            //params.getRequestHeaders()：获取请求头信息。
-            //params.getPostData()：获取POST请求的数据（如果有的话）。
-            //params.isMainFrame()：判断是否是主框架（即整个页面）的请求。
-            //params.hasUserGesture()：判断请求是否由用户操作触发（例如点击链接）。
-            //params.getTransitionType()：获取请求的过渡类型（例如链接点击、表单提交
-        }
-
-        @Override
-        //在浏览器准备发送请求头之前调用
-        public void onBeforeSendHeaders(BeforeSendHeadersParams params) {
-            //BeforeURLRequestParams params：包含即将发出的请求信息及其头信息。
-            //允许您直接响应请求而不实际发送它，或者返回 null 表示继续正常的请求流程。
-            //super.onSendHeaders(params);
-            String getReqURL = params.getURL();
-            //需要判断那think php的情况，baseurl都是一样的，不能作为验证码图片URL
-            if (this.requestCaptchaUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestCaptchaUrl)) {
-                this.tmpCaptchaBytes = new byte[0];
-                params.getHeadersEx().setHeader("Accept-Encoding", "");
-                print_debug(String.format("修改验证码请求头 BeforeSendHeaders: %s", getReqURL));
-            }
-        }
-
-        @Override
-        //在浏览器实际发送请求头之后立即调用
-        public void onSendHeaders(SendHeadersParams params) {
-            String getReqURL = params.getURL();
-            if (this.requestCaptchaUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestCaptchaUrl)) {
-                print_debug(String.format("正在发起验证码请求 onSendHeaders: %s", getReqURL));
-            }
-
-            if (this.requestLoginUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestLoginUrl)) {
-                print_debug(String.format("正在发起登录包请求 onSendHeaders: %s", getReqURL));
-            }
-        }
-
-
-        @Override
-        //当接收到部分响应数据时调用
-        public void onDataReceived(DataReceivedParams paramDataReceivedParams) {
-            if (this.requestCaptchaUrl != null && ElementUtils.isSimilarLink(paramDataReceivedParams.getURL(), this.requestCaptchaUrl)){
-                //存储验证码数据
-                storeCaptchaData(paramDataReceivedParams);
-            } else {
-                //检查登录关键字匹配状态
-                checkLoginStatus(paramDataReceivedParams);
-            }
-        }
-
-        @Override
-        //当服务器开始发送响应时调用
-        public void onResponseStarted(ResponseStartedParams params) {
-            super.onResponseStarted(params);
-        }
-
-        @Override
-        //当接收到服务器响应头时调用
-        public void onHeadersReceived(HeadersReceivedParams params) {
-            //super.onHeadersReceived(params);
-            String getReqURL = params.getURL();
-            if (this.requestCaptchaUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestCaptchaUrl)) {
-                print_debug(String.format("正在接受验证码数据 onHeadersReceived: %s", getReqURL));
-            }
-
-            if (this.requestLoginUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestLoginUrl)) {
-                print_debug(String.format("正在接受登录包响应 onHeadersReceived: %s", getReqURL));
-            }
-        }
-
-
-        @Override
-        //当请求完成（无论是成功还是失败）时调用
-        public void onCompleted(RequestCompletedParams params) {
-            //super.onCompleted(params);
-            String getReqURL = params.getURL();
-            if (this.requestCaptchaUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestCaptchaUrl)) {
-                print_debug(String.format("验证码URL请求完成 onHeadersReceived: %s", getReqURL));
-            }
-
-            if (this.requestLoginUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestLoginUrl)) {
-                print_debug(String.format("登陆包URL请求完成 onHeadersReceived: %s", getReqURL));
-            }
-        }
-
-        @Override
-        //在浏览器准备跟随重定向之前调用
-        public void onBeforeRedirect(BeforeRedirectParams params) {
-            super.onBeforeRedirect(params);
-        }
-
-        @Override
-        //当请求对象被销毁时调用
-        public void onDestroyed(RequestParams params) {
-            super.onDestroyed(params);
-        }
-
-        @Override
-        //决定是否允许设置给定的Cookie
-        public boolean onCanSetCookies(String url, List<Cookie> cookies) {
-            return super.onCanSetCookies(url, cookies);
-        }
-
-        @Override
-        //决定是否允许获取给定的Cookie
-        public boolean onCanGetCookies(String url, List<Cookie> cookies) {
-            return super.onCanGetCookies(url, cookies);
-        }
-
-        @Override
-        //在发送代理服务器请求头之前调用。
-        public void onBeforeSendProxyHeaders(BeforeSendProxyHeadersParams params) {
-            //BeforeSendProxyHeadersParams params：包含即将发送到代理服务器的请求信息及其头信息。
-            super.onBeforeSendProxyHeaders(params);
-        }
-
-        @Override
-        //当代理自动配置脚本（PAC）执行出错时调用
-        public void onPACScriptError(PACScriptErrorParams params) {
-            super.onPACScriptError(params);
-        }
-
-        @Override
-        public boolean onAuthRequired(AuthRequiredParams paramAuthRequiredParams) {
-            //提示需要认证 当服务器要求进行身份验证时调用
-            System.out.println("需要认证");
-            this.isCompleteAuth = false;
-            this.isCancelAuth = false;
-
-            Platform.runLater(new Runnable() {
-                public void run() {
-                    Stage stage = new Stage();
-                    stage.initModality(Modality.APPLICATION_MODAL);
-                    TextField user_field = new TextField();
-                    TextField pass_field = new TextField();
-                    user_field.setPromptText("用户名");
-                    pass_field.setPromptText("密码");
-
-                    Button ok_button = new Button("确定");
-                    Button cancel_button = new Button("取消");
-
-                    HBox hbox = new HBox(50.0D);
-                    hbox.getChildren().addAll(new Node[]{ok_button, cancel_button});
-
-                    VBox vbox = new VBox(20.0D, new Node[]{user_field, pass_field, hbox});
-                    vbox.setPadding(new Insets(30.0D, 30.0D, 30.0D, 30.0D));
-
-                    vbox.setAlignment(Pos.CENTER);
-                    hbox.setAlignment(Pos.CENTER);
-
-                    Scene scene = new Scene(vbox);
-                    stage.setScene(scene);
-                    stage.setTitle("请输入用户名密码");
-                    stage.sizeToScene();
-                    user_field.requestFocus();
-                    EventHandler okAction = new EventHandler<ActionEvent>() {
-                        public void handle(ActionEvent arg0) {
-                            paramAuthRequiredParams.setUsername(user_field.getText());
-                            paramAuthRequiredParams.setPassword(pass_field.getText());
-                            MyNetworkDelegate.this.isCancelAuth = false;
-                            MyNetworkDelegate.this.isCompleteAuth = true;
-                            stage.close();
-                        }
-                    };
-                    EventHandler cancelAction = new EventHandler<ActionEvent>() {
-                        public void handle(ActionEvent arg0) {
-                            MyNetworkDelegate.this.isCancelAuth = true;
-                            MyNetworkDelegate.this.isCompleteAuth = true;
-                            stage.close();
-                        }
-                    };
-                    stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                        //关闭请求时的动作
-                        @Override
-                        public void handle(WindowEvent event) {
-                            MyNetworkDelegate.this.isCancelAuth = true;
-                            System.out.println("hehe");
-                            MyNetworkDelegate.this.isCompleteAuth = true;
-                        }
-                    });
-                    ok_button.setOnAction(okAction);
-                    user_field.setOnAction(okAction);
-                    pass_field.setOnAction(okAction);
-                    cancel_button.setOnAction(cancelAction);
-                    stage.showAndWait();
-                }
-            });
-            while (!this.isCompleteAuth) {
-                System.out.println("等待输入账号密码");
-            }
-            System.out.println(this.isCancelAuth);
-            return this.isCancelAuth;
-        }
-
-
-        /**
-         * 存储验证码数据。
-         *
-         * @param paramDataReceivedParams 包含接收的数据和URL等信息的参数对象
-         */
-        public void storeCaptchaData(DataReceivedParams paramDataReceivedParams) {
-            if (isCapturingCaptcha.get()) {
-                return; // 如果已经在捕获验证码，则直接返回
-            }
-
-            String getReqURL = paramDataReceivedParams.getURL();
-
-            // 如果当前URL是验证码URL请求,就开始获取验证码图片数据
-            if (this.requestCaptchaUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestCaptchaUrl)) {
-                try {
-                    isCapturingCaptcha.set(true);
-
-                    // 创建新的字节数组来存储接收到的数据
-                    byte[] receivedData = paramDataReceivedParams.getData();
-                    byte[] newCaptchaBytes = new byte[tmpCaptchaBytes.length + receivedData.length];
-                    System.arraycopy(tmpCaptchaBytes, 0, newCaptchaBytes, 0, tmpCaptchaBytes.length);
-                    System.arraycopy(receivedData, 0, newCaptchaBytes, tmpCaptchaBytes.length, receivedData.length);
-                    this.tmpCaptchaBytes = newCaptchaBytes;
-
-                    FXMLDocumentController.captchaPictureData = this.tmpCaptchaBytes.clone(); // 克隆数组以避免外部修改
-
-                    if (this.tmpCaptchaBytes.length == 0) {
-                        print_debug(String.format("获取验证码数据失败 onDataReceived is Empty From [%s]", getReqURL));
-                    } else {
-                        print_debug(String.format("获取验证码数据成功 onDataReceived:[%d] From [%s]", this.tmpCaptchaBytes.length, getReqURL));
-                    }
-                } catch (Exception e) {
-                    print_debug(String.format("获取验证码数据失败 onDataReceived From [%s] Error:[%s]", getReqURL, e.getMessage()));
-                } finally {
-                    isCapturingCaptcha.set(false); // 确保设置回false，即使发生异常
-                }
-            }
-        }
-
-        public void checkLoginStatus(DataReceivedParams paramDataReceivedParams) {
-            String getReqURL = paramDataReceivedParams.getURL();
-
-            try {
-                String charset = paramDataReceivedParams.getCharset();
-                if (isEmptyIfStr(charset)) {
-                    charset = "UTF-8"; // 使用大写的 UTF-8 作为标准
-                }
-                // 检查是否为精准匹配模式
-                if (this.matchLoginUrl && this.requestLoginUrl != null) {
-                    if (ElementUtils.isSimilarLink(getReqURL, this.requestLoginUrl)){
-                        print_debug("当前为精准匹配模式...");
-                        handleLoginStatus(getReqURL, new String(paramDataReceivedParams.getData(), charset));
-                    }
-                } else {
-                    print_debug("当前为粗略匹配模式...");
-                    handleLoginStatus(getReqURL, new String(paramDataReceivedParams.getData(), charset));
-                }
-            } catch (UnsupportedEncodingException e) {
-                //e.printStackTrace();
-                printlnErrorOnUIAndConsole(String.format("响应结果关键字匹配发生错误:[%s] -> Error:[%s]", getReqURL, e.getMessage()));
-            }
-        }
-
-        /**
-         * 进行响应数据匹配
-         * @param receive
-         * @param getReqURL
-         */
-        private void handleLoginStatus(String getReqURL, String receive) {
-            String foundStrForLoginSuccess = ElementUtils.FoundContainSubString(receive, loginSuccessKey);
-            String foundStrForLoginFailure = ElementUtils.FoundContainSubString(receive, loginFailureKey);
-            String foundStrForCaptchaFail = ElementUtils.FoundContainSubString(receive, captchaFailKey);
-
-            if (foundStrForLoginSuccess != null) {
-                updateCrackStatus(LOGIN_SUCCESS, foundStrForLoginSuccess, getReqURL);
-            } else if (foundStrForLoginFailure != null) {
-                updateCrackStatus(LOGIN_FAILURE, foundStrForLoginFailure, getReqURL);
-            } else if (foundStrForCaptchaFail != null) {
-                updateCrackStatus(ERROR_CAPTCHA, foundStrForCaptchaFail, getReqURL);
-            } else {
-                printlnErrorOnUIAndConsole(String.format( "当前请求[%s]所有响应关键字匹配出错!!!\n响应长度:[%s]响应内容:[%s]", getReqURL, receive.length(), receive));
-            }
-        }
-
-        private void updateCrackStatus(LoginStatus loginStatus, String matchString, String url) {
-            CURR_LOGIN_STATUS = String.format("%s<->%s", loginStatus.name(), url);
-            CURR_LOADING_STATUS = LOADING_FINISH.name();
-
-            switch (loginStatus) {
-                case LOGIN_SUCCESS:
-                    printlnInfoOnUIAndConsole(String.format("响应内容匹配: 登录成功 %s [匹配结果:%s]", CURR_LOGIN_STATUS, matchString));
-                    break;
-                case LOGIN_FAILURE:
-                    printlnErrorOnUIAndConsole(String.format("响应内容匹配: 登录失败 %s [匹配结果:%s]", CURR_LOGIN_STATUS, matchString));
-                    break;
-                case ERROR_CAPTCHA:
-                    printlnErrorOnUIAndConsole(String.format("响应内容匹配: 验证码错误 %s [匹配结果:%s]", CURR_LOGIN_STATUS, matchString));
-                    break;
-            }
-        }
-    }
 }

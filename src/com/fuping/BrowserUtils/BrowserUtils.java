@@ -1,6 +1,9 @@
 package com.fuping.BrowserUtils;
 
 import com.fuping.CommonUtils.ElementUtils;
+import com.fuping.CommonUtils.UiUtils;
+import com.fuping.CommonUtils.Utils;
+import com.fuping.LoadConfig.Constant;
 import com.teamdev.jxbrowser.chromium.*;
 import com.teamdev.jxbrowser.chromium.dom.By;
 import com.teamdev.jxbrowser.chromium.dom.DOMDocument;
@@ -9,16 +12,16 @@ import com.teamdev.jxbrowser.chromium.dom.internal.InputElement;
 
 import java.awt.*;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.fuping.CommonUtils.ElementUtils.isContainOneKeyByEach;
+import static com.fuping.LoadConfig.MyConst.*;
 import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class BrowserUtils {
@@ -56,36 +59,6 @@ public class BrowserUtils {
         return cookies;
     }
 
-    /**
-     * 从给定的 URL 中提取域名，并构造新的域名字符串。
-     * @param originalUrl 原始 URL 字符串。
-     * @param withHttpPrefix 是否在新域名前加上 "http://"。
-     * @return 构造的新域名字符串。
-     */
-    public static String extractDomain(String originalUrl, boolean withHttpPrefix) {
-        try {
-            URL url = new URL(originalUrl);
-            String protocol = url.getProtocol();
-            String host = url.getHost();
-            String portPart = url.getPort() > -1 ? ":" + url.getPort() : "";
-            String domain = host + portPart;
-
-            //需要考虑 80 443 端口，这两个情况应该不需要配置
-            if (url.getPort() == 80 || url.getPort() == 443){
-                domain = host;
-            }
-
-            // 构造新的域名
-            if (withHttpPrefix) {
-                return protocol + "://" + domain;
-            } else {
-                return domain;
-            }
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid URL format", e);
-        }
-    }
-
     //设置浏览器当前Cookies 有些场景下需要先设置cookie才能访问登录页面
     public static void setBrowserCookies(Browser browser, String urlStr, String cookiesStr) {
         // Cookie 操作 ： https://teamdev.com/jxbrowser/docs/6/guides/cookies/
@@ -99,8 +72,8 @@ public class BrowserUtils {
         }
 
         //获取URL相关数据
-        String target = extractDomain(urlStr,true);
-        String domain = extractDomain(urlStr,false);
+        String target = Utils.extractDomain(urlStr,true);
+        String domain = Utils.extractDomain(urlStr,false);
 
         if (domain==null||target==null||domain.trim().isEmpty()||target.trim().isEmpty()){
             System.out.println(String.format("解析 URL [%s] 结果为空!!!", urlStr));
@@ -198,7 +171,6 @@ public class BrowserUtils {
         return inputElement;
     }
 
-
     public static Element findElementByOption(DOMDocument doc, String elementValue, String selectOption ) {
         //输入用户名元素 //需要添加输入XPath|css元素
         Element element;
@@ -222,7 +194,6 @@ public class BrowserUtils {
         return element;
     }
 
-
     public static void setBrowserProxyMode(Browser browser, boolean useProxy, String browserProxyStr, String loginProto) {
         //浏览器代理设置
         if (browser != null) {
@@ -243,4 +214,73 @@ public class BrowserUtils {
         }
     }
 
+    /**
+     * 查找元素并输入
+     * @ browser_close_action 浏览器关闭时的异常动作
+     * @ find_ele_illegal_action 页面中元素操作异常的动作
+     * @ find_ele_null_action 页面中没有找到元素的动作
+     * @ find_ele_exception_action 页面中元素操作其他异常的动作
+     * @param document 页面的文档对象
+     * @param locate_info 定位信息
+     * @param selectedOption 定位选项
+     * @param input_string 输入值
+     * @return
+     */
+    public static Constant.EleFoundStatus findElementAndInput(DOMDocument document, String locate_info, String selectedOption, String input_string) {
+        Constant.EleFoundStatus action_string = Constant.EleFoundStatus.SUCCESS;
+        try {
+            InputElement findElement = findInputElementByOption(document, locate_info, selectedOption);
+            Map<String, String> attributes = findElement.getAttributes();
+            //findElement.click(); // 尝试前后新增 .click() 解决部分场景内容输入后提示没有内容的问题 无效果
+            findElement.setValue(input_string);
+            // for (String attrName : attributes.keySet()) { System.out.println(attrName + " = " + attributes.get(attrName)); }
+        }
+        catch (IllegalStateException illegalStateException) {
+            String eMessage = illegalStateException.getMessage();
+            System.out.println(eMessage);
+            if (eMessage.contains("Channel is already closed")) {
+                action_string = Constant.EleFoundStatus.fromString(BROWSER_CLOSE_ACTION);
+                UiUtils.printlnErrorOnUIAndConsole(String.format("浏览器已关闭 (IllegalStateException) 动作:[%s]", action_string));
+            }else {
+                illegalStateException.printStackTrace();
+                action_string = Constant.EleFoundStatus.fromString(FIND_ELE_ILLEGAL_ACTION);
+                UiUtils.printlnErrorOnUIAndConsole(String.format("illegal State Exception 动作:[%s]", action_string));
+            }
+        } catch (NullPointerException nullPointerException) {
+            action_string = Constant.EleFoundStatus.fromString(FIND_ELE_NULL_ACTION);
+            UiUtils.printlnErrorOnUIAndConsole(String.format("定位元素失败 (nullPointerException) 动作:[%s]", action_string));
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            action_string = Constant.EleFoundStatus.fromString(FIND_ELE_EXCEPTION_ACTION);
+            UiUtils.printlnErrorOnUIAndConsole(String.format("未知定位异常 (unknown exception) 动作:[%s]", action_string));
+        }
+        return action_string;
+    }
+
+    /***
+     * 支持重试的元素查找方案
+     * maxRetries 尝试次数
+     * retryInterval 重试间隔时间，单位：毫秒
+     */
+    public static Constant.EleFoundStatus findElementAndInputWithRetries(DOMDocument document, String locateInfo, String selectedOption, String inputString, int maxRetries, long retryInterval) {
+
+        int retries = 0;
+        Constant.EleFoundStatus action_status = Constant.EleFoundStatus.FAILURE;
+
+        while (!Constant.EleFoundStatus.SUCCESS.equals(action_status) && retries < maxRetries) {
+            action_status = findElementAndInput(document, locateInfo, selectedOption, inputString);
+            if (Constant.EleFoundStatus.SUCCESS.equals(action_status)) { break; }
+
+            // 延迟500毫秒后重试
+            try {
+                TimeUnit.MILLISECONDS.sleep(retryInterval);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.out.println("Thread was interrupted during sleep.");
+            }
+
+            retries++;
+        }
+        return action_status;
+    }
 }

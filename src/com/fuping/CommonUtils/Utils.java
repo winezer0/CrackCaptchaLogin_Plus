@@ -2,6 +2,8 @@ package com.fuping.CommonUtils;
 
 import com.fuping.LoadDict.UserPassPair;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -77,5 +79,35 @@ public class Utils {
         }
 
         return result;
+    }
+
+    /**
+     * 从给定的 URL 中提取域名，并构造新的域名字符串。
+     * @param originalUrl 原始 URL 字符串。
+     * @param withHttpPrefix 是否在新域名前加上 "http://"。
+     * @return 构造的新域名字符串。
+     */
+    public static String extractDomain(String originalUrl, boolean withHttpPrefix) {
+        try {
+            URL url = new URL(originalUrl);
+            String protocol = url.getProtocol();
+            String host = url.getHost();
+            String portPart = url.getPort() > -1 ? ":" + url.getPort() : "";
+            String domain = host + portPart;
+
+            //需要考虑 80 443 端口，这两个情况应该不需要配置
+            if (url.getPort() == 80 || url.getPort() == 443){
+                domain = host;
+            }
+
+            // 构造新的域名
+            if (withHttpPrefix) {
+                return protocol + "://" + domain;
+            } else {
+                return domain;
+            }
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid URL format", e);
+        }
     }
 }
