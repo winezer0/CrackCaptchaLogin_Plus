@@ -2,7 +2,9 @@ package com.fuping.CommonUtils;
 
 import com.fuping.LoadDict.UserPassPair;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,4 +54,28 @@ public class Utils {
         return string.replace("\"","\\\"");
     }
 
+    /**
+     * 分割字符串并过滤掉空字符串。
+     *
+     * @param input 输入字符串
+     * @param delimiter 分隔符
+     * @return 过滤后的 URL 列表
+     */
+    public static List<String> splitAndFilter(String input, String delimiter) {
+        if (input == null || input.isEmpty()) {
+            return new ArrayList<>(); // 返回空列表
+        }
+
+        List<String> result = new ArrayList<>();
+        String[] parts = input.split(delimiter);
+
+        for (String part : parts) {
+            String trimmedPart = part.trim();
+            if (!trimmedPart.isEmpty()) {
+                result.add(trimmedPart);
+            }
+        }
+
+        return result;
+    }
 }

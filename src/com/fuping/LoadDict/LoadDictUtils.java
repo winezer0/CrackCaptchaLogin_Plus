@@ -2,6 +2,7 @@ package com.fuping.LoadDict;
 
 import cn.hutool.core.io.FileUtil;
 import com.fuping.CommonUtils.MyFileUtils;
+import com.fuping.LoadConfig.Constant;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,8 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
-import static com.fuping.LoadConfig.MyConst.const_pair_file;
-import static com.fuping.LoadConfig.MyConst.const_pitchfork;
+import static com.fuping.LoadConfig.Constant.DictMode.*;
 import static com.fuping.PrintLog.PrintLog.print_error;
 import static com.fuping.PrintLog.PrintLog.print_debug;
 
@@ -87,13 +87,13 @@ public class LoadDictUtils {
         return userPassPairs;
     }
 
-    public static HashSet<UserPassPair> loadUserPassFile(String userNameFile, String passWordFile,String userPassFile, String pair_separator, String DictCompoMode
+    public static HashSet<UserPassPair> loadUserPassFile(String userNameFile, String passWordFile,String userPassFile, String pair_separator, Constant.DictMode dictCompoMode
     ){
         //判断是加载账号密码对字典还是加载账号字典
         HashSet<UserPassPair> userPassPairs = new HashSet<>();
 
         //根据不同的模式生成账号密码对文件
-        if(const_pair_file.equalsIgnoreCase(DictCompoMode)){
+        if(PAIR_FILE.equals(dictCompoMode)){
             if (userPassFile != null){
                 //处理账号密码对文件
                 List<String> userPassPairList =  readDictFile(userPassFile);
@@ -105,7 +105,7 @@ public class LoadDictUtils {
                 List<String> userNameList =  readDictFile(userNameFile);
                 List<String> passWordList =  readDictFile(passWordFile);
                 //判断是否使用 pitchfork 模式
-                if(const_pitchfork.equalsIgnoreCase(DictCompoMode)){
+                if(PITCHFORK.equals(dictCompoMode)){
                     userPassPairs = createPitchforkUserPassPairs(userNameList, passWordList);
                 }else {
                     userPassPairs = createCartesianUserPassPairs(userNameList, passWordList);
@@ -165,13 +165,13 @@ public class LoadDictUtils {
         String usernamePath = "dict" + File.separator + "username.txt";
         String passwordPath = "dict" + File.separator + "password.txt";
         //笛卡尔积读取的账号密码字典
-        loadUserPassFile(usernamePath, passwordPath, null,null , "cartesian");
+        loadUserPassFile(usernamePath, passwordPath, null,null , CARTESIAN);
         //并列读取的账号密码字典
-        loadUserPassFile(usernamePath, passwordPath, null,null , "pitchfork");
+        loadUserPassFile(usernamePath, passwordPath, null,null , PITCHFORK);
 
         //直接读取账号密码对文件
         String userPassPath = "dict" + File.separator + "user_pass.txt";
-        inputUserPassPairs = loadUserPassFile(null, null, userPassPath, ":", "pair_file");
+        inputUserPassPairs = loadUserPassFile(null, null, userPassPath, ":", PAIR_FILE);
 
         //排除历史记录中的文件
         String hisUserPassPath = "dict" + File.separator + "history.txt";

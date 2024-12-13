@@ -2,25 +2,12 @@ package com.fuping.LoadConfig;
 
 import com.fuping.LoadDict.UserPassPair;
 
+import static com.fuping.LoadConfig.Constant.DictMode.CARTESIAN;
 import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class MyConst {
-    // 定义 ActionStatus 枚举
-    public enum ActionStatus {
-        SUCCESS, FAILURE, BREAK, CONTINUE;
-
-        // 自定义从字符串创建枚举的方法，处理大小写不敏感的情况
-        public static ActionStatus fromString(String text) {
-            if (text != null) {
-                for (ActionStatus b : ActionStatus.values()) {
-                    if (text.equalsIgnoreCase(b.name())) {
-                        return b;
-                    }
-                }
-            }
-            throw new IllegalArgumentException("No matching enum found for text: " + text);
-        }
-    }
+    //设置配置参数名称
+    public static String globalProgramVersion = "NOVASEC 3.8.14 20241212" ;
 
     // 私有静态成员变量，用于保存单例实例
     private static MyConst MyConstInstance;
@@ -36,9 +23,6 @@ public class MyConst {
     public static String globalLoginFailureFilePath = null;   //记录密码错误的记录
     public static String globalErrorCaptchaFilePath = null;   //记录验证错误的记录
 
-    //设置配置参数名称
-    public static String globalProgramVersion = "NOVASEC 3.8.14 20241212" ;
-
     //JxBrowser相关配置参数
     public static String globalBrowserProxyStr = null;
     public static String globalBrowserUserAgent = null;
@@ -53,10 +37,6 @@ public class MyConst {
     public static String globalPairSeparator = null;
 
     public static String default_dict_compo_mode = null;      //指定字典组合方式 cartesian  pitchfork pair_file
-
-    public static final String const_pair_file = "pair_file"; //账号密码对文件
-    public static final String const_pitchfork = "pitchfork"; //账号密码对应模式，要求账号和密码文件数量相同，一般不用
-    public static final String const_cartesian = "cartesian"; //默认 交叉模式 常用
 
     public static String globalUserMarkInPass = "%USER%";  //密码内的用户名变量
     public static boolean globalExcludeHistorySwitch = false;    //是否排除历史爆破记录
@@ -150,7 +130,7 @@ public class MyConst {
         globalUserPassFile = configReader.getString("user_pass_file", null);
         globalPairSeparator = configReader.getString("pair_separator", ":");
         //字典模式选择
-        default_dict_compo_mode = configReader.getString("dict_compo_mode", const_cartesian);
+        default_dict_compo_mode = configReader.getString("dict_compo_mode", CARTESIAN.name());
 
         globalUserMarkInPass = configReader.getString("user_mark_in_pass", "%USER%");
         globalExcludeHistorySwitch = configReader.isTrue("exclude_history", false);
