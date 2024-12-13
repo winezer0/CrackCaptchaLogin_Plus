@@ -702,7 +702,7 @@ public class FXMLDocumentController implements Initializable {
                             Integer bro_login_page_wait_time = fxmlInstance.bro_id_login_page_wait_time_combo.getValue();
 
                             //设置初始化Cookies字符串 用于满足Cookie不存在时不能直接访问登录页面的情况
-                            if (index==0 && GLOBAL_BROWSER_INIT_COOKIES != null && !GLOBAL_BROWSER_INIT_COOKIES.trim().isEmpty()){
+                            if (index == 0 && GLOBAL_BROWSER_INIT_COOKIES != null && !GLOBAL_BROWSER_INIT_COOKIES.trim().isEmpty()){
                                 setBrowserCookies(browser, login_access_url, GLOBAL_BROWSER_INIT_COOKIES);
                             }
 
