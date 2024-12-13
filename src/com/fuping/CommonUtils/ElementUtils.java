@@ -119,4 +119,15 @@ public class ElementUtils {
     public static boolean isEqualsOneKey(String stringFormat, List<String> elementsFormat) {
         return elementsFormat.stream().anyMatch(stringFormat::equals);
     }
+
+    public static boolean isEqualsOneKey(String string, String elementsString, boolean defaultBool) {
+        //当元素为空时,返回默认值
+        if (isEmptyObj(string) || isEmptyObj(elementsString)) return defaultBool;
+
+        //预先格式化处理
+        String stringFormat = string.toLowerCase();
+        String[] elementsFormat = elementsString.toLowerCase().split("\\|");
+
+        return isEqualsOneKey(stringFormat, Arrays.asList(elementsFormat));
+    }
 }

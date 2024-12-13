@@ -202,9 +202,9 @@ public class FXMLDocumentController implements Initializable {
         } else {
             try {
                 if (ElementUtils.isNotEmptyObj(imagePath)){
-                    captcha_indent_text = localeIdentCaptcha(imagePath, ident_format_regex, ident_format_length, globalLocaleTessDataName);
+                    captcha_indent_text = localeIdentCaptcha(imagePath, ident_format_regex, ident_format_length, GLOBAL_LOCALE_TESS_DATA_NAME);
                 } else {
-                    captcha_indent_text = localeIdentCaptcha(imageBytes, ident_format_regex, ident_format_length, globalLocaleTessDataName);
+                    captcha_indent_text = localeIdentCaptcha(imageBytes, ident_format_regex, ident_format_length, GLOBAL_LOCALE_TESS_DATA_NAME);
                 }
                 printlnDebugOnUIAndConsole(String.format("验证码 本地识别结果: [%s]", captcha_indent_text));
             } catch (Exception e) {
@@ -223,7 +223,7 @@ public class FXMLDocumentController implements Initializable {
         //在创建任何浏览器实例之前，只能修改一次用户代理字符串。
         // 可以使用BrowserPreferences.setUserAgent（String userAgent）方法
         // 或通过 jxbrowser.chromium.user-agent Java System属性提供用户代理字符串：
-        BrowserPreferences.setUserAgent(globalBrowserUserAgent);
+        BrowserPreferences.setUserAgent(GLOBAL_BROWSER_USERAGENT);
 
         //创建浏览器对象 轻量级对象 BrowserType.LIGHTWEIGHT 轻量级渲染模式， BrowserType.HEAVYWEIGHT重量级渲染模式。
         //轻量级渲染模式是通过CPU来加速渲染的，速度更快，占用更少的内存。在轻量级渲染模式下，Chromium引擎会在后台使用CPU渲染网页，然后将网页的图像保存在共享内存中。
@@ -383,7 +383,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     public void change_browser_proxy_action(ActionEvent actionEvent) {
         printlnInfoOnUIAndConsole("已点击修改浏览器代理配置,请等待修改信号传递...");
-        setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), globalBrowserProxyStr, login_url_protocol);
+        setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), GLOBAL_BROWSER_PROXY_STR, login_url_protocol);
     }
 
     @FXML
@@ -446,7 +446,7 @@ public class FXMLDocumentController implements Initializable {
         //设置浏览器选项
         setWithCheck(this.bro_id_show_browser_check, default_show_browser_switch);
         this.bro_id_exclude_history_check.setTooltip(new Tooltip("显示浏览器到窗口"));
-        setWithCheck(this.bro_id_exclude_history_check, globalExcludeHistorySwitch);
+        setWithCheck(this.bro_id_exclude_history_check, GLOBAL_EXCLUDE_HISTORY_SWITCH);
         this.bro_id_exclude_history_check.setTooltip(new Tooltip("排除已测试的历史账号密码"));
 
         //设置是否保存默认状态
@@ -598,19 +598,19 @@ public class FXMLDocumentController implements Initializable {
             boolean isModifiedExcludeHistory = MyFileUtils.isModifiedExcludeHistory(this.bro_id_exclude_history_check.isSelected());//排除历史状态是否修改
             //print_info(String.format("isModifiedExcludeHistory %s", isModifiedExcludeHistory));
 
-            if(globalExcludeHistorySwitch ||isModifiedAuthFile||isModifiedLoginUrl||isModifiedDictMode||isModifiedExcludeHistory){
+            if(GLOBAL_EXCLUDE_HISTORY_SWITCH ||isModifiedAuthFile||isModifiedLoginUrl||isModifiedDictMode||isModifiedExcludeHistory){
                 //当登录URL或账号密码文件修改后,就需要重新更新
                 printlnDebugOnUIAndConsole("加载账号密码文件开始...");
                 //点击登录后加载字典文件
-                HashSet<UserPassPair> UserPassPairsHashSet = loadUserPassFile(globalUserNameFile, globalPassWordFile, globalUserPassFile, globalPairSeparator, DictMode.fromString(default_dict_compo_mode));
+                HashSet<UserPassPair> UserPassPairsHashSet = loadUserPassFile(GLOBAL_USERNAME_FILE, GLOBAL_PASSWORD_FILE, GLOBAL_USER_PASS_FILE, GLOBAL_PAIR_SEPARATOR, DictMode.fromString(default_dict_compo_mode));
 
                 //替换密码中的用户名变量
-                UserPassPairsHashSet = replaceUserMarkInPass(UserPassPairsHashSet, globalUserMarkInPass);
+                UserPassPairsHashSet = replaceUserMarkInPass(UserPassPairsHashSet, GLOBAL_USER_MARK_IN_PASS);
                 print_debug(String.format("Pairs Count After Replace Mark Str [%s]", UserPassPairsHashSet.size()));
 
                 //读取 history 文件,排除历史扫描记录 ，
-                if (globalExcludeHistorySwitch) {
-                    UserPassPairsHashSet = excludeHistoryPairs(UserPassPairsHashSet, globalCrackHistoryFilePath, globalPairSeparator);
+                if (GLOBAL_EXCLUDE_HISTORY_SWITCH) {
+                    UserPassPairsHashSet = excludeHistoryPairs(UserPassPairsHashSet, globalCrackHistoryFilePath, GLOBAL_PAIR_SEPARATOR);
                     print_debug(String.format("Pairs Count After Exclude History [%s] From [%s]", UserPassPairsHashSet.size(), globalCrackHistoryFilePath));
                 }
 
@@ -653,7 +653,7 @@ public class FXMLDocumentController implements Initializable {
 
             //浏览器代理设置
             login_url_protocol = login_access_url.toLowerCase().startsWith("http://") ? "http" : "https";
-            setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), globalBrowserProxyStr, login_url_protocol);
+            setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), GLOBAL_BROWSER_PROXY_STR, login_url_protocol);
 
             //设置JxBrowser中网络委托的对象，以实现对浏览器的网络请求和响应的控制和处理。 //更详细的请求和响应处理,含保存验证码图片
             if (this.bro_id_captcha_switch_check.isSelected()){
@@ -702,12 +702,12 @@ public class FXMLDocumentController implements Initializable {
                             Integer bro_login_page_wait_time = fxmlInstance.bro_id_login_page_wait_time_combo.getValue();
 
                             //设置初始化Cookies字符串 用于满足Cookie不存在时不能直接访问登录页面的情况
-                            if (index==0 && globalBrowserInitCookies != null && !globalBrowserInitCookies.trim().isEmpty()){
-                                setBrowserCookies(browser, login_access_url, globalBrowserInitCookies);
+                            if (index==0 && GLOBAL_BROWSER_INIT_COOKIES != null && !GLOBAL_BROWSER_INIT_COOKIES.trim().isEmpty()){
+                                setBrowserCookies(browser, login_access_url, GLOBAL_BROWSER_INIT_COOKIES);
                             }
 
                             //清理所有Cookie //可能存在问题,比如验证码, 没有Cookie会怎么样呢?
-                            if (index>0 && globalClearCookiesSwitch){clearCookieStorage(browser); }
+                            if (index>0 && GLOBAL_CLEAR_COOKIES_SWITCH){clearCookieStorage(browser); }
 
                             //清空上一次记录的的验证码数据 //清空的话会导致没有加载页面的时候验证码图片没有值
                             //instance.captcha_data = null;
@@ -717,14 +717,14 @@ public class FXMLDocumentController implements Initializable {
                             //判断当前页面是不是登录页面 当前页面不是登录页[或登录相关]时重新加载登录页面
                             //当用户指定了 global_login_page_reload_per_time 时，重新加载页面
                             //当验证码是错误的时候也需要重新加载页面，不然总是重新识别不出来,死循环
-                            if(global_login_page_reload_per_time ||!ElementUtils.isEqualsOneKey(browser.getURL(),login_about_urls)|| captcha_ident_was_error){
+                            if(GLOBAL_LOGIN_PAGE_RELOAD_PER_TIME ||!ElementUtils.isEqualsOneKey(browser.getURL(),login_about_urls)|| captcha_ident_was_error){
                                 try {
                                     printlnDebugOnUIAndConsole("等待加载登录页面 By global_login_page_reload_per_time || !base_login_url.equals(browser.getURL()) || captcha_ident_was_error");
                                     Browser.invokeAndWaitFinishLoadingMainFrame(browser, new Callback<Browser>() {
                                         public void invoke(Browser browser) {
                                             browser.loadURL(login_access_url);
                                         }
-                                    }, global_login_page_load_time);
+                                    }, GLOBAL_LOGIN_PAGE_LOAD_TIME);
                                 } catch (IllegalStateException illegalStateException) {
                                     String illegalStateExceptionMessage = illegalStateException.getMessage();
 
@@ -741,7 +741,7 @@ public class FXMLDocumentController implements Initializable {
                                     exception.printStackTrace();
 
                                     //登录页面加载超时是否重头再来
-                                    if(global_login_page_load_timeout_rework) {
+                                    if(GLOBAL_LOGIN_PAGE_LOAD_TIMEOUT_REWORK) {
                                         printlnErrorOnUIAndConsole("访问超时-重新测试, 请检查网络设置状态");
                                         continue;
                                     } else {
@@ -764,7 +764,7 @@ public class FXMLDocumentController implements Initializable {
                             if (executeJavaScriptMode){
                                 action_status = setInputValueByJS(browser, bro_user_ele_text, bro_user_ele_type,  cur_user);
                             } else {
-                                action_status = findElementAndInputWithRetries(document, bro_user_ele_text, bro_user_ele_type, cur_user, globalFindEleRetryTimes, globalFindEleDelayTime);
+                                action_status = findElementAndInputWithRetries(document, bro_user_ele_text, bro_user_ele_type, cur_user, GLOBAL_FIND_ELERET_RYTIMES, GLOBAL_FIND_ELE_DELAY_TIME);
                             }
                             //处理资源寻找状态
                             if(!SUCCESS.equals(action_status)){
@@ -780,7 +780,7 @@ public class FXMLDocumentController implements Initializable {
                             if (executeJavaScriptMode){
                                 action_status = setInputValueByJS(browser, bro_pass_ele_text, bro_pass_ele_type,  cur_pass);
                             } else {
-                                action_status = findElementAndInputWithRetries(document, bro_pass_ele_text, bro_pass_ele_type, cur_pass, globalFindEleRetryTimes, globalFindEleDelayTime);
+                                action_status = findElementAndInputWithRetries(document, bro_pass_ele_text, bro_pass_ele_type, cur_pass, GLOBAL_FIND_ELERET_RYTIMES, GLOBAL_FIND_ELE_DELAY_TIME);
                             }
                             //处理资源寻找状态
                             if(!SUCCESS.equals(action_status)){
@@ -822,7 +822,7 @@ public class FXMLDocumentController implements Initializable {
                                 if (executeJavaScriptMode){
                                     action_status = setInputValueByJS(browser, bro_captcha_ele_text, bro_captcha_ele_type,  captchaText);
                                 } else {
-                                    action_status = findElementAndInputWithRetries(document,bro_captcha_ele_text, bro_captcha_ele_type, captchaText, globalFindEleRetryTimes, globalFindEleDelayTime);
+                                    action_status = findElementAndInputWithRetries(document,bro_captcha_ele_text, bro_captcha_ele_type, captchaText, GLOBAL_FIND_ELERET_RYTIMES, GLOBAL_FIND_ELE_DELAY_TIME);
                                 }
                                 //处理资源寻找状态
                                 if(!SUCCESS.equals(action_status)){
@@ -848,7 +848,7 @@ public class FXMLDocumentController implements Initializable {
                                 } catch (IllegalStateException illegalStateException) {
                                     illegalStateException.printStackTrace();
                                     printlnErrorOnUIAndConsole("Error For document.findElement(By.cssSelector(\"[type=submit]\")).click()");
-                                    submit_status = EleFoundStatus.fromString(FIND_ELE_NULL_ACTION);
+                                    submit_status = EleFoundStatus.fromString(GLOBAL_FIND_ELE_NULL_ACTION);
                                 }
                             } finally {
                                 //处理按钮点击状态
@@ -870,18 +870,18 @@ public class FXMLDocumentController implements Initializable {
 
                             //需要等待页面加载完毕
                             if (bro_id_submit_auto_wait_check.isSelected()){
-                                Thread.sleep(global_submit_auto_wait_interval);
+                                Thread.sleep(GLOBAL_SUBMIT_AUTO_WAIT_INTERVAL);
                                 long wait_start_time = System.currentTimeMillis();
                                 while (isEmptyIfStr(CURR_LOADING_STATUS) || CURR_LOADING_STATUS.contains(LOADING_START.name())) {
                                     //输出检查状态
                                     printlnDebugOnUIAndConsole(String.format("checking status: [%s]", CURR_LOADING_STATUS));
                                     // 检查是否超时
-                                    if (System.currentTimeMillis() - wait_start_time > global_submit_auto_wait_limit) {
+                                    if (System.currentTimeMillis() - wait_start_time > GLOBAL_SUBMIT_AUTO_WAIT_LIMIT) {
                                         printlnDebugOnUIAndConsole("等待超时，退出循环");
                                         break;
                                     }
                                     //继续等待
-                                    Thread.sleep(global_submit_auto_wait_interval);
+                                    Thread.sleep(GLOBAL_SUBMIT_AUTO_WAIT_INTERVAL);
                                 }
                             } else {
                                 Thread.sleep((bro_submit_fixed_wait_time>0)?bro_submit_fixed_wait_time:2000);
@@ -928,22 +928,22 @@ public class FXMLDocumentController implements Initializable {
                                 //判断登录状态是否时验证码码错误,是的话,就不能记录到爆破历史中
                                 if(CURR_LOGIN_STATUS.contains(ERROR_CAPTCHA.name())){
                                     captcha_ident_was_error = true;
-                                    MyFileUtils.writeUserPassPairToFile(globalErrorCaptchaFilePath, globalPairSeparator, userPassPair);
+                                    MyFileUtils.writeUserPassPairToFile(globalErrorCaptchaFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
                                     printlnErrorOnUIAndConsole(String.format("重新测试|||账号:密码【%s:%s】\n" +
                                                     "跳转情况:%s -> %s->%s\n" +
                                                     "网页标题:%s -> 长度:%s\n",
                                             cur_user, cur_pass, isPageForward, login_access_url, cur_url, cur_title, cur_length));
                                 } else {
                                     //进行爆破历史记录
-                                    MyFileUtils.writeUserPassPairToFile(globalCrackHistoryFilePath, globalPairSeparator, userPassPair);
+                                    MyFileUtils.writeUserPassPairToFile(globalCrackHistoryFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
                                     if(CURR_LOGIN_STATUS.contains(LOGIN_SUCCESS.name())){
-                                        MyFileUtils.writeUserPassPairToFile(globalLoginSuccessFilePath, globalPairSeparator, userPassPair);
+                                        MyFileUtils.writeUserPassPairToFile(globalLoginSuccessFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
                                         printlnInfoOnUIAndConsole(String.format("登录成功|||账号:密码【%s:%s】\n" +
                                                         "跳转情况:%s -> %s->%s\n" +
                                                         "网页标题:%s -> 长度:%s\n",
                                                 cur_user, cur_pass, isPageForward, login_access_url, cur_url, cur_title, cur_length));
                                     } else if(CURR_LOGIN_STATUS.contains(LOGIN_FAILURE.name())){
-                                        MyFileUtils.writeUserPassPairToFile(globalLoginFailureFilePath, globalPairSeparator, userPassPair);
+                                        MyFileUtils.writeUserPassPairToFile(globalLoginFailureFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
                                         printlnErrorOnUIAndConsole(String.format("登录失败|||账号:密码【%s:%s】\n" +
                                                         "跳转情况:%s -> %s->%s\n" +
                                                         "网页标题:%s -> 长度:%s\n",
@@ -965,7 +965,7 @@ public class FXMLDocumentController implements Initializable {
                                         cur_user, cur_pass, isPageForward, login_access_url, cur_url, cur_title, cur_length));
 
                                 //判断当前是不是固定加载模式,是的话就自动添加一点加载时间
-                                if(!bro_id_submit_auto_wait_check.isSelected() && bro_submit_fixed_wait_time < global_submit_auto_wait_limit) {
+                                if(!bro_id_submit_auto_wait_check.isSelected() && bro_submit_fixed_wait_time < GLOBAL_SUBMIT_AUTO_WAIT_LIMIT) {
                                     bro_submit_fixed_wait_time += 1000;
                                     printlnInfoOnUIAndConsole(String.format("等待超时|||自动更新等待时间至[%s]", bro_submit_fixed_wait_time));
                                 }

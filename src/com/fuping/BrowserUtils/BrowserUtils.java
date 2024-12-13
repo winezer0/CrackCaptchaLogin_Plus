@@ -239,19 +239,19 @@ public class BrowserUtils {
             String eMessage = illegalStateException.getMessage();
             System.out.println(eMessage);
             if (eMessage.contains("Channel is already closed")) {
-                action_string = Constant.EleFoundStatus.fromString(BROWSER_CLOSE_ACTION);
+                action_string = Constant.EleFoundStatus.fromString(GLOBAL_BROWSER_CLOSE_ACTION);
                 UiUtils.printlnErrorOnUIAndConsole(String.format("浏览器已关闭 (IllegalStateException) 动作:[%s]", action_string));
             }else {
                 illegalStateException.printStackTrace();
-                action_string = Constant.EleFoundStatus.fromString(FIND_ELE_ILLEGAL_ACTION);
+                action_string = Constant.EleFoundStatus.fromString(GLOBAL_FIND_ELE_ILLEGAL_ACTION);
                 UiUtils.printlnErrorOnUIAndConsole(String.format("illegal State Exception 动作:[%s]", action_string));
             }
         } catch (NullPointerException nullPointerException) {
-            action_string = Constant.EleFoundStatus.fromString(FIND_ELE_NULL_ACTION);
+            action_string = Constant.EleFoundStatus.fromString(GLOBAL_FIND_ELE_NULL_ACTION);
             UiUtils.printlnErrorOnUIAndConsole(String.format("定位元素失败 (nullPointerException) 动作:[%s]", action_string));
         } catch (Exception exception) {
             exception.printStackTrace();
-            action_string = Constant.EleFoundStatus.fromString(FIND_ELE_EXCEPTION_ACTION);
+            action_string = Constant.EleFoundStatus.fromString(GLOBAL_FIND_ELE_EXCEPTION_ACTION);
             UiUtils.printlnErrorOnUIAndConsole(String.format("未知定位异常 (unknown exception) 动作:[%s]", action_string));
         }
         return action_string;

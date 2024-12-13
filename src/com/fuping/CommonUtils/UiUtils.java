@@ -140,12 +140,12 @@ public class UiUtils {
                         //定位并输入元素成功
                         action_string = SUCCESS;
                     } else {
-                        action_string = fromString(FIND_ELE_NULL_ACTION);
+                        action_string = fromString(GLOBAL_FIND_ELE_NULL_ACTION);
                         String msg = message.asString().getValue();
                         printlnErrorOnUIAndConsole(String.format("定位元素失败 (影响结果false) 动作:[%s] MSG[%s]", action_string, msg));
                     }
                 } else {
-                    action_string = fromString(FIND_ELE_NULL_ACTION);
+                    action_string = fromString(GLOBAL_FIND_ELE_NULL_ACTION);
                     String msg = message.asString().getValue();
                     printlnErrorOnUIAndConsole(String.format("定位元素失败 (响应格式非预期) 动作:[%s] MSG[%s]", action_string, msg));
                 }
@@ -153,7 +153,7 @@ public class UiUtils {
             }
 
             // If we reach here, something unexpected happened.
-            action_string = Constant.EleFoundStatus.fromString(FIND_ELE_NULL_ACTION);
+            action_string = Constant.EleFoundStatus.fromString(GLOBAL_FIND_ELE_NULL_ACTION);
             printlnErrorOnUIAndConsole(String.format("未知定位异常 (JS执行结果格式未知) 动作:[%s]", action_string));
         } catch (Exception e){
             // If we reach here, something unexpected happened.

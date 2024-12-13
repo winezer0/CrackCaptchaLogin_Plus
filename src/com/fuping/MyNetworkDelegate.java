@@ -1,6 +1,7 @@
 package com.fuping;
 
 import com.fuping.CommonUtils.ElementUtils;
+import com.fuping.CommonUtils.HttpUrlInfo;
 import com.fuping.LoadConfig.Constant;
 import com.teamdev.jxbrowser.chromium.*;
 import com.teamdev.jxbrowser.chromium.javafx.DefaultNetworkDelegate;
@@ -24,10 +25,12 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
+import static com.fuping.CommonUtils.ElementUtils.isEqualsOneKey;
 import static com.fuping.CommonUtils.UiUtils.printlnErrorOnUIAndConsole;
 import static com.fuping.CommonUtils.UiUtils.printlnInfoOnUIAndConsole;
 import static com.fuping.LoadConfig.Constant.LoadStatus.LOADING_FINISH;
 import static com.fuping.LoadConfig.Constant.LoginStatus.*;
+import static com.fuping.LoadConfig.MyConst.GLOBAL_MATCH_BLOCK_SUFFIX;
 import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class MyNetworkDelegate extends DefaultNetworkDelegate {
@@ -323,8 +326,11 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
                     handleLoginStatus(getReqURL, new String(paramDataReceivedParams.getData(), charset), true);
                 }
             } else {
-                //print_debug("当前为粗略匹配模式...");
-                handleLoginStatus(getReqURL, new String(paramDataReceivedParams.getData(), charset), false);
+                String urlSuffix = new HttpUrlInfo(getReqURL).getSuffix();
+                if (isEqualsOneKey(urlSuffix, GLOBAL_MATCH_BLOCK_SUFFIX, true)){
+                    //print_debug("当前为粗略匹配模式...");
+                    handleLoginStatus(getReqURL, new String(paramDataReceivedParams.getData(), charset), false);
+                }
             }
         } catch (UnsupportedEncodingException e) {
             //e.printStackTrace();

@@ -108,9 +108,9 @@ public class MyFileUtils {
     }
 
     public static boolean isModifiedAuthFile() {
-        long pairFileTime = getFileModified(globalUserPassFile);
-        long nameFileTime = getFileModified(globalUserNameFile);
-        long passFileTime = getFileModified(globalPassWordFile);
+        long pairFileTime = getFileModified(GLOBAL_USER_PASS_FILE);
+        long nameFileTime = getFileModified(GLOBAL_USERNAME_FILE);
+        long passFileTime = getFileModified(GLOBAL_PASSWORD_FILE);
 
         if(nameFileTime != globalUserFileLastModified || passFileTime != globalPassFileLastModified || pairFileTime != globalPairFileLastModified){
             globalPairFileLastModified = pairFileTime;
@@ -146,11 +146,11 @@ public class MyFileUtils {
 
     public static boolean isModifiedExcludeHistory(boolean exclude_history){
         //检查登录URL是否更新, 更新了就重新赋值
-        if(exclude_history == globalExcludeHistorySwitch){
+        if(exclude_history == GLOBAL_EXCLUDE_HISTORY_SWITCH){
             return false;
         } else {
-            print_debug(String.format("The Exclude History has been modified from [%s] to [%s]", globalExcludeHistorySwitch, exclude_history));
-            globalExcludeHistorySwitch = exclude_history;
+            print_debug(String.format("The Exclude History has been modified from [%s] to [%s]", GLOBAL_EXCLUDE_HISTORY_SWITCH, exclude_history));
+            GLOBAL_EXCLUDE_HISTORY_SWITCH = exclude_history;
             return true;
         }
     }

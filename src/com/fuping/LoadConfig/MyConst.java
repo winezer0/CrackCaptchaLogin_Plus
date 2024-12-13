@@ -24,22 +24,22 @@ public class MyConst {
     public static String globalErrorCaptchaFilePath = null;   //记录验证错误的记录
 
     //JxBrowser相关配置参数
-    public static String globalBrowserProxyStr = null;
-    public static String globalBrowserUserAgent = null;
-    public static boolean globalClearCookiesSwitch = false;
-    public static String globalBrowserInitCookies = null;
+    public static String GLOBAL_BROWSER_PROXY_STR = null;
+    public static String GLOBAL_BROWSER_USERAGENT = null;
+    public static boolean GLOBAL_CLEAR_COOKIES_SWITCH = false;
+    public static String GLOBAL_BROWSER_INIT_COOKIES = null;
 
     //字典文件相关参数
-    public static String globalUserNameFile = null;
-    public static String globalPassWordFile = null;
+    public static String GLOBAL_USERNAME_FILE = null;
+    public static String GLOBAL_PASSWORD_FILE = null;
 
-    public static String globalUserPassFile = null;
-    public static String globalPairSeparator = null;
+    public static String GLOBAL_USER_PASS_FILE = null;
+    public static String GLOBAL_PAIR_SEPARATOR = null;
 
     public static String default_dict_compo_mode = null;      //指定字典组合方式 cartesian  pitchfork pair_file
 
-    public static String globalUserMarkInPass = "%USER%";  //密码内的用户名变量
-    public static boolean globalExcludeHistorySwitch = false;    //是否排除历史爆破记录
+    public static String GLOBAL_USER_MARK_IN_PASS = "%USER%";  //密码内的用户名变量
+    public static boolean GLOBAL_EXCLUDE_HISTORY_SWITCH = false;    //是否排除历史爆破记录
 
     //记录账号密码文件是否修改过,如果没有修改的话,就考虑不重新读取
     public static long globalUserFileLastModified = 0;
@@ -60,21 +60,21 @@ public class MyConst {
 
     public static boolean default_show_browser_switch = false;
 
-    public static boolean global_login_page_reload_per_time = true; //是否每次都重新加载登录页面
-    public static int global_login_page_load_time = 30;  //登录页面加载超时时间
-    public static boolean global_login_page_load_timeout_rework = true; //登录页面加载超时是否重头再来
+    public static boolean GLOBAL_LOGIN_PAGE_RELOAD_PER_TIME = true; //是否每次都重新加载登录页面
+    public static int GLOBAL_LOGIN_PAGE_LOAD_TIME = 30;  //登录页面加载超时时间
+    public static boolean GLOBAL_LOGIN_PAGE_LOAD_TIMEOUT_REWORK = true; //登录页面加载超时是否重头再来
 
     public static int default_login_page_wait_time = 1000;  //登录页面加载后的等待时间
 
     //查找定位元素的配置
-    public static Integer globalFindEleRetryTimes = null;
-    public static Integer globalFindEleDelayTime = null;
+    public static Integer GLOBAL_FIND_ELERET_RYTIMES = null;
+    public static Integer GLOBAL_FIND_ELE_DELAY_TIME = null;
 
     //登录按钮点击后的等待时间
     public static boolean default_submit_auto_wait_switch = true; //是否自动等待模式常量
     public static int default_submit_fixed_wait_time = 2000; //常规模式下点击提交按钮后的 固定的等待时间
-    public static long global_submit_auto_wait_limit = 5000; //自动等待模式下的 超时等待时间设置
-    public static long global_submit_auto_wait_interval = 500; //自动等待模式下的 每次等待时间
+    public static long GLOBAL_SUBMIT_AUTO_WAIT_LIMIT = 5000; //自动等待模式下的 超时等待时间设置
+    public static long GLOBAL_SUBMIT_AUTO_WAIT_INTERVAL = 500; //自动等待模式下的 每次等待时间
 
     //是否保存无法识别当前链接状态的情况
     public static boolean default_store_unknown_load_status = false;
@@ -102,38 +102,41 @@ public class MyConst {
     public static String default_remote_expected_status =null; //访问成功状态正则匹配
     public static String default_remote_expected_keywords =null;  //访问成功响应正则匹配
 
-    public static String globalLocaleTessDataName =null; //默认调用的数据集名称, 实际上就是tessdata目录下的文件名前缀
+    public static String GLOBAL_LOCALE_TESS_DATA_NAME =null; //默认调用的数据集名称, 实际上就是tessdata目录下的文件名前缀
 
     //定义查找元素失败后的操作
-    public static String BROWSER_CLOSE_ACTION;     //浏览器关闭后的动作  break
-    public static String FIND_ELE_ILLEGAL_ACTION;  //查找到不合法的动作时 continue
-    public static String FIND_ELE_NULL_ACTION;     //没有找到元素对应的操作 continue
-    public static String FIND_ELE_EXCEPTION_ACTION; //发生其他异常时的动作 continue
+    public static String GLOBAL_BROWSER_CLOSE_ACTION;     //浏览器关闭后的动作  break
+    public static String GLOBAL_FIND_ELE_ILLEGAL_ACTION;  //查找到不合法的动作时 continue
+    public static String GLOBAL_FIND_ELE_NULL_ACTION;     //没有找到元素对应的操作 continue
+    public static String GLOBAL_FIND_ELE_EXCEPTION_ACTION; //发生其他异常时的动作 continue
 
     //定义查找元素的方案
     public static boolean default_js_mode_switch = false; //是否使用JS模式进行元素查找 仅支持CSS和XPATH
 
+    public static String GLOBAL_MATCH_BLOCK_SUFFIX; //不需要进行响应URL内容匹配的后缀类型
+
+
     public MyConst(){
         ConfigReader configReader = ConfigReader.getInstance();
         //读取代理配置参数
-        globalBrowserProxyStr = configReader.getString("browser_proxy", null);
+        GLOBAL_BROWSER_PROXY_STR = configReader.getString("browser_proxy", null);
         //浏览器UA设置
-        globalBrowserUserAgent = configReader.getString("browser_ua", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36");
+        GLOBAL_BROWSER_USERAGENT = configReader.getString("browser_ua", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36");
         //是否清理Cookie
-        globalClearCookiesSwitch = configReader.isTrue("clear_cookies", false);
+        GLOBAL_CLEAR_COOKIES_SWITCH = configReader.isTrue("clear_cookies", false);
         //浏览器初次打开时配置的Cookies数据
-        globalBrowserInitCookies = configReader.getString("init_cookies", null);
+        GLOBAL_BROWSER_INIT_COOKIES = configReader.getString("init_cookies", null);
         //加载账号密码、文件路径
-        globalUserNameFile = configReader.getString("user_name_file", null);
-        globalPassWordFile = configReader.getString("pass_word_file", null);
+        GLOBAL_USERNAME_FILE = configReader.getString("user_name_file", null);
+        GLOBAL_PASSWORD_FILE = configReader.getString("pass_word_file", null);
         //加载账号密码对文件路径
-        globalUserPassFile = configReader.getString("user_pass_file", null);
-        globalPairSeparator = configReader.getString("pair_separator", ":");
+        GLOBAL_USER_PASS_FILE = configReader.getString("user_pass_file", null);
+        GLOBAL_PAIR_SEPARATOR = configReader.getString("pair_separator", ":");
         //字典模式选择
         default_dict_compo_mode = configReader.getString("dict_compo_mode", CARTESIAN.name());
 
-        globalUserMarkInPass = configReader.getString("user_mark_in_pass", "%USER%");
-        globalExcludeHistorySwitch = configReader.isTrue("exclude_history", false);
+        GLOBAL_USER_MARK_IN_PASS = configReader.getString("user_mark_in_pass", "%USER%");
+        GLOBAL_EXCLUDE_HISTORY_SWITCH = configReader.isTrue("exclude_history", false);
 
         //加载默认的登录框配置
         default_login_url = configReader.getString("login_url", "http://127.0.0.1/demo/index.php/Home/Login/login.html");
@@ -148,15 +151,15 @@ public class MyConst {
 
         default_show_browser_switch = configReader.isTrue("browser_show", false);
 
-        global_login_page_reload_per_time = configReader.isTrue("login_page_reload_per_time", true);
-        global_login_page_load_time = Integer.parseInt(configReader.getString("login_page_load_time", "30"));
-        global_login_page_load_timeout_rework = configReader.isTrue("login_page_load_timeout_rework", true);
+        GLOBAL_LOGIN_PAGE_RELOAD_PER_TIME = configReader.isTrue("login_page_reload_per_time", true);
+        GLOBAL_LOGIN_PAGE_LOAD_TIME = Integer.parseInt(configReader.getString("login_page_load_time", "30"));
+        GLOBAL_LOGIN_PAGE_LOAD_TIMEOUT_REWORK = configReader.isTrue("login_page_load_timeout_rework", true);
 
         default_login_page_wait_time = Integer.parseInt(configReader.getString("login_page_wait_time", "1000"));
         default_submit_auto_wait_switch = configReader.isTrue("submit_auto_wait", true);
         default_submit_fixed_wait_time = Integer.parseInt(configReader.getString("submit_fixed_wait_limit", "2000"));
-        global_submit_auto_wait_limit = Integer.parseInt(configReader.getString("submit_auto_wait_limit", "5000"));
-        global_submit_auto_wait_interval = Integer.parseInt(configReader.getString("submit_auto_wait_interval", "500"));
+        GLOBAL_SUBMIT_AUTO_WAIT_LIMIT = Integer.parseInt(configReader.getString("submit_auto_wait_limit", "5000"));
+        GLOBAL_SUBMIT_AUTO_WAIT_INTERVAL = Integer.parseInt(configReader.getString("submit_auto_wait_interval", "500"));
 
         default_store_unknown_load_status = configReader.isTrue("store_unknown_load_status", false);
 
@@ -179,18 +182,20 @@ public class MyConst {
         default_remote_expected_status = configReader.getString("remote_expected_status", null);
         default_remote_expected_keywords = configReader.getString("remote_expected_keywords", null);
         //指定默认本地识别数据集路径
-        globalLocaleTessDataName = configReader.getString("locale_tess_data_name", null);
+        GLOBAL_LOCALE_TESS_DATA_NAME = configReader.getString("locale_tess_data_name", null);
 
         //指定对应的操作
-        BROWSER_CLOSE_ACTION = configReader.getString("browser_close_action", "break");
-        FIND_ELE_ILLEGAL_ACTION = configReader.getString("find_ele_illegal_action", "continue");
-        FIND_ELE_NULL_ACTION = configReader.getString("find_ele_null_action", "continue");
-        FIND_ELE_EXCEPTION_ACTION = configReader.getString("find_ele_exception_action", "continue");
+        GLOBAL_BROWSER_CLOSE_ACTION = configReader.getString("browser_close_action", "break");
+        GLOBAL_FIND_ELE_ILLEGAL_ACTION = configReader.getString("find_ele_illegal_action", "continue");
+        GLOBAL_FIND_ELE_NULL_ACTION = configReader.getString("find_ele_null_action", "continue");
+        GLOBAL_FIND_ELE_EXCEPTION_ACTION = configReader.getString("find_ele_exception_action", "continue");
 
-        globalFindEleDelayTime = Integer.parseInt(configReader.getString("find_ele_delay_time", "500"));
-        globalFindEleRetryTimes = Integer.parseInt(configReader.getString("find_ele_retry_times", "6"));
+        GLOBAL_FIND_ELE_DELAY_TIME = Integer.parseInt(configReader.getString("find_ele_delay_time", "500"));
+        GLOBAL_FIND_ELERET_RYTIMES = Integer.parseInt(configReader.getString("find_ele_retry_times", "6"));
 
         default_js_mode_switch = configReader.isTrue("js_mode_switch", false);
+
+        GLOBAL_MATCH_BLOCK_SUFFIX = configReader.getString("match_block_suffix", "js|css|woff|woff2|png|jpg|bpm|mp3|mp44|tff");
 
         print_debug("Loaded Config Finish...");
     }
