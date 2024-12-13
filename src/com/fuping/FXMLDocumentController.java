@@ -91,7 +91,9 @@ public class FXMLDocumentController implements Initializable {
     public CheckBox bro_id_submit_auto_wait_check;
 
     @FXML
-    public CheckBox bro_id_default_js_mode_check;
+    public CheckBox bro_id_js_mode_check;
+    @FXML
+    public CheckBox bro_id_match_login_url_check;
 
     @FXML //设置字典组合模式
     private ComboBox<String> bro_id_dict_compo_mode_combo;
@@ -389,7 +391,22 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     public void change_js_mode_action(ActionEvent actionEvent) {
         printlnInfoOnUIAndConsole("已点击修改元素查找模式,请等待修改信号传递...");
-        executeJavaScriptMode = this.bro_id_default_js_mode_check.isSelected();
+        executeJavaScriptMode = this.bro_id_js_mode_check.isSelected();
+    }
+
+    @FXML
+    public void change_match_login_url_action(ActionEvent actionEvent) {
+        printlnInfoOnUIAndConsole("已点击修改响应匹配模式,请等待修改信号传递...");
+        //设置JxBrowser中网络委托的对象，以实现对浏览器的网络请求和响应的控制和处理。 //更详细的请求和响应处理,含保存验证码图片
+        browser.getContext().getNetworkService().setNetworkDelegate(
+                new MyNetworkDelegate(
+                        this.captcha_request_url,
+                        this.login_request_url,
+                        this.bro_id_match_login_url_check.isSelected(),
+                        this.bro_id_captcha_regex_text.getText(),
+                        this.bro_id_failure_regex_text.getText(),
+                        this.bro_id_success_regex_text.getText()
+                ));
     }
 
     @FXML
@@ -467,8 +484,11 @@ public class FXMLDocumentController implements Initializable {
         this.bro_id_submit_auto_wait_check.setTooltip(new Tooltip("自动等待页面加载完成"));
         this.change_submit_auto_wait_action(null);
 
-        setWithCheck(this.bro_id_default_js_mode_check, default_js_mode_switch);
-        this.bro_id_default_js_mode_check.setTooltip(new Tooltip("使用JS执行模式进行元素查找和输入 仅实现XPATH和CSS元素选择器"));
+        setWithCheck(this.bro_id_js_mode_check, default_js_mode_switch);
+        this.bro_id_js_mode_check.setTooltip(new Tooltip("使用JS执行模式进行元素查找和输入 仅实现XPATH和CSS元素选择器"));
+
+        setWithCheck(this.bro_id_match_login_url_check, default_match_login_url_switch);
+        this.bro_id_match_login_url_check.setTooltip(new Tooltip("是否仅对请求包的URL进行响应数据提取 需要输入请求包对应的URL"));
 
         setWithCheck(this.bro_id_dict_compo_mode_combo, default_dict_compo_mode);
         this.bro_id_dict_compo_mode_combo.setTooltip(new Tooltip("字典组合方式"));
@@ -655,23 +675,24 @@ public class FXMLDocumentController implements Initializable {
             login_url_protocol = login_access_url.toLowerCase().startsWith("http://") ? "http" : "https";
             setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), GLOBAL_BROWSER_PROXY_STR, login_url_protocol);
 
-            //设置JxBrowser中网络委托的对象，以实现对浏览器的网络请求和响应的控制和处理。 //更详细的请求和响应处理,含保存验证码图片
+            //获取验证码URL
             if (this.bro_id_captcha_switch_check.isSelected()){
                 this.captcha_request_url = this.bro_id_captcha_url_text.getText().trim();
-                MyNetworkDelegate myNetworkDelegate = new MyNetworkDelegate(
-                        this,
-                        this.captcha_request_url,
-                        this.login_request_url,
-                        true,
-                        this.bro_id_captcha_regex_text.getText(),
-                        this.bro_id_failure_regex_text.getText(),
-                        this.bro_id_success_regex_text.getText()
-                );
-                browser.getContext().getNetworkService().setNetworkDelegate(myNetworkDelegate );
             }
 
+            //设置JxBrowser中网络委托的对象，以实现对浏览器的网络请求和响应的控制和处理。 //更详细的请求和响应处理,含保存验证码图片
+            browser.getContext().getNetworkService().setNetworkDelegate(
+                    new MyNetworkDelegate(
+                            this.captcha_request_url,
+                            this.login_request_url,
+                            this.bro_id_match_login_url_check.isSelected(),
+                            this.bro_id_captcha_regex_text.getText(),
+                            this.bro_id_failure_regex_text.getText(),
+                            this.bro_id_success_regex_text.getText()
+                    ));
+
             //初始化获取当前的元素选择模式
-            executeJavaScriptMode = this.bro_id_default_js_mode_check.isSelected();
+            executeJavaScriptMode = this.bro_id_js_mode_check.isSelected();
 
             //开启一个新的线程进行爆破操作
             new Thread(new Runnable() {

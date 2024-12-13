@@ -7,7 +7,7 @@ import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class MyConst {
     //设置配置参数名称
-    public static String globalProgramVersion = "NOVASEC 3.8.14 20241212" ;
+    public static String globalProgramVersion = "NOVASEC 3.8.15 20241213" ;
 
     // 私有静态成员变量，用于保存单例实例
     private static MyConst MyConstInstance;
@@ -111,10 +111,11 @@ public class MyConst {
     public static String GLOBAL_FIND_ELE_EXCEPTION_ACTION; //发生其他异常时的动作 continue
 
     //定义查找元素的方案
-    public static boolean default_js_mode_switch = false; //是否使用JS模式进行元素查找 仅支持CSS和XPATH
+    public static boolean default_js_mode_switch; //是否使用JS模式进行元素查找 仅支持CSS和XPATH
 
     public static String GLOBAL_MATCH_BLOCK_SUFFIX; //不需要进行响应URL内容匹配的后缀类型
 
+    public static boolean default_match_login_url_switch; //是否仅对登录包进行响应提取
 
     public MyConst(){
         ConfigReader configReader = ConfigReader.getInstance();
@@ -196,6 +197,8 @@ public class MyConst {
         default_js_mode_switch = configReader.isTrue("js_mode_switch", false);
 
         GLOBAL_MATCH_BLOCK_SUFFIX = configReader.getString("match_block_suffix", "js|css|woff|woff2|png|jpg|bpm|mp3|mp44|tff");
+
+        default_match_login_url_switch = configReader.isTrue("match_login_url", false);
 
         print_debug("Loaded Config Finish...");
     }

@@ -56,12 +56,9 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
      * @param requestLoginUrl   登录包相关URL 支持正则格式
      * @param matchLoginUrl     是否匹配登录包URL 否的话在所有请求中都取查找登录匹配结果关键字
      */
-    public MyNetworkDelegate(FXMLDocumentController fxmlDocumentController,
-                             String requestCaptchaUrl, String requestLoginUrl, boolean matchLoginUrl,
+    public MyNetworkDelegate(String requestCaptchaUrl, String requestLoginUrl, boolean matchLoginUrl,
                              String captchaFailKey, String loginFailureKey, String loginSuccessKey)
     {
-        fxmlDocumentController = FXMLDocumentController.getInstance();
-
         this.requestCaptchaUrl = requestCaptchaUrl;
         this.requestLoginUrl = requestLoginUrl;
         this.matchLoginUrl = matchLoginUrl;
