@@ -116,6 +116,7 @@ public class MyConst {
     public static String GLOBAL_MATCH_BLOCK_SUFFIX; //不需要进行响应URL内容匹配的后缀类型
 
     public static boolean default_match_login_url_switch; //是否仅对登录包进行响应提取
+    public static boolean GLOBAL_UNKNOWN_ERROR_NOT_STOP; //遇到未知异常时自动继续重启爆破
 
     public MyConst(){
         ConfigReader configReader = ConfigReader.getInstance();
@@ -199,6 +200,8 @@ public class MyConst {
         GLOBAL_MATCH_BLOCK_SUFFIX = configReader.getString("match_block_suffix", "js|css|woff|woff2|png|jpg|bpm|mp3|mp44|tff");
 
         default_match_login_url_switch = configReader.isTrue("match_login_url", false);
+
+        GLOBAL_UNKNOWN_ERROR_NOT_STOP = configReader.isTrue("unknown_error_not_stop", false);
 
         print_debug("Loaded Config Finish...");
     }

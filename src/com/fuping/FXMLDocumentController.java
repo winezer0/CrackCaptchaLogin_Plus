@@ -701,6 +701,8 @@ public class FXMLDocumentController implements Initializable {
                         //提交等待时间
                         Integer bro_submit_fixed_wait_time = fxmlInstance.bro_id_submit_fixed_wait_time_combo.getValue();
 
+                        //记录是否发生超时错误,是的话后续就需要重新访问页面了 用于在设置了每次不自动访问登录页的场景下
+                        boolean occurAccessUrlError = false;
                         //遍历账号密码字典
                         for (int index = 0; index < globalUserPassPairsArray.length;) {
                             // 记录程序开始时间
@@ -738,8 +740,13 @@ public class FXMLDocumentController implements Initializable {
                             //判断当前页面是不是登录页面 当前页面不是登录页[或登录相关]时重新加载登录页面
                             //当用户指定了 global_login_page_reload_per_time 时，重新加载页面
                             //当验证码是错误的时候也需要重新加载页面，不然总是重新识别不出来,死循环
-                            if(GLOBAL_LOGIN_PAGE_RELOAD_PER_TIME ||!ElementUtils.isEqualsOneKey(browser.getURL(),login_about_urls)|| captcha_ident_was_error){
+                            if(GLOBAL_LOGIN_PAGE_RELOAD_PER_TIME
+                                    || occurAccessUrlError
+                                    || !ElementUtils.isEqualsOneKey(browser.getURL(),login_about_urls)
+                                    || captcha_ident_was_error)
+                            {
                                 try {
+                                    occurAccessUrlError = false; // 已经重新访问URL就重置
                                     printlnDebugOnUIAndConsole("等待加载登录页面 By global_login_page_reload_per_time || !base_login_url.equals(browser.getURL()) || captcha_ident_was_error");
                                     Browser.invokeAndWaitFinishLoadingMainFrame(browser, new Callback<Browser>() {
                                         public void invoke(Browser browser) {
@@ -747,8 +754,8 @@ public class FXMLDocumentController implements Initializable {
                                         }
                                     }, GLOBAL_LOGIN_PAGE_LOAD_TIME);
                                 } catch (IllegalStateException illegalStateException) {
+                                    occurAccessUrlError = true; //发生异常就设置要求重新访问页面
                                     String illegalStateExceptionMessage = illegalStateException.getMessage();
-
                                     //状态异常是否重新开始
                                     if (illegalStateExceptionMessage.contains("Channel is already closed")) {
                                         printlnErrorOnUIAndConsole("停止测试, 请点击按钮重新开始");
@@ -758,15 +765,15 @@ public class FXMLDocumentController implements Initializable {
                                         continue;
                                     }
 
-                                } catch (Exception exception) {
-                                    exception.printStackTrace();
-
+                                } catch (Exception e) {
+                                    occurAccessUrlError = true; //发生异常就设置要求重新访问页面
+                                    e.printStackTrace();
                                     //登录页面加载超时是否重头再来
                                     if(GLOBAL_LOGIN_PAGE_LOAD_TIMEOUT_REWORK) {
-                                        printlnErrorOnUIAndConsole("访问超时-重新测试, 请检查网络设置状态");
+                                        printlnErrorOnUIAndConsole(String.format("访问超时-重新测试, 请检查网络设置状态:%s", e.getMessage()));
                                         continue;
                                     } else {
-                                        printlnErrorOnUIAndConsole("访问超时-停止测试, 请检查网络设置状态");
+                                        printlnErrorOnUIAndConsole(String.format("访问超时-停止测试, 请检查网络设置状态:%s", e.getMessage()));
                                         break;
                                     }
                                 }
@@ -869,7 +876,7 @@ public class FXMLDocumentController implements Initializable {
                                 } catch (IllegalStateException illegalStateException) {
                                     illegalStateException.printStackTrace();
                                     printlnErrorOnUIAndConsole("Error For document.findElement(By.cssSelector(\"[type=submit]\")).click()");
-                                    submit_status = EleFoundStatus.fromString(GLOBAL_FIND_ELE_NULL_ACTION);
+                                    submit_status = fromString(GLOBAL_FIND_ELE_NULL_ACTION);
                                 }
                             } finally {
                                 //处理按钮点击状态
@@ -898,6 +905,7 @@ public class FXMLDocumentController implements Initializable {
                                     printlnDebugOnUIAndConsole(String.format("checking status: [%s]", CURR_LOADING_STATUS));
                                     // 检查是否超时
                                     if (System.currentTimeMillis() - wait_start_time > GLOBAL_SUBMIT_AUTO_WAIT_LIMIT) {
+                                        occurAccessUrlError = true;
                                         printlnDebugOnUIAndConsole("等待超时，退出循环");
                                         break;
                                     }
@@ -905,7 +913,7 @@ public class FXMLDocumentController implements Initializable {
                                     Thread.sleep(GLOBAL_SUBMIT_AUTO_WAIT_INTERVAL);
                                 }
                             } else {
-                                Thread.sleep((bro_submit_fixed_wait_time>0)?bro_submit_fixed_wait_time:2000);
+                                Thread.sleep( bro_submit_fixed_wait_time>0 ? bro_submit_fixed_wait_time : 2000);
                             }
 
 
@@ -913,6 +921,7 @@ public class FXMLDocumentController implements Initializable {
                             if(isEmptyIfStr(CURR_LOADING_STATUS)|| CURR_LOADING_STATUS.equals(LOADING_UNKNOWN.name())) {
                                 printlnErrorOnUIAndConsole(String.format("最终页面状态异常: [%s] 保留: [%s]", CURR_LOADING_STATUS, bro_id_store_unknown_status_check.isSelected()));
                                 CURR_LOADING_STATUS = LOADING_UNKNOWN.name();
+                                occurAccessUrlError = true; //页面状态异常，就当是出错了吧,重新访问登录页
                             }
 
                             //输出加载状态
@@ -1006,14 +1015,17 @@ public class FXMLDocumentController implements Initializable {
                         stopCrackStatus=true;
                     } catch (Exception e) {
                         // 处理特定的 IllegalStateException
-                        if (e.getMessage().contains("stream was closed") || e.getMessage().contains("Failed to send message")) {
-                            printlnDebugOnUIAndConsole("发生已知异常|即将重试: Channel stream was closed !!!");
+                        if (e.getMessage().contains("stream was closed")) {
                             stopCrackStatus=false;
+                            printlnDebugOnUIAndConsole("发生已知异常[Channel stream was closed !!!] | 即将重试...");
+                        }else if (e.getMessage().contains("Failed to send message")) {
+                            stopCrackStatus=false;
+                            printlnDebugOnUIAndConsole("发生已知异常[Failed to send message !!!] | 即将重试...");
                         } else {
                             // 其他类型的 IllegalStateException
+                            stopCrackStatus=GLOBAL_UNKNOWN_ERROR_NOT_STOP;
                             e.printStackTrace();
-                            printlnErrorOnUIAndConsole("发生未知异常|即将停止: " + e.getMessage());
-                            stopCrackStatus=true;
+                            printlnErrorOnUIAndConsole(String.format("发生未知异常:[%s]|StopCrack:[%s]", e.getMessage(), stopCrackStatus));
                         }
                     } finally {
                         //开始进行重新测试
