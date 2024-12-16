@@ -30,6 +30,7 @@ import javafx.stage.WindowEvent;
 
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.BrowserUtils.BrowserUtils.*;
@@ -698,11 +699,9 @@ public class FXMLDocumentController implements Initializable {
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        //提交等待时间
-                        Integer bro_submit_fixed_wait_time = fxmlInstance.bro_id_submit_fixed_wait_time_combo.getValue();
-
                         //记录是否发生超时错误,是的话后续就需要重新访问页面了 用于在设置了每次不自动访问登录页的场景下
                         boolean occurAccessUrlError = false;
+                        Integer localEleErrorCounts = 0;
                         //遍历账号密码字典
                         for (int index = 0; index < globalUserPassPairsArray.length;) {
                             // 记录程序开始时间
@@ -718,11 +717,18 @@ public class FXMLDocumentController implements Initializable {
                                 break;
                             }
 
+                            //重复次数过多时应该停止、重新打开浏览器
+                            if (localEleErrorCounts > 10) {
+                                throw new TimeoutException("Too many errors: " + localEleErrorCounts);
+                            }
+
                             //输出当前即将测试的数据
                             printlnInfoOnUIAndConsole(String.format("当前进度 [%s/%s] <--> [%s] [%s]", index+1, globalUserPassPairsArray.length, userPassPair, login_access_url));
 
                             //请求间隔设置
                             Integer bro_login_page_wait_time = fxmlInstance.bro_id_login_page_wait_time_combo.getValue();
+                            //提交等待时间
+                            Integer bro_submit_fixed_wait_time = fxmlInstance.bro_id_submit_fixed_wait_time_combo.getValue();
 
                             //设置初始化Cookies字符串 用于满足Cookie不存在时不能直接访问登录页面的情况
                             if (index == 0 && GLOBAL_BROWSER_INIT_COOKIES != null && !GLOBAL_BROWSER_INIT_COOKIES.trim().isEmpty()){
@@ -732,9 +738,8 @@ public class FXMLDocumentController implements Initializable {
                             //清理所有Cookie //可能存在问题,比如验证码, 没有Cookie会怎么样呢?
                             if (index>0 && GLOBAL_CLEAR_COOKIES_SWITCH){clearCookieStorage(browser); }
 
-                            //清空上一次记录的的验证码数据 //清空的话会导致没有加载页面的时候验证码图片没有值
+                            //清空上一次记录的的验证码数据 //在这里清空的话会导致没有加载页面的时候验证码图片没有值
                             //instance.captcha_data = null;
-
 
                             //加载登录URL
                             //判断当前页面是不是登录页面 当前页面不是登录页[或登录相关]时重新加载登录页面
@@ -789,15 +794,16 @@ public class FXMLDocumentController implements Initializable {
                             DOMDocument document = browser.getDocument();
                             //输入用户名
                             EleFoundStatus action_status;
+                            localEleErrorCounts += 1;
                             if (executeJavaScriptMode){
                                 action_status = setInputValueByJS(browser, bro_user_ele_text, bro_user_ele_type,  cur_user);
                             } else {
                                 action_status = findElementAndInputWithRetries(document, bro_user_ele_text, bro_user_ele_type, cur_user, GLOBAL_FIND_ELERET_RYTIMES, GLOBAL_FIND_ELE_DELAY_TIME);
                             }
+
                             //处理资源寻找状态
                             if(!SUCCESS.equals(action_status)){
                                 printlnErrorOnUIAndConsole(String.format("Error For Location [USERNAME] [%s] <--> Action: [%s]", bro_user_ele_text, action_status));
-
                                 //查找元素错误时的处理 继续还是中断
                                 if(BREAK.equals(action_status)) {break;} else if(CONTINUE.equals(action_status)){continue;} else {continue;}
                             }else{
@@ -805,6 +811,7 @@ public class FXMLDocumentController implements Initializable {
                             }
 
                             //查找密码输入框
+                            localEleErrorCounts += 1;
                             if (executeJavaScriptMode){
                                 action_status = setInputValueByJS(browser, bro_pass_ele_text, bro_pass_ele_type,  cur_pass);
                             } else {
@@ -847,6 +854,7 @@ public class FXMLDocumentController implements Initializable {
                                 }
 
                                 //输入验证码元素 并检查输入状态
+                                localEleErrorCounts += 1;
                                 if (executeJavaScriptMode){
                                     action_status = setInputValueByJS(browser, bro_captcha_ele_text, bro_captcha_ele_type,  captchaText);
                                 } else {
@@ -865,6 +873,7 @@ public class FXMLDocumentController implements Initializable {
 
                             //定位提交按钮, 并填写按钮
                             EleFoundStatus submit_status = SUCCESS;
+                            localEleErrorCounts += 1;
                             try {
                                 Element submitElement = findElementByOption(document, bro_submit_ele_text, bro_id_submit_ele_type);
                                 submitElement.click();
@@ -888,6 +897,9 @@ public class FXMLDocumentController implements Initializable {
                                     print_debug("find [SUBMIT] Element And Input Success ...");
                                 }
                             }
+
+                            //充值查找错误计数
+                            localEleErrorCounts = 0;
 
                             //在当前编辑区域（可能是文本框或富文本编辑器等）的光标位置插入一个新的空行，类似于按下回车键创建一个新行。
                             //browser.executeCommand(EditorCommand.INSERT_NEW_LINE);
