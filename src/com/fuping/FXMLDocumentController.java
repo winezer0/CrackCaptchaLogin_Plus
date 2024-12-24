@@ -67,17 +67,17 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextField id_login_access_url_text;
     @FXML
-    private TextField bro_id_user_ele_text;
+    private TextField bro_id_name_box_ele_text;
     @FXML
-    private TextField bro_id_pass_ele_text;
+    private TextField bro_id_pass_box_ele_text;
     @FXML
-    private TextField bro_id_submit_ele_text;
+    private TextField bro_id_submit_btn_ele_text;
     @FXML
-    private ComboBox<String> bro_id_user_ele_type_combo;
+    private ComboBox<String> bro_id_name_box_ele_type_combo;
     @FXML
-    private ComboBox<String> bro_id_pass_ele_type_combo;
+    private ComboBox<String> bro_id_pass_box_ele_type_combo;
     @FXML
-    private ComboBox<String> bro_id_submit_ele_type_combo;
+    private ComboBox<String> bro_id_submit_btn_ele_type_combo;
     @FXML
     private TextField bro_id_success_regex_text;
     @FXML
@@ -107,7 +107,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     public VBox bro_id_captcha_set_vbox;
     @FXML
-    private CheckBox bro_id_captcha_switch_check;
+    private CheckBox bro_id_ident_captcha_switch_check;
     @FXML
     private CheckBox bro_id_store_unknown_status_check;
     @FXML
@@ -115,9 +115,9 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextField bro_id_captcha_url_text;
     @FXML
-    private ComboBox<String> bro_id_captcha_ele_type_combo;
+    private ComboBox<String> bro_id_captcha_box_ele_type_combo;
     @FXML
-    private TextField bro_id_captcha_ele_text;
+    private TextField bro_id_captcha_box_ele_text;
     @FXML
     private RadioButton bro_id_yzm_remote_ident_radio;
     @FXML
@@ -444,22 +444,22 @@ public class FXMLDocumentController implements Initializable {
         //设置登录URL
         setWithCheck(this.id_login_access_url_text, default_login_access_url);
         //设置登录框
-        setWithCheck(this.bro_id_user_ele_text, default_name_box_ele_value);
-        setWithCheck(this.bro_id_user_ele_type_combo, default_name_box_ele_type);
-        this.bro_id_user_ele_text.setTooltip(new Tooltip("账号框元素定位方式和对应值"));
-        this.bro_id_user_ele_type_combo.setTooltip(new Tooltip("账号框元素定位方式和对应值"));
+        setWithCheck(this.bro_id_name_box_ele_text, default_name_box_ele_value);
+        setWithCheck(this.bro_id_name_box_ele_type_combo, default_name_box_ele_type);
+        this.bro_id_name_box_ele_text.setTooltip(new Tooltip("账号框元素定位方式和对应值"));
+        this.bro_id_name_box_ele_type_combo.setTooltip(new Tooltip("账号框元素定位方式和对应值"));
 
         //设置密码框
-        setWithCheck(this.bro_id_pass_ele_text, default_pass_box_ele_value);
-        setWithCheck(this.bro_id_pass_ele_type_combo, default_pass_box_ele_type);
-        this.bro_id_pass_ele_text.setTooltip(new Tooltip("密码框元素定位方式和对应值"));
-        this.bro_id_pass_ele_type_combo.setTooltip(new Tooltip("密码框元素定位方式和对应值"));
+        setWithCheck(this.bro_id_pass_box_ele_text, default_pass_box_ele_value);
+        setWithCheck(this.bro_id_pass_box_ele_type_combo, default_pass_box_ele_type);
+        this.bro_id_pass_box_ele_text.setTooltip(new Tooltip("密码框元素定位方式和对应值"));
+        this.bro_id_pass_box_ele_type_combo.setTooltip(new Tooltip("密码框元素定位方式和对应值"));
 
         //设置提交按钮
-        setWithCheck(this.bro_id_submit_ele_text, default_submit_btn_ele_value);
-        setWithCheck(this.bro_id_submit_ele_type_combo, default_submit_btn_ele_type);
-        this.bro_id_submit_ele_text.setTooltip(new Tooltip("提交按钮元素定位方式和对应值"));
-        this.bro_id_submit_ele_type_combo.setTooltip(new Tooltip("提交按钮元素定位方式和对应值"));
+        setWithCheck(this.bro_id_submit_btn_ele_text, default_submit_btn_ele_value);
+        setWithCheck(this.bro_id_submit_btn_ele_type_combo, default_submit_btn_ele_type);
+        this.bro_id_submit_btn_ele_text.setTooltip(new Tooltip("提交按钮元素定位方式和对应值"));
+        this.bro_id_submit_btn_ele_type_combo.setTooltip(new Tooltip("提交按钮元素定位方式和对应值"));
 
         //设置浏览器选项
         setWithCheck(this.bro_id_show_browser_check, default_show_browser_switch);
@@ -499,16 +499,16 @@ public class FXMLDocumentController implements Initializable {
         setWithCheck(this.bro_id_failure_regex_text, default_resp_key_failure_regex);
         setWithCheck(this.bro_id_captcha_regex_text, default_resp_key_captcha_regex);
         //设置验证码识别开关
-        setWithCheck(this.bro_id_captcha_switch_check, default_ident_captcha_switch);
-        this.bro_id_captcha_switch_check.setTooltip(new Tooltip("开启验证码识别功能"));
+        setWithCheck(this.bro_id_ident_captcha_switch_check, default_ident_captcha_switch);
+        this.bro_id_ident_captcha_switch_check.setTooltip(new Tooltip("开启验证码识别功能"));
         //设置验证码识别方式
         setWithCheck(default_locale_identify_switch ? this.bro_id_locale_ident_flag_radio : this.bro_id_yzm_remote_ident_radio, true);
         //设置验证码属性
         setWithCheck(this.bro_id_captcha_url_text, default_captcha_actual_url);
-        setWithCheck(this.bro_id_captcha_ele_text, default_captcha_box_ele_value);
-        setWithCheck(this.bro_id_captcha_ele_type_combo, default_captcha_box_ele_type);
-        this.bro_id_captcha_ele_text.setTooltip(new Tooltip("验证码输入框元素定位方式和对应值"));
-        this.bro_id_captcha_ele_type_combo.setTooltip(new Tooltip("验证码输入框元素定位方式和对应值"));
+        setWithCheck(this.bro_id_captcha_box_ele_text, default_captcha_box_ele_value);
+        setWithCheck(this.bro_id_captcha_box_ele_type_combo, default_captcha_box_ele_type);
+        this.bro_id_captcha_box_ele_text.setTooltip(new Tooltip("验证码输入框元素定位方式和对应值"));
+        this.bro_id_captcha_box_ele_type_combo.setTooltip(new Tooltip("验证码输入框元素定位方式和对应值"));
 
         //设置验证码配置细节
         setWithCheck(this.bro_id_ident_time_out_combo, default_ident_time_out);
@@ -528,7 +528,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML  //点击 验证码识别开关需要 禁用|开启 的按钮
     private void captcha_identify_action(ActionEvent event) {
-        this.bro_id_captcha_set_vbox.setDisable(!this.bro_id_captcha_switch_check.isSelected());
+        this.bro_id_captcha_set_vbox.setDisable(!this.bro_id_ident_captcha_switch_check.isSelected());
     }
 
 
@@ -649,22 +649,22 @@ public class FXMLDocumentController implements Initializable {
 
 
             //获取用户名框框的内容
-            String bro_user_ele_text = this.bro_id_user_ele_text.getText().trim();
-            String bro_user_ele_type = this.bro_id_user_ele_type_combo.getValue();
-            if (isEmptyIfStr(bro_user_ele_text)) { this.bro_id_user_ele_text.requestFocus(); return;}
+            String bro_user_ele_text = this.bro_id_name_box_ele_text.getText().trim();
+            String bro_user_ele_type = this.bro_id_name_box_ele_type_combo.getValue();
+            if (isEmptyIfStr(bro_user_ele_text)) { this.bro_id_name_box_ele_text.requestFocus(); return;}
 
             //获取密码框元素的内容
-            String bro_pass_ele_text = this.bro_id_pass_ele_text.getText().trim();
-            String bro_pass_ele_type = this.bro_id_pass_ele_type_combo.getValue();
-            if (isEmptyIfStr(bro_pass_ele_text)) { this.bro_id_pass_ele_text.requestFocus(); return;}
+            String bro_pass_ele_text = this.bro_id_pass_box_ele_text.getText().trim();
+            String bro_pass_ele_type = this.bro_id_pass_box_ele_type_combo.getValue();
+            if (isEmptyIfStr(bro_pass_ele_text)) { this.bro_id_pass_box_ele_text.requestFocus(); return;}
 
             //登录按钮内容
-            String bro_submit_ele_text = this.bro_id_submit_ele_text.getText().trim();
-            String bro_id_submit_ele_type = this.bro_id_submit_ele_type_combo.getValue();
-            if (isEmptyIfStr(bro_submit_ele_text)) { this.bro_id_submit_ele_text.requestFocus(); return;}
+            String bro_submit_ele_text = this.bro_id_submit_btn_ele_text.getText().trim();
+            String bro_id_submit_ele_type = this.bro_id_submit_btn_ele_type_combo.getValue();
+            if (isEmptyIfStr(bro_submit_ele_text)) { this.bro_id_submit_btn_ele_text.requestFocus(); return;}
 
             //检查验证码输入URL的内容
-            if (this.bro_id_captcha_switch_check.isSelected() && isEmptyIfStr(this.bro_id_captcha_url_text.getText().trim())) {
+            if (this.bro_id_ident_captcha_switch_check.isSelected() && isEmptyIfStr(this.bro_id_captcha_url_text.getText().trim())) {
                 this.bro_id_captcha_url_text.requestFocus();
                 return;
             }
@@ -677,7 +677,7 @@ public class FXMLDocumentController implements Initializable {
             setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), GLOBAL_BROWSER_PROXY_STR, login_url_protocol);
 
             //获取验证码URL
-            if (this.bro_id_captcha_switch_check.isSelected()){
+            if (this.bro_id_ident_captcha_switch_check.isSelected()){
                 this.captcha_request_url = this.bro_id_captcha_url_text.getText().trim();
             }
 
@@ -827,7 +827,7 @@ public class FXMLDocumentController implements Initializable {
                             }
 
                             //获取验证码并进行识别
-                            if (fxmlInstance.bro_id_captcha_switch_check.isSelected()) {
+                            if (fxmlInstance.bro_id_ident_captcha_switch_check.isSelected()) {
                                 //captcha_data不存在
                                 if (FXMLDocumentController.captchaPictureData == null) {
                                     printlnErrorOnUIAndConsole("获取验证码失败 (数据为空) 重新测试...");
@@ -836,11 +836,11 @@ public class FXMLDocumentController implements Initializable {
                                 }
 
                                 //获取输入的验证码元素定位信息
-                                String bro_captcha_ele_text = fxmlInstance.bro_id_captcha_ele_text.getText().trim();
-                                String bro_captcha_ele_type = fxmlInstance.bro_id_captcha_ele_type_combo.getValue();
+                                String bro_captcha_ele_text = fxmlInstance.bro_id_captcha_box_ele_text.getText().trim();
+                                String bro_captcha_ele_type = fxmlInstance.bro_id_captcha_box_ele_type_combo.getValue();
                                 if (isEmptyIfStr(bro_captcha_ele_text)) {
                                     printlnErrorOnUIAndConsole("验证码定位元素表单内容为空 请输入...");
-                                    fxmlInstance.bro_id_user_ele_text.requestFocus();
+                                    fxmlInstance.bro_id_name_box_ele_text.requestFocus();
                                     return;
                                 }
 
