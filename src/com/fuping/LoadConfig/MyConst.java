@@ -48,6 +48,7 @@ public class MyConst {
 
     //登录配置参数
     public static String default_login_access_url = null;
+    public static String default_login_actual_url = null;  //登录的实际URL
 
     public static String default_name_box_ele_value = null;
     public static String default_name_box_ele_type = null;
@@ -142,6 +143,8 @@ public class MyConst {
 
         //加载默认的登录框配置
         default_login_access_url = configReader.getString("login_access_url", "http://127.0.0.1/demo/index.php/Home/Login/login.html");
+        default_login_actual_url = configReader.getString("login_actual_url", null);
+
         default_name_box_ele_value = configReader.getString("name_box_ele_value", "username");
         default_name_box_ele_type = configReader.getString("name_box_ele_type", null);
 

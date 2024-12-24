@@ -67,6 +67,9 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextField id_login_access_url_text;
     @FXML
+    private TextField bro_id_login_actual_url_text;
+
+    @FXML
     private TextField bro_id_name_box_ele_text;
     @FXML
     private TextField bro_id_pass_box_ele_text;
@@ -443,6 +446,10 @@ public class FXMLDocumentController implements Initializable {
         //初始化窗口1的内容设置
         //设置登录URL
         setWithCheck(this.id_login_access_url_text, default_login_access_url);
+
+        //设置登录包URL框
+        setWithCheck(this.bro_id_login_actual_url_text, default_login_actual_url);
+
         //设置登录框
         setWithCheck(this.bro_id_name_box_ele_text, default_name_box_ele_value);
         setWithCheck(this.bro_id_name_box_ele_type_combo, default_name_box_ele_type);
@@ -596,10 +603,15 @@ public class FXMLDocumentController implements Initializable {
                 } else{
                     login_about_urls = Collections.singletonList(login_url_text);
                 }
+                //把登录相关URl的第一个URL作为访问URL
+                login_access_url = login_about_urls.get(0);
 
                 //获取指定登录包相关的URL、不指定也能用
-                login_access_url = login_about_urls.get(0);
-                login_actual_url = login_about_urls.get(login_about_urls.size()-1);
+                if (!isEmptyIfStr(this.bro_id_login_actual_url_text.getText().trim())){
+                    login_actual_url = this.bro_id_login_actual_url_text.getText().trim();
+                    login_about_urls.add(login_actual_url); //把登录包URL也加入相关URL中, 可能不需要
+                }
+
                 printlnDebugOnUIAndConsole(String.format("指定登录访问URL:%s 登录包URL为:%s 登录相关URL为:%s", login_access_url, login_actual_url, login_url_text));
             }
 

@@ -125,6 +125,18 @@
                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                     </padding>
                                  </HBox>
+                                 <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="108.0" spacing="2.0">
+                                    <children>
+                                       <Label prefHeight="23.0" prefWidth="108" text="实际登录包URL" />
+                                       <TextField fx:id="bro_id_login_actual_url_text" prefHeight="23.0" prefWidth="79.0" promptText="示例: 使用URL https://xxx/Login.aspx 或 使用正则 https://xxx/Login.aspx.*" text="" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                    <padding>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                    <VBox.margin>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </VBox.margin>
+                                 </HBox>
                               </VBox>
                               <Separator prefWidth="200.0" />
                               <VBox spacing="2.0" VBox.vgrow="ALWAYS">
