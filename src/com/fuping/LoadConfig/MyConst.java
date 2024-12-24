@@ -49,14 +49,14 @@ public class MyConst {
     //登录配置参数
     public static String default_login_access_url = null;
 
-    public static String default_name_ele_value = null;
-    public static String default_name_ele_type = null;
+    public static String default_name_box_ele_value = null;
+    public static String default_name_box_ele_type = null;
 
-    public static String default_pass_ele_value = null;
-    public static String default_pass_ele_type = null;
+    public static String default_pass_box_ele_value = null;
+    public static String default_pass_box_ele_type = null;
 
-    public static String default_submit_ele_value = null;
-    public static String default_submit_ele_type = null;
+    public static String default_submit_btn_ele_value = null;
+    public static String default_submit_btn_ele_type = null;
 
     public static boolean default_show_browser_switch = false;
 
@@ -84,9 +84,9 @@ public class MyConst {
     public static String default_resp_key_failure_regex = null;
     public static String default_resp_key_captcha_regex = null;
 
-    public static String default_captcha_url = null;
-    public static String default_captcha_ele_value = null;
-    public static String default_captcha_ele_type = null;
+    public static String default_captcha_actual_url = null;
+    public static String default_captcha_box_ele_value = null;
+    public static String default_captcha_box_ele_type = null;
 
     public static boolean default_ident_captcha_switch = false;
     public static boolean default_locale_identify_switch = false;
@@ -142,14 +142,14 @@ public class MyConst {
 
         //加载默认的登录框配置
         default_login_access_url = configReader.getString("login_access_url", "http://127.0.0.1/demo/index.php/Home/Login/login.html");
-        default_name_ele_value = configReader.getString("name_ele_value", "username");
-        default_name_ele_type = configReader.getString("name_ele_type", null);
+        default_name_box_ele_value = configReader.getString("name_box_ele_value", "username");
+        default_name_box_ele_type = configReader.getString("name_box_ele_type", null);
 
-        default_pass_ele_value = configReader.getString("pass_ele_value", "password");
-        default_pass_ele_type = configReader.getString("pass_ele_type", null);
+        default_pass_box_ele_value = configReader.getString("pass_box_ele_value", "password");
+        default_pass_box_ele_type = configReader.getString("pass_box_ele_type", null);
 
-        default_submit_ele_value = configReader.getString("submit_ele_value", "login");
-        default_submit_ele_type = configReader.getString("submit_ele_type", null);
+        default_submit_btn_ele_value = configReader.getString("submit_btn_ele_value", "login");
+        default_submit_btn_ele_type = configReader.getString("submit_btn_ele_type", null);
 
         default_show_browser_switch = configReader.isTrue("browser_show", false);
 
@@ -172,9 +172,9 @@ public class MyConst {
         default_ident_captcha_switch = configReader.isTrue("captcha_switch", false);
         default_locale_identify_switch = configReader.isTrue("locale_Identify", false);
 
-        default_captcha_url = configReader.getString("captcha_url", null);
-        default_captcha_ele_value = configReader.getString("captcha_ele_value", null);
-        default_captcha_ele_type = configReader.getString("captcha_ele_type", null);
+        default_captcha_actual_url = configReader.getString("captcha_actual_url", null);
+        default_captcha_box_ele_value = configReader.getString("captcha_box_ele_value", null);
+        default_captcha_box_ele_type = configReader.getString("captcha_box_ele_type", null);
 
         default_ident_time_out = Integer.parseInt(configReader.getString("ident_time_out", "1000"));
         default_ident_format_regex = configReader.getString("ident_format_regex", null);
