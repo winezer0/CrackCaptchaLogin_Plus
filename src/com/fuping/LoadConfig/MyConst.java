@@ -169,7 +169,7 @@ public class MyConst {
         default_resp_key_failure_regex = configReader.getString("failure_regex", "登录失败");
         default_resp_key_captcha_regex = configReader.getString("captcha_regex", "验证码错误");
 
-        default_ident_captcha_switch = configReader.isTrue("captcha_switch", false);
+        default_ident_captcha_switch = configReader.isTrue("ident_captcha_switch", false);
         default_locale_identify_switch = configReader.isTrue("locale_Identify", false);
 
         default_captcha_actual_url = configReader.getString("captcha_actual_url", null);
