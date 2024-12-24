@@ -137,7 +137,7 @@ public class FXMLDocumentController implements Initializable {
 
     private List<String> login_about_urls = null;  //存储当前URL相关的多个URl
     private String login_access_url = null;  //设置当前登录url的全局变量用于后续调用
-    private String login_request_url = null;  //设置当前登录HTTP报文的URL地址用于后续调用
+    private String login_actual_url = null;  //设置当前登录HTTP报文的URL地址用于后续调用 登录的实际URL
 
     private String captcha_request_url = null;  //设置当前登录验证码url用于后续调用
     private boolean captcha_ident_was_error = false; //设置当前验证码识别错误状态
@@ -402,7 +402,7 @@ public class FXMLDocumentController implements Initializable {
         browser.getContext().getNetworkService().setNetworkDelegate(
                 new MyNetworkDelegate(
                         this.captcha_request_url,
-                        this.login_request_url,
+                        this.login_actual_url,
                         this.bro_id_match_login_url_check.isSelected(),
                         this.bro_id_captcha_regex_text.getText(),
                         this.bro_id_failure_regex_text.getText(),
@@ -599,8 +599,8 @@ public class FXMLDocumentController implements Initializable {
 
                 //获取指定登录包相关的URL、不指定也能用
                 login_access_url = login_about_urls.get(0);
-                login_request_url = login_about_urls.get(login_about_urls.size()-1);
-                printlnDebugOnUIAndConsole(String.format("指定登录访问URL:%s 登录包URL为:%s 登录相关URL为:%s", login_access_url, login_request_url, login_url_text));
+                login_actual_url = login_about_urls.get(login_about_urls.size()-1);
+                printlnDebugOnUIAndConsole(String.format("指定登录访问URL:%s 登录包URL为:%s 登录相关URL为:%s", login_access_url, login_actual_url, login_url_text));
             }
 
             //基于登录URL初始化|URL更新|日志文件配置
@@ -685,7 +685,7 @@ public class FXMLDocumentController implements Initializable {
             browser.getContext().getNetworkService().setNetworkDelegate(
                     new MyNetworkDelegate(
                             this.captcha_request_url,
-                            this.login_request_url,
+                            this.login_actual_url,
                             this.bro_id_match_login_url_check.isSelected(),
                             this.bro_id_captcha_regex_text.getText(),
                             this.bro_id_failure_regex_text.getText(),
