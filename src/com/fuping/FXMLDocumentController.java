@@ -113,7 +113,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private CheckBox bro_id_use_browser_proxy;
     @FXML
-    private TextField bro_id_captcha_url_text;
+    private TextField bro_id_captcha_actual_url_text;
     @FXML
     private ComboBox<String> bro_id_captcha_box_ele_type_combo;
     @FXML
@@ -504,7 +504,7 @@ public class FXMLDocumentController implements Initializable {
         //设置验证码识别方式
         setWithCheck(default_locale_identify_switch ? this.bro_id_locale_ident_flag_radio : this.bro_id_yzm_remote_ident_radio, true);
         //设置验证码属性
-        setWithCheck(this.bro_id_captcha_url_text, default_captcha_actual_url);
+        setWithCheck(this.bro_id_captcha_actual_url_text, default_captcha_actual_url);
         setWithCheck(this.bro_id_captcha_box_ele_text, default_captcha_box_ele_value);
         setWithCheck(this.bro_id_captcha_box_ele_type_combo, default_captcha_box_ele_type);
         this.bro_id_captcha_box_ele_text.setTooltip(new Tooltip("验证码输入框元素定位方式和对应值"));
@@ -538,9 +538,9 @@ public class FXMLDocumentController implements Initializable {
         boolean remoteIdent = this.bro_id_yzm_remote_ident_radio.isSelected();
 
         //获取验证码输入URL的内容
-        String bro_captcha_url_text = this.bro_id_captcha_url_text.getText().trim();
+        String bro_captcha_url_text = this.bro_id_captcha_actual_url_text.getText().trim();
         if (isEmptyIfStr(bro_captcha_url_text)) {
-            this.bro_id_captcha_url_text.requestFocus();
+            this.bro_id_captcha_actual_url_text.requestFocus();
             return;
         }
 
@@ -664,8 +664,8 @@ public class FXMLDocumentController implements Initializable {
             if (isEmptyIfStr(bro_submit_ele_text)) { this.bro_id_submit_btn_ele_text.requestFocus(); return;}
 
             //检查验证码输入URL的内容
-            if (this.bro_id_ident_captcha_switch_check.isSelected() && isEmptyIfStr(this.bro_id_captcha_url_text.getText().trim())) {
-                this.bro_id_captcha_url_text.requestFocus();
+            if (this.bro_id_ident_captcha_switch_check.isSelected() && isEmptyIfStr(this.bro_id_captcha_actual_url_text.getText().trim())) {
+                this.bro_id_captcha_actual_url_text.requestFocus();
                 return;
             }
 
@@ -678,7 +678,7 @@ public class FXMLDocumentController implements Initializable {
 
             //获取验证码URL
             if (this.bro_id_ident_captcha_switch_check.isSelected()){
-                this.captcha_request_url = this.bro_id_captcha_url_text.getText().trim();
+                this.captcha_request_url = this.bro_id_captcha_actual_url_text.getText().trim();
             }
 
             //设置JxBrowser中网络委托的对象，以实现对浏览器的网络请求和响应的控制和处理。 //更详细的请求和响应处理,含保存验证码图片
