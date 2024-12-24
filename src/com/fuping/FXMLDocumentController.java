@@ -65,7 +65,7 @@ public class FXMLDocumentController implements Initializable {
 
     //登录相关元素
     @FXML
-    private TextField id_login_url_text;
+    private TextField id_login_access_url_text;
     @FXML
     private TextField bro_id_user_ele_text;
     @FXML
@@ -442,7 +442,7 @@ public class FXMLDocumentController implements Initializable {
 
         //初始化窗口1的内容设置
         //设置登录URL
-        setWithCheck(this.id_login_url_text, default_login_url);
+        setWithCheck(this.id_login_access_url_text, default_login_access_url);
         //设置登录框
         setWithCheck(this.bro_id_user_ele_text, default_name_ele_value);
         setWithCheck(this.bro_id_user_ele_type_combo, default_name_ele_type);
@@ -583,7 +583,7 @@ public class FXMLDocumentController implements Initializable {
             }
 
             //读取登录 URL
-            String login_url_text = this.id_login_url_text.getText().trim();
+            String login_url_text = this.id_login_access_url_text.getText().trim();
 
             //登陆 URL 检查
             if (isEmptyIfStr(login_url_text) || !login_url_text.startsWith("http")) {

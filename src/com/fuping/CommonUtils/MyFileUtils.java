@@ -122,13 +122,13 @@ public class MyFileUtils {
         return false;
     }
 
-    public static boolean isModifiedLoginUrl(String login_url){
+    public static boolean isModifiedLoginUrl(String login_access_url){
         //检查登录URL是否更新, 更新了就重新赋值
-        if(login_url.equalsIgnoreCase(default_login_url)) {
+        if(login_access_url.equalsIgnoreCase(default_login_access_url)) {
             return false;
         } else{
-            print_debug(String.format("The login URL has been modified from [%s] to [%s]", default_login_url, login_url));
-            default_login_url = login_url;
+            print_debug(String.format("The login URL has been modified from [%s] to [%s]", default_login_access_url, login_access_url));
+            default_login_access_url = login_access_url;
             return true;
         }
     }

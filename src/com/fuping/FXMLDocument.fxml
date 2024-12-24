@@ -10,7 +10,7 @@
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="0.0" spacing="2.0" BorderPane.alignment="CENTER">
          <children>
-            <TextField fx:id="id_login_url_text" promptText="请输入登录页面的URL" text="" HBox.hgrow="ALWAYS" />
+            <TextField fx:id="id_login_access_url_text" promptText="请输入登录页面的URL" text="" HBox.hgrow="ALWAYS" />
             <Button mnemonicParsing="false" onAction="#startCrack" text="开始爆破" />
             <Button mnemonicParsing="false" onAction="#stopCrack" text="停止爆破" />
          </children>

@@ -47,7 +47,7 @@ public class MyConst {
     public static long globalPairFileLastModified = 0;
 
     //登录配置参数
-    public static String default_login_url = null;
+    public static String default_login_access_url = null;
 
     public static String default_name_ele_value = null;
     public static String default_name_ele_type = null;
@@ -141,7 +141,7 @@ public class MyConst {
         GLOBAL_EXCLUDE_HISTORY_SWITCH = configReader.isTrue("exclude_history", false);
 
         //加载默认的登录框配置
-        default_login_url = configReader.getString("login_url", "http://127.0.0.1/demo/index.php/Home/Login/login.html");
+        default_login_access_url = configReader.getString("login_access_url", "http://127.0.0.1/demo/index.php/Home/Login/login.html");
         default_name_ele_value = configReader.getString("name_ele_value", "username");
         default_name_ele_type = configReader.getString("name_ele_type", null);
 
