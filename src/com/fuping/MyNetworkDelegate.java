@@ -2,7 +2,6 @@ package com.fuping;
 
 import com.fuping.CommonUtils.ElementUtils;
 import com.fuping.CommonUtils.HttpUrlInfo;
-import com.fuping.LoadConfig.Constant;
 import com.teamdev.jxbrowser.chromium.*;
 import com.teamdev.jxbrowser.chromium.javafx.DefaultNetworkDelegate;
 import javafx.application.Platform;
@@ -25,16 +24,17 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
-import static com.fuping.CommonUtils.ElementUtils.isEqualsOneKey;
+import static com.fuping.CommonUtils.ElementUtils.*;
 import static com.fuping.CommonUtils.UiUtils.printlnErrorOnUIAndConsole;
 import static com.fuping.CommonUtils.UiUtils.printlnInfoOnUIAndConsole;
+import static com.fuping.CommonUtils.Utils.concatHeaders;
+import static com.fuping.CommonUtils.Utils.countNotEmptyStrings;
 import static com.fuping.LoadConfig.Constant.LoadStatus.LOADING_FINISH;
 import static com.fuping.LoadConfig.Constant.LoginStatus.*;
 import static com.fuping.LoadConfig.MyConst.GLOBAL_MATCH_BLOCK_SUFFIX;
 import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class MyNetworkDelegate extends DefaultNetworkDelegate {
-    FXMLDocumentController fxmlDocumentController;
 
     private boolean isCompleteAuth;
     private boolean isCancelAuth;
@@ -116,12 +116,13 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
     @Override
     //当接收到部分响应数据时调用
     public void onDataReceived(DataReceivedParams paramDataReceivedParams) {
-        if (this.requestCaptchaUrl != null && ElementUtils.isSimilarLink(paramDataReceivedParams.getURL(), this.requestCaptchaUrl)) {
+        String getReqURL = paramDataReceivedParams.getURL();
+        if (this.requestCaptchaUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestCaptchaUrl)) {
             //存储验证码数据
-            storeCaptchaData(paramDataReceivedParams);
+            storeCaptchaData(getReqURL, paramDataReceivedParams);
         } else {
             //检查登录关键字匹配状态
-            checkLoginStatus(paramDataReceivedParams);
+            checkLoginStatusOnBody(getReqURL, paramDataReceivedParams);
         }
     }
 
@@ -142,6 +143,9 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
 
         if (this.requestLoginUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestLoginUrl)) {
             print_debug(String.format("正在接受登录包响应 onHeadersReceived: %s", getReqURL));
+
+            //部分情况下需要从响应头匹配 Location 字段来判断是否成功登录
+            checkLoginStatusOnHeaders(getReqURL, concatHeaders(params.getHeadersEx().getHeaders()));
         }
     }
 
@@ -275,12 +279,10 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
      *
      * @param paramDataReceivedParams 包含接收的数据和URL等信息的参数对象
      */
-    public void storeCaptchaData(DataReceivedParams paramDataReceivedParams) {
+    public void storeCaptchaData(String getReqURL, DataReceivedParams paramDataReceivedParams) {
         if (isCapturingCaptcha.get()) {
             return; // 如果已经在捕获验证码，则直接返回
         }
-
-        String getReqURL = paramDataReceivedParams.getURL();
 
         // 如果当前URL是验证码URL请求,就开始获取验证码图片数据
         if (this.requestCaptchaUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestCaptchaUrl)) {
@@ -308,8 +310,8 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
         }
     }
 
-    public void checkLoginStatus(DataReceivedParams paramDataReceivedParams) {
-        String getReqURL = paramDataReceivedParams.getURL();
+
+    public void checkLoginStatusOnBody(String getReqURL, DataReceivedParams paramDataReceivedParams) {
 
         try {
             String charset = paramDataReceivedParams.getCharset();
@@ -320,13 +322,13 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
             if (this.matchLoginUrl && this.requestLoginUrl != null) {
                 if (ElementUtils.isSimilarLink(getReqURL, this.requestLoginUrl)) {
                     //print_debug("当前为精准匹配模式...");
-                    handleLoginStatus(getReqURL, new String(paramDataReceivedParams.getData(), charset), true);
+                    handleLoginStatus(getReqURL, new String(paramDataReceivedParams.getData(), charset), true, false);
                 }
             } else {
                 String urlSuffix = new HttpUrlInfo(getReqURL).getSuffix();
                 if (isEqualsOneKey(urlSuffix, GLOBAL_MATCH_BLOCK_SUFFIX, true)){
                     //print_debug("当前为粗略匹配模式...");
-                    handleLoginStatus(getReqURL, new String(paramDataReceivedParams.getData(), charset), false);
+                    handleLoginStatus(getReqURL, new String(paramDataReceivedParams.getData(), charset), false, false);
                 }
             }
         } catch (UnsupportedEncodingException e) {
@@ -335,50 +337,71 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
         }
     }
 
-    /**
-     * 进行响应数据匹配
-     *
-     * @param receive
-     * @param getReqURL
-     */
-    private void handleLoginStatus(String getReqURL, String receive, Boolean matchLoginUrl) {
-        String foundStrForLoginSuccess = ElementUtils.FoundContainSubString(receive, loginSuccessKey);
-        String foundStrForLoginFailure = ElementUtils.FoundContainSubString(receive, loginFailureKey);
-        String foundStrForCaptchaFail = ElementUtils.FoundContainSubString(receive, captchaFailKey);
-
-        if (foundStrForLoginSuccess != null) {
-            updateCrackStatus(LOGIN_SUCCESS, foundStrForLoginSuccess, getReqURL);
-        }
-
-        if (foundStrForLoginFailure != null) {
-            updateCrackStatus(LOGIN_FAILURE, foundStrForLoginFailure, getReqURL);
-        }
-
-        if (foundStrForCaptchaFail != null) {
-            updateCrackStatus(ERROR_CAPTCHA, foundStrForCaptchaFail, getReqURL);
-        }
-
-        if (foundStrForLoginSuccess==null && foundStrForCaptchaFail==null && foundStrForLoginFailure==null){
-            if (matchLoginUrl){
-                printlnErrorOnUIAndConsole(String.format("当前请求[%s]所有响应关键字匹配出错!!!\n响应长度:[%s]响应内容:[%s]", getReqURL, receive.length(), receive));
+    public void checkLoginStatusOnHeaders(String getReqURL, String receivedHeaders) {
+        // 检查是否为精准匹配模式
+        if (this.matchLoginUrl && this.requestLoginUrl != null) {
+            if (ElementUtils.isSimilarLink(getReqURL, this.requestLoginUrl)) {
+                handleLoginStatus(getReqURL, receivedHeaders, true, true);
+            }
+        } else {
+            String urlSuffix = new HttpUrlInfo(getReqURL).getSuffix();
+            if (isEqualsOneKey(urlSuffix, GLOBAL_MATCH_BLOCK_SUFFIX, true)){
+                handleLoginStatus(getReqURL, receivedHeaders, false, true);
             }
         }
     }
 
-    private void updateCrackStatus(Constant.LoginStatus loginStatus, String matchString, String url) {
-        FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s", loginStatus.name(), url);
-        FXMLDocumentController.CURR_LOADING_STATUS = LOADING_FINISH.name();
+    private void handleLoginStatus(String getReqURL, String receive, Boolean matchLoginUrl, Boolean isHeader) {
+        String foundStrForLoginSuccess = ElementUtils.FoundContainSubString(receive, loginSuccessKey);
+        String foundStrForLoginFailure = ElementUtils.FoundContainSubString(receive, loginFailureKey);
+        String foundStrForCaptchaFail = ElementUtils.FoundContainSubString(receive, captchaFailKey);
 
-        switch (loginStatus) {
-            case LOGIN_SUCCESS:
-                printlnInfoOnUIAndConsole(String.format("响应内容匹配: 登录成功 %s [匹配结果:%s]", FXMLDocumentController.CURR_LOGIN_STATUS, matchString));
-                break;
-            case LOGIN_FAILURE:
-                printlnErrorOnUIAndConsole(String.format("响应内容匹配: 登录失败 %s [匹配结果:%s]", FXMLDocumentController.CURR_LOGIN_STATUS, matchString));
-                break;
-            case ERROR_CAPTCHA:
-                printlnErrorOnUIAndConsole(String.format("响应内容匹配: 验证码错误 %s [匹配结果:%s]", FXMLDocumentController.CURR_LOGIN_STATUS, matchString));
-                break;
+        int notEmptyStrNum = countNotEmptyStrings(foundStrForLoginSuccess, foundStrForCaptchaFail, foundStrForLoginFailure);
+
+        if (notEmptyStrNum == 1) {
+            if (isHeader){
+                if (isNotEmptyObj(foundStrForLoginSuccess)) {
+                    FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s", LOGIN_SUCCESS.name(), getReqURL);
+                    printlnInfoOnUIAndConsole(String.format("响应头部匹配: 登录成功 %s [匹配结果:%s]", FXMLDocumentController.CURR_LOGIN_STATUS, foundStrForLoginSuccess));
+                }
+                if (isNotEmptyObj(foundStrForLoginFailure)) {
+                    FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s", LOGIN_FAILURE.name(), getReqURL);
+                    printlnErrorOnUIAndConsole(String.format("响应头部匹配: 登录失败 %s [匹配结果:%s]", FXMLDocumentController.CURR_LOGIN_STATUS, foundStrForLoginFailure));
+                }
+                if (isNotEmptyObj(foundStrForCaptchaFail)) {
+                    FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s", ERROR_CAPTCHA.name(), getReqURL);
+                    printlnErrorOnUIAndConsole(String.format("响应头部匹配: 验证码错误 %s [匹配结果:%s]", FXMLDocumentController.CURR_LOGIN_STATUS, foundStrForCaptchaFail));
+                }
+            } else {
+                //确定已经匹配成功,就将当前加载状态设置为已完成
+                FXMLDocumentController.CURR_LOADING_STATUS = LOADING_FINISH.name();
+                //如果已经从响应头部匹配出结果、就忽略匹配、否则继续匹配
+                if (isEmptyObj(FXMLDocumentController.CURR_LOGIN_STATUS)){
+                    if (isNotEmptyObj(foundStrForLoginSuccess)) {
+                        FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s", LOGIN_SUCCESS.name(), getReqURL);
+                        printlnInfoOnUIAndConsole(String.format("响应内容匹配: 登录成功 %s [匹配结果:%s]", FXMLDocumentController.CURR_LOGIN_STATUS, foundStrForLoginSuccess));
+                    }
+
+                    if (isNotEmptyObj(foundStrForLoginFailure)) {
+                        FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s", LOGIN_FAILURE.name(), getReqURL);
+                        printlnErrorOnUIAndConsole(String.format("响应内容匹配: 登录失败 %s [匹配结果:%s]", FXMLDocumentController.CURR_LOGIN_STATUS, foundStrForLoginFailure));
+                    }
+
+                    if (isNotEmptyObj(foundStrForCaptchaFail)) {
+                        FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s", ERROR_CAPTCHA.name(), getReqURL);
+                        printlnErrorOnUIAndConsole(String.format("响应内容匹配: 验证码错误 %s [匹配结果:%s]", FXMLDocumentController.CURR_LOGIN_STATUS, foundStrForCaptchaFail));
+                    }
+                }
+            }
+        }
+
+        if (notEmptyStrNum == 0 && matchLoginUrl && isHeader){
+            //printlnErrorOnUIAndConsole(String.format("当前请求[%s]所有响应关键字匹配出错!!\n响应长度:[%s]响应内容:[%s]", getReqURL, receive.length(), receive));
+            printlnErrorOnUIAndConsole(String.format("当前请求[%s]响应关键字匹配失败!!\n响应长度:[%s]", getReqURL, receive.length()));
+        }
+
+        if (notEmptyStrNum > 1) {
+            printlnErrorOnUIAndConsole(String.format("匹配关键字异常[Status:%s] 存在多个匹配结果: [Success:%s|CaptchaFail:%s|LoginFailure:%s]", FXMLDocumentController.CURR_LOGIN_STATUS, foundStrForLoginSuccess, foundStrForCaptchaFail, foundStrForLoginFailure));
         }
     }
 }

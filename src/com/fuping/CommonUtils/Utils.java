@@ -1,19 +1,15 @@
 package com.fuping.CommonUtils;
 
-import com.fuping.LoadDict.UserPassPair;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
-import static com.fuping.LoadDict.LoadDictUtils.excludeHistoryPairs;
-import static com.fuping.LoadDict.LoadDictUtils.replaceUserMarkInPass;
-import static com.fuping.PrintLog.PrintLog.print_debug;
+import static com.fuping.CommonUtils.ElementUtils.isNotEmptyObj;
 
 public class Utils {
 
@@ -109,5 +105,59 @@ public class Utils {
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("Invalid URL format", e);
         }
+    }
+
+
+    /**
+     * 将响应头映射拼接成字符串。
+     * @param respHeaders 包含响应头的映射
+     * @return 拼接后的字符串表示形式
+     */
+    public static String concatHeaders(Map<String, List<String>> respHeaders) {
+        if (respHeaders == null || respHeaders.isEmpty()) {
+            return "";
+        }
+
+        // 使用StringBuilder来构建最终的字符串，提高性能
+        StringBuilder headerStringBuilder = new StringBuilder();
+
+        // 遍历map中的每一个entry，并将其添加到StringBuilder中
+        for (Map.Entry<String, List<String>> entry : respHeaders.entrySet()) {
+            String key = entry.getKey();
+            List<String> values = entry.getValue();
+
+            // 如果该header有多个值，则将它们用逗号分隔
+            String valueString = String.join(", ", values);
+
+            // 将key和value拼接并添加到结果字符串中
+            headerStringBuilder.append(key).append(": ").append(valueString).append("\n");
+        }
+
+        // 移除最后一个多余的换行符
+        if (headerStringBuilder.length() > 0) {
+            headerStringBuilder.setLength(headerStringBuilder.length() - 1);
+        }
+
+        return headerStringBuilder.toString();
+    }
+
+    /**
+     * 统计非空字符串的数量。
+     * @param strings 要检查的字符串数组
+     * @return 非空字符串的数量
+     */
+    public static int countNotEmptyStrings(String... strings) {
+        if (strings == null) {
+            return 0;
+        }
+
+        int noEmptyCount = 0;
+        for (String str : strings) {
+            if (isNotEmptyObj(str)) {
+                noEmptyCount++;
+            }
+        }
+
+        return noEmptyCount;
     }
 }
