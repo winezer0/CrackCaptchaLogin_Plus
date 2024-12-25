@@ -468,19 +468,19 @@ public class FXMLDocumentController implements Initializable {
         //设置登录框
         setWithCheck(this.bro_id_name_box_ele_text, default_name_box_ele_value);
         this.bro_id_name_box_ele_text.setTooltip(new Tooltip("账号框元素定位方式和对应值"));
-        setWithCheck(this.bro_id_name_box_ele_type_combo, default_name_box_ele_type);
+        setWithCheck(this.bro_id_name_box_ele_type_combo, default_name_box_ele_type.name());
         this.bro_id_name_box_ele_type_combo.setTooltip(new Tooltip("账号框元素定位方式和对应值"));
 
         //设置密码框
         setWithCheck(this.bro_id_pass_box_ele_text, default_pass_box_ele_value);
         this.bro_id_pass_box_ele_text.setTooltip(new Tooltip("密码框元素定位方式和对应值"));
-        setWithCheck(this.bro_id_pass_box_ele_type_combo, default_pass_box_ele_type);
+        setWithCheck(this.bro_id_pass_box_ele_type_combo, default_pass_box_ele_type.name());
         this.bro_id_pass_box_ele_type_combo.setTooltip(new Tooltip("密码框元素定位方式和对应值"));
 
         //设置提交按钮
         setWithCheck(this.bro_id_submit_btn_ele_text, default_submit_btn_ele_value);
         this.bro_id_submit_btn_ele_text.setTooltip(new Tooltip("提交按钮元素定位方式和对应值"));
-        setWithCheck(this.bro_id_submit_btn_ele_type_combo, default_submit_btn_ele_type);
+        setWithCheck(this.bro_id_submit_btn_ele_type_combo, default_submit_btn_ele_type.name());
         this.bro_id_submit_btn_ele_type_combo.setTooltip(new Tooltip("提交按钮元素定位方式和对应值"));
 
         //设置浏览器选项
@@ -534,7 +534,7 @@ public class FXMLDocumentController implements Initializable {
 
 
         setWithCheck(this.bro_id_captcha_box_ele_text, default_captcha_box_ele_value);
-        setWithCheck(this.bro_id_captcha_box_ele_type_combo, default_captcha_box_ele_type);
+        setWithCheck(this.bro_id_captcha_box_ele_type_combo, default_captcha_box_ele_type.name());
         this.bro_id_captcha_box_ele_text.setTooltip(new Tooltip("验证码输入框元素定位方式和对应值"));
         this.bro_id_captcha_box_ele_type_combo.setTooltip(new Tooltip("验证码输入框元素定位方式和对应值"));
 
