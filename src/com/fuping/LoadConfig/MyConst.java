@@ -5,6 +5,8 @@ import com.fuping.LoadDict.UserPassPair;
 import static com.fuping.LoadConfig.Constant.DictMode.CARTESIAN;
 import static com.fuping.LoadConfig.Constant.EleFoundStatus.BREAK;
 import static com.fuping.LoadConfig.Constant.EleFoundStatus.CONTINUE;
+import static com.fuping.LoadConfig.Constant.HttpMethod.GET;
+import static com.fuping.LoadConfig.Constant.HttpMethod.POST;
 import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class MyConst {
@@ -52,7 +54,7 @@ public class MyConst {
     //登录配置参数
     public static String default_login_access_url = null;
     public static String default_login_actual_url = null;  //登录包的实际请求URL
-    public static String default_login_actual_method = null;  //登录包的实际请求方法
+    public static Constant.HttpMethod default_login_actual_method = null;  //登录包的实际请求方法
 
     public static String default_name_box_ele_value = null;
     public static String default_name_box_ele_type = null;
@@ -72,7 +74,7 @@ public class MyConst {
     public static int default_login_page_wait_time = 1000;  //登录页面加载后的等待时间
 
     //查找定位元素的配置
-    public static Integer GLOBAL_FIND_ELERET_RYTIMES = null;
+    public static Integer GLOBAL_FIND_ELE_RETRY_TIMES = null;
     public static Integer GLOBAL_FIND_ELE_DELAY_TIME = null;
 
     //登录按钮点击后的等待时间
@@ -90,7 +92,7 @@ public class MyConst {
     public static String default_resp_key_captcha_regex = null;
 
     public static String default_captcha_actual_url = null; //验证码请求包的实际请求URL
-    public static String default_captcha_actual_method = null;  //验证码请求包的实际请求方法
+    public static Constant.HttpMethod default_captcha_actual_method = null;  //验证码请求包的实际请求方法
 
     public static String default_captcha_box_ele_value = null;
     public static String default_captcha_box_ele_type = null;
@@ -112,10 +114,10 @@ public class MyConst {
     public static String GLOBAL_LOCALE_TESS_DATA_NAME =null; //默认调用的数据集名称, 实际上就是tessdata目录下的文件名前缀
 
     //定义查找元素失败后的操作
-    public static String GLOBAL_BROWSER_CLOSE_ACTION;     //浏览器关闭后的动作  break
-    public static String GLOBAL_FIND_ELE_ILLEGAL_ACTION;  //查找到不合法的动作时 continue
-    public static String GLOBAL_FIND_ELE_NULL_ACTION;     //没有找到元素对应的操作 continue
-    public static String GLOBAL_FIND_ELE_EXCEPTION_ACTION; //发生其他异常时的动作 continue
+    public static Constant.EleFoundStatus GLOBAL_BROWSER_CLOSE_ACTION;     //浏览器关闭后的动作  break
+    public static Constant.EleFoundStatus GLOBAL_FIND_ELE_ILLEGAL_ACTION;  //查找到不合法的动作时 continue
+    public static Constant.EleFoundStatus GLOBAL_FIND_ELE_NULL_ACTION;     //没有找到元素对应的操作 continue
+    public static Constant.EleFoundStatus GLOBAL_FIND_ELE_EXCEPTION_ACTION; //发生其他异常时的动作 continue
 
     //定义查找元素的方案
     public static boolean default_js_mode_switch; //是否使用JS模式进行元素查找 仅支持CSS和XPATH
@@ -150,7 +152,7 @@ public class MyConst {
         //加载默认的登录框配置
         default_login_access_url = configReader.getString("login_access_url", "http://127.0.0.1/demo/index.php/Home/Login/login.html");
         default_login_actual_url = configReader.getString("login_actual_url", null);
-        default_login_actual_method = configReader.getString("login_actual_method", "POST");
+        default_login_actual_method = Constant.HttpMethod.fromString(configReader.getString("login_actual_method", POST.name()));
 
         default_name_box_ele_value = configReader.getString("name_box_ele_value", "username");
         default_name_box_ele_type = configReader.getString("name_box_ele_type", null);
@@ -183,7 +185,7 @@ public class MyConst {
         default_locale_identify_switch = configReader.isTrue("locale_Identify", false);
 
         default_captcha_actual_url = configReader.getString("captcha_actual_url", null);
-        default_captcha_actual_method = configReader.getString("captcha_actual_method", "GET");
+        default_captcha_actual_method = Constant.HttpMethod.fromString(configReader.getString("captcha_actual_method", GET.name()));
 
         default_captcha_box_ele_value = configReader.getString("captcha_box_ele_value", null);
         default_captcha_box_ele_type = configReader.getString("captcha_box_ele_type", null);
@@ -199,13 +201,13 @@ public class MyConst {
         GLOBAL_LOCALE_TESS_DATA_NAME = configReader.getString("locale_tess_data_name", null);
 
         //指定对应的操作
-        GLOBAL_BROWSER_CLOSE_ACTION = configReader.getString("browser_close_action", BREAK.name());
-        GLOBAL_FIND_ELE_ILLEGAL_ACTION = configReader.getString("find_ele_illegal_action", CONTINUE.name());
-        GLOBAL_FIND_ELE_NULL_ACTION = configReader.getString("find_ele_null_action", CONTINUE.name());
-        GLOBAL_FIND_ELE_EXCEPTION_ACTION = configReader.getString("find_ele_exception_action", CONTINUE.name());
+        GLOBAL_BROWSER_CLOSE_ACTION = Constant.EleFoundStatus.fromString(configReader.getString("browser_close_action", BREAK.name()));
+        GLOBAL_FIND_ELE_ILLEGAL_ACTION = Constant.EleFoundStatus.fromString(configReader.getString("find_ele_illegal_action", CONTINUE.name()));
+        GLOBAL_FIND_ELE_NULL_ACTION = Constant.EleFoundStatus.fromString(configReader.getString("find_ele_null_action", CONTINUE.name()));
+        GLOBAL_FIND_ELE_EXCEPTION_ACTION = Constant.EleFoundStatus.fromString(configReader.getString("find_ele_exception_action", CONTINUE.name()));
 
         GLOBAL_FIND_ELE_DELAY_TIME = Integer.parseInt(configReader.getString("find_ele_delay_time", "500"));
-        GLOBAL_FIND_ELERET_RYTIMES = Integer.parseInt(configReader.getString("find_ele_retry_times", "6"));
+        GLOBAL_FIND_ELE_RETRY_TIMES = Integer.parseInt(configReader.getString("find_ele_retry_times", "6"));
 
         default_js_mode_switch = configReader.isTrue("js_mode_switch", false);
 

@@ -2,6 +2,7 @@ package com.fuping;
 
 import com.fuping.CommonUtils.ElementUtils;
 import com.fuping.CommonUtils.HttpUrlInfo;
+import com.fuping.LoadConfig.Constant;
 import com.teamdev.jxbrowser.chromium.*;
 import com.teamdev.jxbrowser.chromium.javafx.DefaultNetworkDelegate;
 import javafx.application.Platform;
@@ -25,11 +26,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static cn.hutool.core.util.StrUtil.isEmptyIfStr;
 import static com.fuping.CommonUtils.ElementUtils.*;
-import static com.fuping.CommonUtils.UiUtils.printlnErrorOnUIAndConsole;
-import static com.fuping.CommonUtils.UiUtils.printlnInfoOnUIAndConsole;
+import static com.fuping.CommonUtils.UiUtils.*;
 import static com.fuping.CommonUtils.Utils.concatHeaders;
 import static com.fuping.CommonUtils.Utils.countNotEmptyStrings;
-import static com.fuping.LoadConfig.Constant.LoadStatus.LOADING_FINISH;
+import static com.fuping.LoadConfig.Constant.LoadingStatus.LOADING_FINISH;
 import static com.fuping.LoadConfig.Constant.LoginStatus.*;
 import static com.fuping.LoadConfig.MyConst.GLOBAL_MATCH_BLOCK_SUFFIX;
 import static com.fuping.PrintLog.PrintLog.print_debug;
@@ -40,10 +40,10 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
     private boolean isCancelAuth;
 
     private String captchaActualUrl;  //验证码请求包URL
-    private String captchaActualMethod;  //验证码请求包URL的请求方法
+    private Constant.HttpMethod captchaActualMethod;  //验证码请求包URL的请求方法
 
     private String loginActualUrl; //登录包请求URL
-    private String loginActualMethod; //登录包请求URL的请求方法
+    private Constant.HttpMethod loginActualMethod; //登录包请求URL的请求方法
 
     private boolean matchLoginUrl;
     //private long current_id;
@@ -61,10 +61,9 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
      * @param loginActualUrl   登录包相关URL 支持正则格式
      * @param matchLoginUrl     是否匹配登录包URL 否的话在所有请求中都取查找登录匹配结果关键字
      */
-    public MyNetworkDelegate(String captchaActualUrl, String captchaActualMethod,
-                             String loginActualUrl, String loginActualMethod,
-                             boolean matchLoginUrl,
-                             String captchaFailKey, String loginFailureKey, String loginSuccessKey)
+    public MyNetworkDelegate(String captchaActualUrl, Constant.HttpMethod captchaActualMethod,
+                             String loginActualUrl, Constant.HttpMethod loginActualMethod,
+                             boolean matchLoginUrl, String captchaFailKey, String loginFailureKey, String loginSuccessKey)
     {
         this.captchaActualUrl = captchaActualUrl;
         this.captchaActualMethod = captchaActualMethod;
@@ -100,33 +99,36 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
         //BeforeURLRequestParams params：包含即将发出的请求信息及其头信息。
         //允许您直接响应请求而不实际发送它，或者返回 null 表示继续正常的请求流程。
         //super.onSendHeaders(params);
-        String getReqURL = params.getURL();
-        String getMethod = params.getMethod();
+        String currURL = params.getURL();
+        String currMethod = params.getMethod();
         //需要判断那think php的情况，baseurl都是一样的，不能作为验证码图片URL
 
-        if(isSimilarLinkAndMethod(getReqURL, this.captchaActualUrl, getMethod, this.captchaActualMethod)){
+        if(isSimilarLinkAndMethod(currURL, this.captchaActualUrl, Constant.HttpMethod.fromString(currMethod), this.captchaActualMethod)){
             this.tmpCaptchaBytes = new byte[0];
             params.getHeadersEx().setHeader("Accept-Encoding", "");
-            //print_debug(String.format("修改验证码请求头 BeforeSendHeaders: %s", getReqURL));
+            //print_debug(String.format("修改验证码请求头 BeforeSendHeaders: %s", currURL));
         }
     }
 
-    private boolean isSimilarLinkAndMethod(String curUrl, String exceptUrl, String curMethod, String exceptMethod){
-        return curUrl != null && curMethod.equalsIgnoreCase(exceptMethod) && ElementUtils.isSimilarLink(curUrl, exceptUrl);
+    /**
+     * 判断当前URL和请求方法是否等于预期的URL和请求方法,用来确认是否是登录包和验证码包
+     */
+    private boolean isSimilarLinkAndMethod(String curUrl, String exceptUrl, Constant.HttpMethod curMethod, Constant.HttpMethod exceptMethod){
+        return curUrl != null && curMethod.equals(exceptMethod) && ElementUtils.isSimilarLink(curUrl, exceptUrl);
     }
 
     @Override
     //在浏览器实际发送请求头之后立即调用
     public void onSendHeaders(SendHeadersParams params) {
 /*
-        String getReqURL = params.getURL();
-        String getMethod = params.getMethod();
-        if(isSimilarLinkAndMethod(getReqURL, this.captchaActualUrl, getMethod, this.captchaActualMethod)){
-            print_debug(String.format("正在发起验证码请求 onSendHeaders: %s", getReqURL));
+        String currURL = params.getURL();
+        Constant.HttpMethod currMethod = Constant.HttpMethod.fromString(params.getMethod());
+        if(isSimilarLinkAndMethod(currURL, this.captchaActualUrl, currMethod, this.captchaActualMethod)){
+            print_debug(String.format("正在发起验证码请求 onSendHeaders: %s", currURL));
         }
 
-        if(isSimilarLinkAndMethod(getReqURL, this.loginActualUrl, getMethod, this.loginActualMethod)){
-           print_debug(String.format("正在发起登录包请求 onSendHeaders: %s", getReqURL));
+        if(isSimilarLinkAndMethod(currURL, this.loginActualUrl, currMethod, this.loginActualMethod)){
+           print_debug(String.format("正在发起登录包请求 onSendHeaders: %s", currURL));
         }
 */
     }
@@ -134,15 +136,15 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
 
     @Override
     //当接收到部分响应数据时调用
-    public void onDataReceived(DataReceivedParams paramDataReceivedParams) {
-        String getReqURL = paramDataReceivedParams.getURL();
-        String getMethod = paramDataReceivedParams.getMethod();
-        if(isSimilarLinkAndMethod(getReqURL, this.captchaActualUrl, getMethod, this.captchaActualMethod)){
+    public void onDataReceived(DataReceivedParams params) {
+        String currUrl = params.getURL();
+        Constant.HttpMethod currMethod = Constant.HttpMethod.fromString(params.getMethod());
+        if(isSimilarLinkAndMethod(currUrl, this.captchaActualUrl, currMethod, this.captchaActualMethod)){
             //存储验证码数据
-            storeCaptchaData(getReqURL, getMethod, paramDataReceivedParams);
+            storeCaptchaData(currUrl, currMethod, params);
         } else {
             //检查登录关键字匹配状态
-            checkLoginStatusOnBody(getReqURL, getMethod, paramDataReceivedParams);
+            checkLoginStatusOnBody(currUrl, currMethod, params);
         }
     }
 
@@ -156,16 +158,16 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
     //当接收到服务器响应头时调用
     public void onHeadersReceived(HeadersReceivedParams params) {
         //super.onHeadersReceived(params);
-        String getReqURL = params.getURL();
-        String getMethod = params.getMethod();
-        if (isSimilarLinkAndMethod(getReqURL, this.captchaActualUrl, getMethod, this.captchaActualMethod)){
-            print_debug(String.format("正在接受验证码数据头部 onHeadersReceived: %s", getReqURL));
+        String currUrl = params.getURL();
+        Constant.HttpMethod currMethod = Constant.HttpMethod.fromString(params.getMethod());
+        if (isSimilarLinkAndMethod(currUrl, this.captchaActualUrl, currMethod, this.captchaActualMethod)){
+            print_debug(String.format("正在接受验证码数据头部 onHeadersReceived: %s", currUrl));
         }
 
-        if (isSimilarLinkAndMethod(getReqURL, this.loginActualUrl, getMethod, this.loginActualMethod)){
-            print_debug(String.format("正在接受并匹配登录包响应头部 onHeadersReceived: %s", getReqURL));
+        if (isSimilarLinkAndMethod(currUrl, this.loginActualUrl, currMethod, this.loginActualMethod)){
+            print_debug(String.format("正在接受并匹配登录包响应头部 onHeadersReceived: %s", currUrl));
             //部分情况下需要从响应头匹配 Location 字段来判断是否成功登录
-            checkLoginStatusOnHeaders(getReqURL, getMethod, concatHeaders(params.getHeadersEx().getHeaders()));
+            checkLoginStatusOnHeaders(currUrl, currMethod, concatHeaders(params.getHeadersEx().getHeaders()));
         }
     }
 
@@ -173,14 +175,15 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
     //当请求完成（无论是成功还是失败）时调用
     public void onCompleted(RequestCompletedParams params) {
         //super.onCompleted(params);
-        String getReqURL = params.getURL();
-        String getMethod = params.getMethod();
-        if(isSimilarLinkAndMethod(getReqURL, this.captchaActualUrl, getMethod, this.captchaActualMethod)){
-            //print_debug(String.format("验证码URL请求完成 onHeadersReceived: %s", getReqURL));
+        String currUrl = params.getURL();
+        Constant.HttpMethod currMethod = Constant.HttpMethod.fromString(params.getMethod());
+        if(isSimilarLinkAndMethod(currUrl, this.captchaActualUrl, currMethod, this.captchaActualMethod)){
+            //print_debug(String.format("验证码URL请求完成 onHeadersReceived: %s", currUrl));
         }
 
-        if (isSimilarLinkAndMethod(getReqURL, this.loginActualUrl, getMethod, this.loginActualMethod)){
-            print_debug(String.format("登陆包URL请求完成 onHeadersReceived: %s", getReqURL));
+        if (isSimilarLinkAndMethod(currUrl, this.loginActualUrl, currMethod, this.loginActualMethod)){
+            print_debug(String.format("登陆包URL请求完成 onHeadersReceived: %s", currUrl));
+            //此处应该可以更新加载状态为 已完成  FXMLDocumentController.CURR_LOADING_STATUS = LOADING_FINISH.name();
         }
     }
 
@@ -297,16 +300,16 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
     /**
      * 存储验证码数据。
      *
-     * @param paramDataReceivedParams 包含接收的数据和URL等信息的参数对象
+     * @param receivedParams 包含接收的数据和URL等信息的参数对象
      */
-    public void storeCaptchaData(String getReqURL, String getMethod, DataReceivedParams paramDataReceivedParams) {
+    public void storeCaptchaData(String currUrl, Constant.HttpMethod currMethod, DataReceivedParams receivedParams) {
         if (isCapturingCaptcha.get()) {
             return; // 如果已经在捕获验证码，则直接返回
         }
 
         // 如果当前URL是验证码URL请求,就开始获取验证码图片数据
-        if(isSimilarLinkAndMethod(getReqURL, this.captchaActualUrl, getMethod, this.captchaActualMethod)){
-            byte[] receivedData = paramDataReceivedParams.getData();
+        if(isSimilarLinkAndMethod(currUrl, this.captchaActualUrl, currMethod, this.captchaActualMethod)){
+            byte[] receivedData = receivedParams.getData();
             try {
                 isCapturingCaptcha.set(true);
                 // 创建新的字节数组来存储接收到的数据
@@ -318,12 +321,12 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
                 FXMLDocumentController.captchaPictureData = this.tmpCaptchaBytes.clone(); // 克隆数组以避免外部修改
 
                 if (this.tmpCaptchaBytes.length == 0) {
-                    print_debug(String.format("获取验证码数据失败 onDataReceived is Empty From [%s]", getReqURL));
+                    print_debug(String.format("获取验证码数据失败 onDataReceived is Empty From [%s]", currUrl));
                 } else {
-                    print_debug(String.format("获取验证码数据成功 onDataReceived:[%d] From [%s]", this.tmpCaptchaBytes.length, getReqURL));
+                    print_debug(String.format("获取验证码数据成功 onDataReceived:[%d] From [%s]", this.tmpCaptchaBytes.length, currUrl));
                 }
             } catch (Exception e) {
-                print_debug(String.format("获取验证码数据失败 onDataReceived From [%s] receivedData[%s] Error:[%s]", getReqURL, receivedData.length, e.getMessage()));
+                print_debug(String.format("获取验证码数据失败 onDataReceived From [%s] receivedData[%s] Error:[%s]", currUrl, receivedData.length, e.getMessage()));
             } finally {
                 isCapturingCaptcha.set(false); // 确保设置回false，即使发生异常
             }
@@ -331,50 +334,50 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
     }
 
 
-    public void checkLoginStatusOnBody(String getReqURL, String getMethod, DataReceivedParams paramDataReceivedParams) {
+    public void checkLoginStatusOnBody(String currUrl, Constant.HttpMethod currMethod, DataReceivedParams receivedParams) {
 
         try {
-            String charset = paramDataReceivedParams.getCharset();
+            String charset = receivedParams.getCharset();
             if (isEmptyIfStr(charset)) {
                 charset = "UTF-8"; // 使用大写的 UTF-8 作为标准
             }
             // 检查是否为精准匹配模式
             if (this.matchLoginUrl && this.loginActualUrl != null) {
-                if (isSimilarLinkAndMethod(getReqURL, this.loginActualUrl, getMethod, this.loginActualMethod)) {
+                if (isSimilarLinkAndMethod(currUrl, this.loginActualUrl, currMethod, this.loginActualMethod)) {
                     print_debug("当前为精准匹配模式...");
-                    handleLoginStatus(getReqURL, new String(paramDataReceivedParams.getData(), charset), true, false);
+                    handleLoginStatus(currUrl, new String(receivedParams.getData(), charset), true, false);
                 }
             } else {
-                String urlSuffix = new HttpUrlInfo(getReqURL).getSuffix();
+                String urlSuffix = new HttpUrlInfo(currUrl).getSuffix();
                 if (isEqualsOneKey(urlSuffix, GLOBAL_MATCH_BLOCK_SUFFIX, true)){
                     print_debug("当前为粗略匹配模式...");
-                    handleLoginStatus(getReqURL, new String(paramDataReceivedParams.getData(), charset), false, false);
+                    handleLoginStatus(currUrl, new String(receivedParams.getData(), charset), false, false);
                 }
             }
         } catch (UnsupportedEncodingException e) {
             //e.printStackTrace();
-            printlnErrorOnUIAndConsole(String.format("响应结果关键字匹配发生错误:[%s] -> Error:[%s]", getReqURL, e.getMessage()));
+            printlnErrorOnUIAndConsole(String.format("响应结果关键字匹配发生错误:[%s] -> Error:[%s]", currUrl, e.getMessage()));
         }
     }
 
-    public void checkLoginStatusOnHeaders(String getReqURL, String getMethod, String receivedHeaders) {
+    public void checkLoginStatusOnHeaders(String currUrl, Constant.HttpMethod currMethod, String receivedHeaders) {
         // 检查是否为精准匹配模式
         if (this.matchLoginUrl && this.loginActualUrl != null) {
-            if (isSimilarLinkAndMethod(getReqURL, this.loginActualUrl, getMethod, this.loginActualMethod)) {
-                handleLoginStatus(getReqURL, receivedHeaders, true, true);
+            if (isSimilarLinkAndMethod(currUrl, this.loginActualUrl, currMethod, this.loginActualMethod)) {
+                handleLoginStatus(currUrl, receivedHeaders, true, true);
             }
         } else {
-            String urlSuffix = new HttpUrlInfo(getReqURL).getSuffix();
+            String urlSuffix = new HttpUrlInfo(currUrl).getSuffix();
             if (isEqualsOneKey(urlSuffix, GLOBAL_MATCH_BLOCK_SUFFIX, true)){
-                handleLoginStatus(getReqURL, receivedHeaders, false, true);
+                handleLoginStatus(currUrl, receivedHeaders, false, true);
             }
         }
     }
 
-    private void handleLoginStatus(String getReqURL, String receive, Boolean matchLoginUrl, Boolean isHeader) {
-        String foundStrForLoginSuccess = ElementUtils.FoundContainSubString(receive, loginSuccessKey);
-        String foundStrForLoginFailure = ElementUtils.FoundContainSubString(receive, loginFailureKey);
-        String foundStrForCaptchaFail = ElementUtils.FoundContainSubString(receive, captchaFailKey);
+    private void handleLoginStatus(String currUrl, String receiveData, Boolean matchLoginUrl, Boolean isHeader) {
+        String foundStrForLoginSuccess = ElementUtils.FoundContainSubString(receiveData, loginSuccessKey);
+        String foundStrForLoginFailure = ElementUtils.FoundContainSubString(receiveData, loginFailureKey);
+        String foundStrForCaptchaFail = ElementUtils.FoundContainSubString(receiveData, captchaFailKey);
 
         int notEmptyStrNum = countNotEmptyStrings(foundStrForLoginSuccess, foundStrForCaptchaFail, foundStrForLoginFailure);
 
@@ -384,32 +387,32 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
 
             if (isHeader){
                 if (isNotEmptyObj(foundStrForLoginSuccess)) {
-                    FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s<->Header", LOGIN_SUCCESS.name(), getReqURL);
+                    FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s<->Header", LOGIN_SUCCESS.name(), currUrl);
                     printlnInfoOnUIAndConsole(String.format("响应头部匹配: 登录成功 %s [匹配结果:%s]", FXMLDocumentController.CURR_LOGIN_STATUS, foundStrForLoginSuccess));
                 }
                 if (isNotEmptyObj(foundStrForLoginFailure)) {
-                    FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s<->Header", LOGIN_FAILURE.name(), getReqURL);
+                    FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s<->Header", LOGIN_FAILURE.name(), currUrl);
                     printlnErrorOnUIAndConsole(String.format("响应头部匹配: 登录失败 %s [匹配结果:%s]", FXMLDocumentController.CURR_LOGIN_STATUS, foundStrForLoginFailure));
                 }
                 if (isNotEmptyObj(foundStrForCaptchaFail)) {
-                    FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s<->Header", ERROR_CAPTCHA.name(), getReqURL);
+                    FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s<->Header", ERROR_CAPTCHA.name(), currUrl);
                     printlnErrorOnUIAndConsole(String.format("响应头部匹配: 验证码错误 %s [匹配结果:%s]", FXMLDocumentController.CURR_LOGIN_STATUS, foundStrForCaptchaFail));
                 }
             } else {
                 //如果已经从响应头部匹配出结果、就忽略状态更新、否则继续匹配
                 if (isEmptyObj(FXMLDocumentController.CURR_LOGIN_STATUS)){
                     if (isNotEmptyObj(foundStrForLoginSuccess)) {
-                        FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s<->Body", LOGIN_SUCCESS.name(), getReqURL);
+                        FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s<->Body", LOGIN_SUCCESS.name(), currUrl);
                         printlnInfoOnUIAndConsole(String.format("响应内容匹配: 登录成功 %s [匹配结果:%s]", FXMLDocumentController.CURR_LOGIN_STATUS, foundStrForLoginSuccess));
                     }
 
                     if (isNotEmptyObj(foundStrForLoginFailure)) {
-                        FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s<->Body", LOGIN_FAILURE.name(), getReqURL);
+                        FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s<->Body", LOGIN_FAILURE.name(), currUrl);
                         printlnErrorOnUIAndConsole(String.format("响应内容匹配: 登录失败 %s [匹配结果:%s]", FXMLDocumentController.CURR_LOGIN_STATUS, foundStrForLoginFailure));
                     }
 
                     if (isNotEmptyObj(foundStrForCaptchaFail)) {
-                        FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s<->Body", ERROR_CAPTCHA.name(), getReqURL);
+                        FXMLDocumentController.CURR_LOGIN_STATUS = String.format("%s<->%s<->Body", ERROR_CAPTCHA.name(), currUrl);
                         printlnErrorOnUIAndConsole(String.format("响应内容匹配: 验证码错误 %s [匹配结果:%s]", FXMLDocumentController.CURR_LOGIN_STATUS, foundStrForCaptchaFail));
                     }
                 }
@@ -417,8 +420,8 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
         }
 
         if (notEmptyStrNum == 0 && matchLoginUrl && !isHeader && isEmptyObj(FXMLDocumentController.CURR_LOGIN_STATUS)){
-            //printlnErrorOnUIAndConsole(String.format("当前请求[%s]所有响应关键字匹配出错!!\n响应长度:[%s]响应内容:[%s]", getReqURL, receive.length(), receive));
-            printlnErrorOnUIAndConsole(String.format("当前请求[%s]响应关键字匹配失败!!响应长度:[%s]", getReqURL, receive.length()));
+            //printlnErrorOnUIAndConsole(String.format("当前请求[%s]所有响应关键字匹配出错!!\n响应长度:[%s]响应内容:[%s]", currUrl, receive.length(), receive));
+            printlnErrorOnUIAndConsole(String.format("当前请求[%s]响应关键字匹配失败!!响应长度:[%s]", currUrl, receiveData.length()));
         }
 
         if (notEmptyStrNum > 1) {

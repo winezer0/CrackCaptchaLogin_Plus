@@ -227,7 +227,7 @@ public class BrowserUtils {
      * @return
      */
     public static Constant.EleFoundStatus findElementAndInput(DOMDocument document, String locate_info, String selectedOption, String input_string) {
-        Constant.EleFoundStatus action_string = Constant.EleFoundStatus.SUCCESS;
+        Constant.EleFoundStatus eleFoundStatusAction = Constant.EleFoundStatus.SUCCESS;
         try {
             InputElement findElement = findInputElementByOption(document, locate_info, selectedOption);
             Map<String, String> attributes = findElement.getAttributes();
@@ -239,22 +239,22 @@ public class BrowserUtils {
             String eMessage = illegalStateException.getMessage();
             System.out.println(eMessage);
             if (eMessage.contains("Channel is already closed")) {
-                action_string = Constant.EleFoundStatus.fromString(GLOBAL_BROWSER_CLOSE_ACTION);
-                UiUtils.printlnErrorOnUIAndConsole(String.format("浏览器已关闭 (IllegalStateException) 动作:[%s]", action_string));
+                eleFoundStatusAction = GLOBAL_BROWSER_CLOSE_ACTION;
+                UiUtils.printlnErrorOnUIAndConsole(String.format("浏览器已关闭 (IllegalStateException) 动作:[%s]", eleFoundStatusAction));
             }else {
                 illegalStateException.printStackTrace();
-                action_string = Constant.EleFoundStatus.fromString(GLOBAL_FIND_ELE_ILLEGAL_ACTION);
-                UiUtils.printlnErrorOnUIAndConsole(String.format("illegal State Exception 动作:[%s]", action_string));
+                eleFoundStatusAction = GLOBAL_FIND_ELE_ILLEGAL_ACTION;
+                UiUtils.printlnErrorOnUIAndConsole(String.format("illegal State Exception 动作:[%s]", eleFoundStatusAction));
             }
         } catch (NullPointerException nullPointerException) {
-            action_string = Constant.EleFoundStatus.fromString(GLOBAL_FIND_ELE_NULL_ACTION);
-            UiUtils.printlnErrorOnUIAndConsole(String.format("定位元素失败 (nullPointerException) 动作:[%s]", action_string));
+            eleFoundStatusAction = GLOBAL_FIND_ELE_NULL_ACTION;
+            UiUtils.printlnErrorOnUIAndConsole(String.format("定位元素失败 (nullPointerException) 动作:[%s]", eleFoundStatusAction));
         } catch (Exception exception) {
             exception.printStackTrace();
-            action_string = Constant.EleFoundStatus.fromString(GLOBAL_FIND_ELE_EXCEPTION_ACTION);
-            UiUtils.printlnErrorOnUIAndConsole(String.format("未知定位异常 (unknown exception) 动作:[%s]", action_string));
+            eleFoundStatusAction = GLOBAL_FIND_ELE_EXCEPTION_ACTION;
+            UiUtils.printlnErrorOnUIAndConsole(String.format("未知定位异常 (unknown exception) 动作:[%s]", eleFoundStatusAction));
         }
-        return action_string;
+        return eleFoundStatusAction;
     }
 
     /***

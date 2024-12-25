@@ -40,7 +40,7 @@ import static com.fuping.CaptchaIdentify.TesseractsLocaleIdent.localeIdentCaptch
 import static com.fuping.CommonUtils.UiUtils.*;
 import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.LoadConfig.Constant.*;
-import static com.fuping.LoadConfig.Constant.LoadStatus.*;
+import static com.fuping.LoadConfig.Constant.LoadingStatus.*;
 import static com.fuping.LoadConfig.Constant.LoginStatus.*;
 import static com.fuping.LoadConfig.MyConst.*;
 import static com.fuping.LoadConfig.Constant.EleFoundStatus.*;
@@ -146,16 +146,16 @@ public class FXMLDocumentController implements Initializable {
     private List<String> login_about_urls = null;  //存储当前URL相关的多个URl
     private String login_access_url = null;  //设置当前登录url的全局变量用于后续调用
     private String login_actual_url = null;  //设置当前登录HTTP报文的URL地址用于后续调用 登录的实际URL
-    private String login_actual_method = null;  //设置当前登录HTTP报文的请求方法
+    private HttpMethod login_actual_method = null;  //设置当前登录HTTP报文的请求方法
 
     private String captcha_actual_url = null;  //设置当前登录验证码url用于后续调用
-    private String captcha_actual_method = null;  //设置当前登录验证码的请求方法
+    private HttpMethod captcha_actual_method = null;  //设置当前登录验证码的请求方法
 
     private boolean captcha_ident_was_error = false; //设置当前验证码识别错误状态
 
     private Browser browser = null;
 
-    private String login_url_protocol = null; //记录当前登录URL的协议类型,用于后续http/https的纠正使用
+    private String login_url_http_proto = null; //记录当前登录URL的协议类型,用于后续http/https的纠正使用
 
     //元素查找方法
     private boolean executeJavaScriptMode = false;
@@ -397,7 +397,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     public void change_browser_proxy_action(ActionEvent actionEvent) {
         printlnInfoOnUIAndConsole("已点击修改浏览器代理配置,请等待修改信号传递...");
-        setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), GLOBAL_BROWSER_PROXY_STR, login_url_protocol);
+        setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), GLOBAL_BROWSER_PROXY_STR, login_url_http_proto);
     }
 
     @FXML
@@ -461,7 +461,7 @@ public class FXMLDocumentController implements Initializable {
         setWithCheck(this.bro_id_login_actual_url_text, default_login_actual_url);
         this.bro_id_login_actual_url_text.setTooltip(new Tooltip("登录包的实际请求URL"));
 
-        setWithCheck(this.bro_id_login_actual_method_combo, default_login_actual_method);
+        setWithCheck(this.bro_id_login_actual_method_combo, default_login_actual_method.name());
         this.bro_id_login_actual_method_combo.setTooltip(new Tooltip("登录包的实际请求方法"));
 
         //设置登录框
@@ -528,7 +528,7 @@ public class FXMLDocumentController implements Initializable {
         //设置验证码属性
         setWithCheck(this.bro_id_captcha_actual_url_text, default_captcha_actual_url);
         this.bro_id_captcha_actual_url_text.setTooltip(new Tooltip("验证码请求包的实际请求URL"));
-        setWithCheck(this.bro_id_captcha_actual_method_combo, default_captcha_actual_method);
+        setWithCheck(this.bro_id_captcha_actual_method_combo, default_captcha_actual_method.name());
         this.bro_id_captcha_actual_method_combo.setTooltip(new Tooltip("验证码请求包的实际请求方法"));
 
 
@@ -628,12 +628,13 @@ public class FXMLDocumentController implements Initializable {
 
                 //获取指定登录包相关的URL、不指定也能用
                 if (!isEmptyIfStr(this.bro_id_login_actual_url_text.getText().trim())){
-                    login_actual_url = this.bro_id_login_actual_url_text.getText().trim();
-                    login_actual_method = this.bro_id_login_actual_method_combo.getValue();
-                    login_about_urls.add(login_actual_url); //把登录包URL也加入相关URL中, 可能不需要
+                    this.login_actual_url = this.bro_id_login_actual_url_text.getText().trim();
+                    this.login_actual_method = HttpMethod.fromString(this.bro_id_login_actual_method_combo.getValue());
+                    this.login_about_urls.add(this.login_actual_url); //把登录包URL也加入相关URL中, 可能不需要
                 }
 
-                printlnDebugOnUIAndConsole(String.format("指定登录访问URL:[%s] 登录包URL为:[%s:%s] 登录相关URL为:[%s]", login_access_url, login_actual_method, login_actual_url, login_url_text));
+                printlnDebugOnUIAndConsole(String.format("指定登录访问URL:[%s] 登录包URL为:[%s:%s] 登录相关URL为:[%s]",
+                        this.login_access_url, this.login_actual_method, this.login_actual_url, login_url_text));
             }
 
             //基于登录URL初始化|URL更新|日志文件配置
@@ -700,7 +701,7 @@ public class FXMLDocumentController implements Initializable {
             if (this.bro_id_ident_captcha_switch_check.isSelected()) {
                 //获取验证码URL
                 this.captcha_actual_url = this.bro_id_captcha_actual_url_text.getText().trim();
-                this.captcha_actual_method = this.bro_id_captcha_actual_method_combo.getValue();
+                this.captcha_actual_method = HttpMethod.fromString(this.bro_id_captcha_actual_method_combo.getValue());
                 if (isEmptyIfStr(this.captcha_actual_url)){
                     this.bro_id_captcha_actual_url_text.requestFocus();
                     return;
@@ -711,8 +712,8 @@ public class FXMLDocumentController implements Initializable {
             browser = initJxBrowserInstance();
 
             //浏览器代理设置
-            login_url_protocol = login_access_url.toLowerCase().startsWith("http://") ? "http" : "https";
-            setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), GLOBAL_BROWSER_PROXY_STR, login_url_protocol);
+            login_url_http_proto = login_access_url.toLowerCase().startsWith("http://") ? "http" : "https";
+            setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), GLOBAL_BROWSER_PROXY_STR, login_url_http_proto);
 
             //设置JxBrowser中网络委托的对象，以实现对浏览器的网络请求和响应的控制和处理。 //更详细的请求和响应处理,含保存验证码图片
             browser.getContext().getNetworkService().setNetworkDelegate(
@@ -828,19 +829,19 @@ public class FXMLDocumentController implements Initializable {
                             //加载URl文档
                             DOMDocument document = browser.getDocument();
                             //输入用户名
-                            EleFoundStatus action_status;
+                            EleFoundStatus eleFoundStatusAction;
                             localEleErrorCounts += 1;
                             if (executeJavaScriptMode){
-                                action_status = setInputValueByJS(browser, bro_name_box_ele_text, bro_name_box_ele_type,  cur_user);
+                                eleFoundStatusAction = setInputValueByJS(browser, bro_name_box_ele_text, bro_name_box_ele_type,  cur_user);
                             } else {
-                                action_status = findElementAndInputWithRetries(document, bro_name_box_ele_text, bro_name_box_ele_type, cur_user, GLOBAL_FIND_ELERET_RYTIMES, GLOBAL_FIND_ELE_DELAY_TIME);
+                                eleFoundStatusAction = findElementAndInputWithRetries(document, bro_name_box_ele_text, bro_name_box_ele_type, cur_user, GLOBAL_FIND_ELE_RETRY_TIMES, GLOBAL_FIND_ELE_DELAY_TIME);
                             }
 
                             //处理资源寻找状态
-                            if(!SUCCESS.equals(action_status)){
-                                printlnErrorOnUIAndConsole(String.format("Error For Location [USERNAME] [%s] <--> Action: [%s]", bro_name_box_ele_text, action_status));
+                            if(!SUCCESS.equals(eleFoundStatusAction)){
+                                printlnErrorOnUIAndConsole(String.format("Error For Location [USERNAME] [%s] <--> Action: [%s]", bro_name_box_ele_text, eleFoundStatusAction));
                                 //查找元素错误时的处理 继续还是中断
-                                if(BREAK.equals(action_status)) {break;} else if(CONTINUE.equals(action_status)){continue;} else {continue;}
+                                if(BREAK.equals(eleFoundStatusAction)) {break;} else if(CONTINUE.equals(eleFoundStatusAction)){continue;} else {continue;}
                             }else{
                                 print_debug("find [USERNAME] Element And Input Success ...");
                             }
@@ -848,15 +849,15 @@ public class FXMLDocumentController implements Initializable {
                             //查找密码输入框
                             localEleErrorCounts += 1;
                             if (executeJavaScriptMode){
-                                action_status = setInputValueByJS(browser, bro_pass_box_ele_text, bro_pass_box_ele_type,  cur_pass);
+                                eleFoundStatusAction = setInputValueByJS(browser, bro_pass_box_ele_text, bro_pass_box_ele_type,  cur_pass);
                             } else {
-                                action_status = findElementAndInputWithRetries(document, bro_pass_box_ele_text, bro_pass_box_ele_type, cur_pass, GLOBAL_FIND_ELERET_RYTIMES, GLOBAL_FIND_ELE_DELAY_TIME);
+                                eleFoundStatusAction = findElementAndInputWithRetries(document, bro_pass_box_ele_text, bro_pass_box_ele_type, cur_pass, GLOBAL_FIND_ELE_RETRY_TIMES, GLOBAL_FIND_ELE_DELAY_TIME);
                             }
                             //处理资源寻找状态
-                            if(!SUCCESS.equals(action_status)){
-                                printlnErrorOnUIAndConsole(String.format("Error For Location [PASSWORD] [%s] <--> Action: [%s]", bro_pass_box_ele_text, action_status));
+                            if(!SUCCESS.equals(eleFoundStatusAction)){
+                                printlnErrorOnUIAndConsole(String.format("Error For Location [PASSWORD] [%s] <--> Action: [%s]", bro_pass_box_ele_text, eleFoundStatusAction));
                                 //查找元素错误时的处理 继续还是中断
-                                if(BREAK.equals(action_status)) {break;} else if(CONTINUE.equals(action_status)){continue;} else {continue;}
+                                if(BREAK.equals(eleFoundStatusAction)) {break;} else if(CONTINUE.equals(eleFoundStatusAction)){continue;} else {continue;}
                             }else{
                                 print_debug("find [PASSWORD] Element And Input Success ...");
                             }
@@ -891,15 +892,15 @@ public class FXMLDocumentController implements Initializable {
                                 //输入验证码元素 并检查输入状态
                                 localEleErrorCounts += 1;
                                 if (executeJavaScriptMode){
-                                    action_status = setInputValueByJS(browser, bro_captcha_box_ele_text, bro_captcha_box_ele_type,  captchaText);
+                                    eleFoundStatusAction = setInputValueByJS(browser, bro_captcha_box_ele_text, bro_captcha_box_ele_type,  captchaText);
                                 } else {
-                                    action_status = findElementAndInputWithRetries(document,bro_captcha_box_ele_text, bro_captcha_box_ele_type, captchaText, GLOBAL_FIND_ELERET_RYTIMES, GLOBAL_FIND_ELE_DELAY_TIME);
+                                    eleFoundStatusAction = findElementAndInputWithRetries(document,bro_captcha_box_ele_text, bro_captcha_box_ele_type, captchaText, GLOBAL_FIND_ELE_RETRY_TIMES, GLOBAL_FIND_ELE_DELAY_TIME);
                                 }
                                 //处理资源寻找状态
-                                if(!SUCCESS.equals(action_status)){
-                                    printlnErrorOnUIAndConsole(String.format("Error For Location [CAPTCHA] [%s] <--> Action: [%s]", bro_captcha_box_ele_text, action_status));
+                                if(!SUCCESS.equals(eleFoundStatusAction)){
+                                    printlnErrorOnUIAndConsole(String.format("Error For Location [CAPTCHA] [%s] <--> Action: [%s]", bro_captcha_box_ele_text, eleFoundStatusAction));
                                     //查找元素错误时的处理 继续还是中断
-                                    if(BREAK.equals(action_status)) {break;} else if(CONTINUE.equals(action_status)){continue;} else {continue;}
+                                    if(BREAK.equals(eleFoundStatusAction)) {break;} else if(CONTINUE.equals(eleFoundStatusAction)){continue;} else {continue;}
                                 }else{
                                     print_debug("find [CAPTCHA] Element And Input Success ...");
                                 }
@@ -907,7 +908,7 @@ public class FXMLDocumentController implements Initializable {
                             }
 
                             //定位提交按钮, 并填写按钮
-                            EleFoundStatus submit_status = SUCCESS;
+                            EleFoundStatus EleFoundStatusForSubmitBtn = SUCCESS;
                             localEleErrorCounts += 1;
                             try {
                                 Element submitElement = findElementByOption(document, bro_submit_btn_ele_text, bro_id_submit_btn_ele_type);
@@ -920,14 +921,14 @@ public class FXMLDocumentController implements Initializable {
                                 } catch (IllegalStateException illegalStateException) {
                                     illegalStateException.printStackTrace();
                                     printlnErrorOnUIAndConsole("Error For document.findElement(By.cssSelector(\"[type=submit]\")).click()");
-                                    submit_status = fromString(GLOBAL_FIND_ELE_NULL_ACTION);
+                                    EleFoundStatusForSubmitBtn = GLOBAL_FIND_ELE_NULL_ACTION;
                                 }
                             } finally {
                                 //处理按钮点击状态
-                                if(!SUCCESS.equals(submit_status)){
-                                    printlnErrorOnUIAndConsole(String.format("Error For Location [SUBMIT] [%s] <--> Action: [%s]", bro_submit_btn_ele_text, submit_status));
+                                if(!SUCCESS.equals(EleFoundStatusForSubmitBtn)){
+                                    printlnErrorOnUIAndConsole(String.format("Error For Location [SUBMIT] [%s] <--> Action: [%s]", bro_submit_btn_ele_text, EleFoundStatusForSubmitBtn));
                                     //查找元素错误时的处理 继续还是中断
-                                    if(BREAK.equals(action_status)) {break;} else if(CONTINUE.equals(action_status)){continue;} else {continue;}
+                                    if(BREAK.equals(eleFoundStatusAction)) {break;} else if(CONTINUE.equals(eleFoundStatusAction)){continue;} else {continue;}
                                 }else{
                                     print_debug("find [SUBMIT] Element And Input Success ...");
                                 }

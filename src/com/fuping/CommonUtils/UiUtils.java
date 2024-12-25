@@ -70,7 +70,7 @@ public class UiUtils {
      * @return
      */
     public static Constant.EleFoundStatus setInputValueByJS(Browser browser, String locateInfo, String locateType, String inputText) {
-        Constant.EleFoundStatus action_string;
+        Constant.EleFoundStatus eleFoundStatusAction;
         String jsCode = null;
         switch (locateType.toUpperCase()) {
             case "CSS":
@@ -138,28 +138,28 @@ public class UiUtils {
                     // System.out.println(isSuccess.getValue(), msg);
                     if (isSuccess.getValue()) {
                         //定位并输入元素成功
-                        action_string = SUCCESS;
+                        eleFoundStatusAction = SUCCESS;
                     } else {
-                        action_string = fromString(GLOBAL_FIND_ELE_NULL_ACTION);
+                        eleFoundStatusAction = GLOBAL_FIND_ELE_NULL_ACTION;
                         String msg = message.asString().getValue();
-                        printlnErrorOnUIAndConsole(String.format("定位元素失败 (影响结果false) 动作:[%s] MSG[%s]", action_string, msg));
+                        printlnErrorOnUIAndConsole(String.format("定位元素失败 (影响结果false) 动作:[%s] MSG[%s]", eleFoundStatusAction, msg));
                     }
                 } else {
-                    action_string = fromString(GLOBAL_FIND_ELE_NULL_ACTION);
+                    eleFoundStatusAction = GLOBAL_FIND_ELE_NULL_ACTION;
                     String msg = message.asString().getValue();
-                    printlnErrorOnUIAndConsole(String.format("定位元素失败 (响应格式非预期) 动作:[%s] MSG[%s]", action_string, msg));
+                    printlnErrorOnUIAndConsole(String.format("定位元素失败 (响应格式非预期) 动作:[%s] MSG[%s]", eleFoundStatusAction, msg));
                 }
-                return action_string;
+                return eleFoundStatusAction;
             }
 
             // If we reach here, something unexpected happened.
-            action_string = Constant.EleFoundStatus.fromString(GLOBAL_FIND_ELE_NULL_ACTION);
-            printlnErrorOnUIAndConsole(String.format("未知定位异常 (JS执行结果格式未知) 动作:[%s]", action_string));
+            eleFoundStatusAction = GLOBAL_FIND_ELE_NULL_ACTION;
+            printlnErrorOnUIAndConsole(String.format("未知定位异常 (JS执行结果格式未知) 动作:[%s]", eleFoundStatusAction));
         } catch (Exception e){
             // If we reach here, something unexpected happened.
-            action_string = CONTINUE;
-            printlnErrorOnUIAndConsole(String.format("未知定位异常 (JS执行发生未知错误) 动作:[%s] ERROR:[%s]", action_string, e.getMessage()));
+            eleFoundStatusAction = CONTINUE;
+            printlnErrorOnUIAndConsole(String.format("未知定位异常 (JS执行发生未知错误) 动作:[%s] ERROR:[%s]", eleFoundStatusAction, e.getMessage()));
         }
-        return action_string;
+        return eleFoundStatusAction;
     }
 }
