@@ -76,14 +76,14 @@ public class BrowserUtils {
         String domain = Utils.extractDomain(urlStr,false);
 
         if (domain==null||target==null||domain.trim().isEmpty()||target.trim().isEmpty()){
-            System.out.println(String.format("解析 URL [%s] 结果为空!!!", urlStr));
+            System.out.printf("解析 URL [%s] 结果为空!!!%n", urlStr);
             return;
         }
 
         //解析请求cookie数据
         Map<String, String> cookies = parseCookiesStr(cookiesStr);
         if (cookies == null || cookies.isEmpty()){
-            System.out.println(String.format("解析 Cookies [%s] 结果为空!!!", cookiesStr));
+            System.out.printf("解析 Cookies [%s] 结果为空!!!%n", cookiesStr);
             return;
         }
 
@@ -92,7 +92,7 @@ public class BrowserUtils {
         for (Map.Entry<String, String> cookie : cookies.entrySet()) {
             String cookieName = cookie.getKey();
             String cookieValue = cookie.getValue();
-            System.out.println(String.format("Setting %s <-> %s  <-> %s:%s", target,domain,cookieName,cookieValue));
+            System.out.printf("Setting %s <-> %s  <-> %s:%s%n", target,domain,cookieName,cookieValue);
 
             //设置持久化Cookie
             cookieStorage.setCookie(target, cookieName, cookieValue, domain,"/", (System.currentTimeMillis() +  7 * 24 * 60 * 60) * 1000, false, false);
@@ -105,7 +105,7 @@ public class BrowserUtils {
         //List<Cookie> allCookies = browser.getCookieStorage().getAllCookies(target);
         //输出指定URL的Cookies
         List<Cookie>  allCookies = browser.getCookieStorage().getAllCookies(target);
-        System.out.println(String.format("New Cookies: size:%s <-> %s", allCookies.size(), cookiesToString(allCookies)));
+        System.out.printf("New Cookies: size:%s <-> %s%n", allCookies.size(), cookiesToString(allCookies));
     }
 
     //转换当前Cookies到字符串
@@ -148,46 +148,46 @@ public class BrowserUtils {
         }
     }
 
-    public static InputElement findInputElementByOption(DOMDocument doc, String elementValue, String selectOption ) {
+    public static InputElement findInputElementByOption(DOMDocument doc, String elementValue, Constant.EleFindType eleFindType ) {
         //输入用户名元素 //需要添加输入XPath|css元素
         InputElement inputElement;
-        switch (selectOption.toUpperCase()) {
-            case "ID":
+        switch (eleFindType) {
+            case ID:
                 inputElement = (InputElement) doc.findElement(By.id(elementValue));
                 break;
-            case "NAME":
+            case NAME:
                 inputElement = (InputElement) doc.findElement(By.name(elementValue));
                 break;
-            case "CLASS":
+            case CLASS:
                 inputElement = (InputElement) doc.findElement(By.className(elementValue));
                 break;
-            case "CSS":
+            case CSS:
                 inputElement = (InputElement) doc.findElement(By.cssSelector(elementValue));
                 break;
-            case "XPATH":
+            case XPATH:
             default:
                 inputElement = (InputElement) doc.findElement(By.xpath(elementValue));
         }
         return inputElement;
     }
 
-    public static Element findElementByOption(DOMDocument doc, String elementValue, String selectOption ) {
+    public static Element findElementByOption(DOMDocument doc, String elementValue, Constant.EleFindType eleFindType ) {
         //输入用户名元素 //需要添加输入XPath|css元素
         Element element;
-        switch (selectOption.toUpperCase()) {
-            case "ID":
+        switch (eleFindType) {
+            case ID:
                 element = (Element) doc.findElement(By.id(elementValue));
                 break;
-            case "NAME":
+            case NAME:
                 element = (Element) doc.findElement(By.name(elementValue));
                 break;
-            case "CLASS":
+            case CLASS:
                 element = (Element) doc.findElement(By.className(elementValue));
                 break;
-            case "CSS":
+            case CSS:
                 element = (Element) doc.findElement(By.cssSelector(elementValue));
                 break;
-            case "XPATH":
+            case XPATH:
             default:
                 element = (Element) doc.findElement(By.xpath(elementValue));
         }
@@ -222,14 +222,14 @@ public class BrowserUtils {
      * @ find_ele_exception_action 页面中元素操作其他异常的动作
      * @param document 页面的文档对象
      * @param locate_info 定位信息
-     * @param selectedOption 定位选项
+     * @param eleFindType 定位选项
      * @param input_string 输入值
      * @return
      */
-    public static Constant.EleFoundStatus findElementAndInput(DOMDocument document, String locate_info, String selectedOption, String input_string) {
+    public static Constant.EleFoundStatus findElementAndInput(DOMDocument document, String locate_info, Constant.EleFindType eleFindType, String input_string) {
         Constant.EleFoundStatus eleFoundStatusAction = Constant.EleFoundStatus.SUCCESS;
         try {
-            InputElement findElement = findInputElementByOption(document, locate_info, selectedOption);
+            InputElement findElement = findInputElementByOption(document, locate_info, eleFindType);
             Map<String, String> attributes = findElement.getAttributes();
             //findElement.click(); // 尝试前后新增 .click() 解决部分场景内容输入后提示没有内容的问题 无效果
             findElement.setValue(input_string);
@@ -262,13 +262,13 @@ public class BrowserUtils {
      * maxRetries 尝试次数
      * retryInterval 重试间隔时间，单位：毫秒
      */
-    public static Constant.EleFoundStatus findElementAndInputWithRetries(DOMDocument document, String locateInfo, String selectedOption, String inputString, int maxRetries, long retryInterval) {
+    public static Constant.EleFoundStatus findElementAndInputWithRetries(DOMDocument document, String locateInfo, Constant.EleFindType eleFindType, String inputString, int maxRetries, long retryInterval) {
 
         int retries = 0;
         Constant.EleFoundStatus action_status = Constant.EleFoundStatus.FAILURE;
 
         while (!Constant.EleFoundStatus.SUCCESS.equals(action_status) && retries < maxRetries) {
-            action_status = findElementAndInput(document, locateInfo, selectedOption, inputString);
+            action_status = findElementAndInput(document, locateInfo, eleFindType, inputString);
             if (Constant.EleFoundStatus.SUCCESS.equals(action_status)) { break; }
 
             // 延迟500毫秒后重试

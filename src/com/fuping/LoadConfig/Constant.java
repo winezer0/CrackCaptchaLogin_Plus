@@ -100,4 +100,22 @@ public class Constant {
         }
     }
 
+
+    // 定义 HttpMethod 枚举 主要是登录和验证码请求相关的HTTP方法
+    public enum EleFindType {
+         ID, NAME, CLASS, CSS, XPATH;
+        // 自定义从字符串创建枚举的方法，处理大小写不敏感的情况
+        public static EleFindType fromString(String text) {
+            if (text != null) {
+                for (EleFindType b : EleFindType.values()) {
+                    if (text.equalsIgnoreCase(b.name())) {
+                        return b;
+                    }
+                }
+            }
+            throw new IllegalArgumentException("No matching enum found for text: " + text);
+        }
+    }
+
+
 }

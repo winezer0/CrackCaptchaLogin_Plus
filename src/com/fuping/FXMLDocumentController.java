@@ -4,6 +4,7 @@ import com.fuping.BrowserUtils.MyDialogHandler;
 import com.fuping.CommonUtils.ElementUtils;
 import com.fuping.CommonUtils.MyFileUtils;
 import com.fuping.CommonUtils.SystemUtilization;
+import com.fuping.LoadConfig.Constant;
 import com.fuping.LoadDict.UserPassPair;
 import com.teamdev.jxbrowser.chromium.Callback;
 import com.teamdev.jxbrowser.chromium.*;
@@ -40,12 +41,12 @@ import static com.fuping.CaptchaIdentify.TesseractsLocaleIdent.localeIdentCaptch
 import static com.fuping.CommonUtils.UiUtils.*;
 import static com.fuping.CommonUtils.Utils.*;
 import static com.fuping.LoadConfig.Constant.*;
+import static com.fuping.LoadConfig.Constant.EleFoundStatus.*;
 import static com.fuping.LoadConfig.Constant.LoadingStatus.*;
 import static com.fuping.LoadConfig.Constant.LoginStatus.*;
 import static com.fuping.LoadConfig.MyConst.*;
-import static com.fuping.LoadConfig.Constant.EleFoundStatus.*;
 import static com.fuping.LoadDict.LoadDictUtils.*;
-import static com.fuping.PrintLog.PrintLog.*;
+import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class FXMLDocumentController implements Initializable {
     @FXML  //识别结果判断条件
@@ -684,17 +685,17 @@ public class FXMLDocumentController implements Initializable {
 
             //获取用户名框框的内容
             String bro_name_box_ele_text = this.bro_id_name_box_ele_text.getText().trim();
-            String bro_name_box_ele_type = this.bro_id_name_box_ele_type_combo.getValue();
+            EleFindType bro_name_box_ele_type = EleFindType.fromString(this.bro_id_name_box_ele_type_combo.getValue());
             if (isEmptyIfStr(bro_name_box_ele_text)) { this.bro_id_name_box_ele_text.requestFocus(); return;}
 
             //获取密码框元素的内容
             String bro_pass_box_ele_text = this.bro_id_pass_box_ele_text.getText().trim();
-            String bro_pass_box_ele_type = this.bro_id_pass_box_ele_type_combo.getValue();
+            EleFindType bro_pass_box_ele_type = EleFindType.fromString(this.bro_id_pass_box_ele_type_combo.getValue());
             if (isEmptyIfStr(bro_pass_box_ele_text)) { this.bro_id_pass_box_ele_text.requestFocus(); return;}
 
             //登录按钮内容
             String bro_submit_btn_ele_text = this.bro_id_submit_btn_ele_text.getText().trim();
-            String bro_id_submit_btn_ele_type = this.bro_id_submit_btn_ele_type_combo.getValue();
+            EleFindType bro_id_submit_btn_ele_type = EleFindType.fromString(this.bro_id_submit_btn_ele_type_combo.getValue());
             if (isEmptyIfStr(bro_submit_btn_ele_text)) { this.bro_id_submit_btn_ele_text.requestFocus(); return;}
 
             //检查验证码输入URL的内容
@@ -873,7 +874,7 @@ public class FXMLDocumentController implements Initializable {
 
                                 //获取输入的验证码元素定位信息
                                 String bro_captcha_box_ele_text = fxmlInstance.bro_id_captcha_box_ele_text.getText().trim();
-                                String bro_captcha_box_ele_type = fxmlInstance.bro_id_captcha_box_ele_type_combo.getValue();
+                                EleFindType bro_captcha_box_ele_type = EleFindType.fromString(fxmlInstance.bro_id_captcha_box_ele_type_combo.getValue());
                                 if (isEmptyIfStr(bro_captcha_box_ele_text)) {
                                     printlnErrorOnUIAndConsole("验证码定位元素表单内容为空 请输入...");
                                     fxmlInstance.bro_id_captcha_box_ele_text.requestFocus();

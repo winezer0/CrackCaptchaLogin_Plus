@@ -65,15 +65,15 @@ public class UiUtils {
      * 通过浏览器JS代码执行器来输入元素操作
      * @param browser
      * @param locateInfo
-     * @param locateType
+     * @param eleFindType
      * @param inputText
      * @return
      */
-    public static Constant.EleFoundStatus setInputValueByJS(Browser browser, String locateInfo, String locateType, String inputText) {
+    public static Constant.EleFoundStatus setInputValueByJS(Browser browser, String locateInfo, Constant.EleFindType eleFindType, String inputText) {
         Constant.EleFoundStatus eleFoundStatusAction;
         String jsCode = null;
-        switch (locateType.toUpperCase()) {
-            case "CSS":
+        switch (eleFindType) {
+            case CSS:
                 // JavaScript code to find an element by CSS selector and set its value.
                 jsCode = "function setInputValueByCSS(cssSelector, value) {" +
                         "   try {" +
@@ -92,7 +92,7 @@ public class UiUtils {
                         "}" +
                         "setInputValueByCSS('" + locateInfo.replace("'", "\\'") + "', '" + inputText.replace("'", "\\'") + "');";
                 break;
-            case "XPATH":
+            case XPATH:
                 // JavaScript code to find an element by XPath and set its value.
                 jsCode = "function setInputValueByXPath(xpath, value) {" +
                         "   try {" +
@@ -112,16 +112,16 @@ public class UiUtils {
                         "}" +
                         "setInputValueByXPath('" + locateInfo.replace("'", "\\'") + "', '" + inputText.replace("'", "\\'") + "');";
                 break;
-            case "ID":
-            case "NAME":
-            case "CLASS":
+            case ID:
+            case NAME:
+            case CLASS:
             default:
                 printlnErrorOnUIAndConsole("Js Mode Not Support [id|name|class] Mode!!! Please Input [CSS] or [XPATH] Locate Info Again.");
                 break;
         }
 
         if (jsCode == null){
-            printlnErrorOnUIAndConsole(String.format("Js Mode Only Support [css|xpath] Mode!!! You Input Mode is [%s]", locateType));
+            printlnErrorOnUIAndConsole(String.format("Js Mode Only Support [css|xpath] Mode!!! You Input Mode is [%s]", eleFindType));
             return BREAK;
         }
 
