@@ -680,24 +680,29 @@ public class FXMLDocumentController implements Initializable {
 
 
             //获取用户名框框的内容
-            String bro_user_ele_text = this.bro_id_name_box_ele_text.getText().trim();
-            String bro_user_ele_type = this.bro_id_name_box_ele_type_combo.getValue();
-            if (isEmptyIfStr(bro_user_ele_text)) { this.bro_id_name_box_ele_text.requestFocus(); return;}
+            String bro_name_box_ele_text = this.bro_id_name_box_ele_text.getText().trim();
+            String bro_name_box_ele_type = this.bro_id_name_box_ele_type_combo.getValue();
+            if (isEmptyIfStr(bro_name_box_ele_text)) { this.bro_id_name_box_ele_text.requestFocus(); return;}
 
             //获取密码框元素的内容
-            String bro_pass_ele_text = this.bro_id_pass_box_ele_text.getText().trim();
-            String bro_pass_ele_type = this.bro_id_pass_box_ele_type_combo.getValue();
-            if (isEmptyIfStr(bro_pass_ele_text)) { this.bro_id_pass_box_ele_text.requestFocus(); return;}
+            String bro_pass_box_ele_text = this.bro_id_pass_box_ele_text.getText().trim();
+            String bro_pass_box_ele_type = this.bro_id_pass_box_ele_type_combo.getValue();
+            if (isEmptyIfStr(bro_pass_box_ele_text)) { this.bro_id_pass_box_ele_text.requestFocus(); return;}
 
             //登录按钮内容
-            String bro_submit_ele_text = this.bro_id_submit_btn_ele_text.getText().trim();
-            String bro_id_submit_ele_type = this.bro_id_submit_btn_ele_type_combo.getValue();
-            if (isEmptyIfStr(bro_submit_ele_text)) { this.bro_id_submit_btn_ele_text.requestFocus(); return;}
+            String bro_submit_btn_ele_text = this.bro_id_submit_btn_ele_text.getText().trim();
+            String bro_id_submit_btn_ele_type = this.bro_id_submit_btn_ele_type_combo.getValue();
+            if (isEmptyIfStr(bro_submit_btn_ele_text)) { this.bro_id_submit_btn_ele_text.requestFocus(); return;}
 
             //检查验证码输入URL的内容
-            if (this.bro_id_ident_captcha_switch_check.isSelected() && isEmptyIfStr(this.bro_id_captcha_actual_url_text.getText().trim())) {
-                this.bro_id_captcha_actual_url_text.requestFocus();
-                return;
+            if (this.bro_id_ident_captcha_switch_check.isSelected()) {
+                //获取验证码URL
+                this.captcha_actual_url = this.bro_id_captcha_actual_url_text.getText().trim();
+                this.captcha_actual_method = this.bro_id_captcha_actual_method_combo.getValue();
+                if (isEmptyIfStr(this.captcha_actual_url)){
+                    this.bro_id_captcha_actual_url_text.requestFocus();
+                    return;
+                }
             }
 
             //初始化浏览器 //尝试将 Browser 设置为全局时,将导致无法停止
@@ -706,12 +711,6 @@ public class FXMLDocumentController implements Initializable {
             //浏览器代理设置
             login_url_protocol = login_access_url.toLowerCase().startsWith("http://") ? "http" : "https";
             setBrowserProxyMode(browser, this.bro_id_use_browser_proxy.isSelected(), GLOBAL_BROWSER_PROXY_STR, login_url_protocol);
-
-            //获取验证码URL
-            if (this.bro_id_ident_captcha_switch_check.isSelected()){
-                this.captcha_actual_url = this.bro_id_captcha_actual_url_text.getText().trim();
-                this.captcha_actual_method = this.bro_id_captcha_actual_method_combo.getValue();
-            }
 
             //设置JxBrowser中网络委托的对象，以实现对浏览器的网络请求和响应的控制和处理。 //更详细的请求和响应处理,含保存验证码图片
             browser.getContext().getNetworkService().setNetworkDelegate(
@@ -828,14 +827,14 @@ public class FXMLDocumentController implements Initializable {
                             EleFoundStatus action_status;
                             localEleErrorCounts += 1;
                             if (executeJavaScriptMode){
-                                action_status = setInputValueByJS(browser, bro_user_ele_text, bro_user_ele_type,  cur_user);
+                                action_status = setInputValueByJS(browser, bro_name_box_ele_text, bro_name_box_ele_type,  cur_user);
                             } else {
-                                action_status = findElementAndInputWithRetries(document, bro_user_ele_text, bro_user_ele_type, cur_user, GLOBAL_FIND_ELERET_RYTIMES, GLOBAL_FIND_ELE_DELAY_TIME);
+                                action_status = findElementAndInputWithRetries(document, bro_name_box_ele_text, bro_name_box_ele_type, cur_user, GLOBAL_FIND_ELERET_RYTIMES, GLOBAL_FIND_ELE_DELAY_TIME);
                             }
 
                             //处理资源寻找状态
                             if(!SUCCESS.equals(action_status)){
-                                printlnErrorOnUIAndConsole(String.format("Error For Location [USERNAME] [%s] <--> Action: [%s]", bro_user_ele_text, action_status));
+                                printlnErrorOnUIAndConsole(String.format("Error For Location [USERNAME] [%s] <--> Action: [%s]", bro_name_box_ele_text, action_status));
                                 //查找元素错误时的处理 继续还是中断
                                 if(BREAK.equals(action_status)) {break;} else if(CONTINUE.equals(action_status)){continue;} else {continue;}
                             }else{
@@ -845,13 +844,13 @@ public class FXMLDocumentController implements Initializable {
                             //查找密码输入框
                             localEleErrorCounts += 1;
                             if (executeJavaScriptMode){
-                                action_status = setInputValueByJS(browser, bro_pass_ele_text, bro_pass_ele_type,  cur_pass);
+                                action_status = setInputValueByJS(browser, bro_pass_box_ele_text, bro_pass_box_ele_type,  cur_pass);
                             } else {
-                                action_status = findElementAndInputWithRetries(document, bro_pass_ele_text, bro_pass_ele_type, cur_pass, GLOBAL_FIND_ELERET_RYTIMES, GLOBAL_FIND_ELE_DELAY_TIME);
+                                action_status = findElementAndInputWithRetries(document, bro_pass_box_ele_text, bro_pass_box_ele_type, cur_pass, GLOBAL_FIND_ELERET_RYTIMES, GLOBAL_FIND_ELE_DELAY_TIME);
                             }
                             //处理资源寻找状态
                             if(!SUCCESS.equals(action_status)){
-                                printlnErrorOnUIAndConsole(String.format("Error For Location [PASSWORD] [%s] <--> Action: [%s]", bro_pass_ele_text, action_status));
+                                printlnErrorOnUIAndConsole(String.format("Error For Location [PASSWORD] [%s] <--> Action: [%s]", bro_pass_box_ele_text, action_status));
                                 //查找元素错误时的处理 继续还是中断
                                 if(BREAK.equals(action_status)) {break;} else if(CONTINUE.equals(action_status)){continue;} else {continue;}
                             }else{
@@ -868,11 +867,11 @@ public class FXMLDocumentController implements Initializable {
                                 }
 
                                 //获取输入的验证码元素定位信息
-                                String bro_captcha_ele_text = fxmlInstance.bro_id_captcha_box_ele_text.getText().trim();
-                                String bro_captcha_ele_type = fxmlInstance.bro_id_captcha_box_ele_type_combo.getValue();
-                                if (isEmptyIfStr(bro_captcha_ele_text)) {
+                                String bro_captcha_box_ele_text = fxmlInstance.bro_id_captcha_box_ele_text.getText().trim();
+                                String bro_captcha_box_ele_type = fxmlInstance.bro_id_captcha_box_ele_type_combo.getValue();
+                                if (isEmptyIfStr(bro_captcha_box_ele_text)) {
                                     printlnErrorOnUIAndConsole("验证码定位元素表单内容为空 请输入...");
-                                    fxmlInstance.bro_id_name_box_ele_text.requestFocus();
+                                    fxmlInstance.bro_id_captcha_box_ele_text.requestFocus();
                                     return;
                                 }
 
@@ -888,13 +887,13 @@ public class FXMLDocumentController implements Initializable {
                                 //输入验证码元素 并检查输入状态
                                 localEleErrorCounts += 1;
                                 if (executeJavaScriptMode){
-                                    action_status = setInputValueByJS(browser, bro_captcha_ele_text, bro_captcha_ele_type,  captchaText);
+                                    action_status = setInputValueByJS(browser, bro_captcha_box_ele_text, bro_captcha_box_ele_type,  captchaText);
                                 } else {
-                                    action_status = findElementAndInputWithRetries(document,bro_captcha_ele_text, bro_captcha_ele_type, captchaText, GLOBAL_FIND_ELERET_RYTIMES, GLOBAL_FIND_ELE_DELAY_TIME);
+                                    action_status = findElementAndInputWithRetries(document,bro_captcha_box_ele_text, bro_captcha_box_ele_type, captchaText, GLOBAL_FIND_ELERET_RYTIMES, GLOBAL_FIND_ELE_DELAY_TIME);
                                 }
                                 //处理资源寻找状态
                                 if(!SUCCESS.equals(action_status)){
-                                    printlnErrorOnUIAndConsole(String.format("Error For Location [CAPTCHA] [%s] <--> Action: [%s]", bro_captcha_ele_text, action_status));
+                                    printlnErrorOnUIAndConsole(String.format("Error For Location [CAPTCHA] [%s] <--> Action: [%s]", bro_captcha_box_ele_text, action_status));
                                     //查找元素错误时的处理 继续还是中断
                                     if(BREAK.equals(action_status)) {break;} else if(CONTINUE.equals(action_status)){continue;} else {continue;}
                                 }else{
@@ -907,11 +906,11 @@ public class FXMLDocumentController implements Initializable {
                             EleFoundStatus submit_status = SUCCESS;
                             localEleErrorCounts += 1;
                             try {
-                                Element submitElement = findElementByOption(document, bro_submit_ele_text, bro_id_submit_ele_type);
+                                Element submitElement = findElementByOption(document, bro_submit_btn_ele_text, bro_id_submit_btn_ele_type);
                                 submitElement.click();
                             } catch (Exception exception) {
                                 exception.printStackTrace();
-                                printlnErrorOnUIAndConsole(String.format("Error For Location:[%s] <--> Action:[%s] <--> Error:[%s]", bro_submit_ele_text, bro_id_submit_ele_type, exception.getMessage()));
+                                printlnErrorOnUIAndConsole(String.format("Error For Location:[%s] <--> Action:[%s] <--> Error:[%s]", bro_submit_btn_ele_text, bro_id_submit_btn_ele_type, exception.getMessage()));
                                 try {
                                     document.findElement(By.cssSelector("[type=submit]")).click();
                                 } catch (IllegalStateException illegalStateException) {
@@ -922,7 +921,7 @@ public class FXMLDocumentController implements Initializable {
                             } finally {
                                 //处理按钮点击状态
                                 if(!SUCCESS.equals(submit_status)){
-                                    printlnErrorOnUIAndConsole(String.format("Error For Location [SUBMIT] [%s] <--> Action: [%s]", bro_submit_ele_text, submit_status));
+                                    printlnErrorOnUIAndConsole(String.format("Error For Location [SUBMIT] [%s] <--> Action: [%s]", bro_submit_btn_ele_text, submit_status));
                                     //查找元素错误时的处理 继续还是中断
                                     if(BREAK.equals(action_status)) {break;} else if(CONTINUE.equals(action_status)){continue;} else {continue;}
                                 }else{
