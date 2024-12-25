@@ -99,6 +99,7 @@ public class MyFileUtils {
         globalLoginSuccessFilePath = genFileNameByUrl(login_url, "dict/LoginSuccess.log", ".LoginSuccess.log", true);
         globalLoginFailureFilePath = genFileNameByUrl(login_url, "dict/LoginFailure.log", ".LoginFailure.log", true);
         globalErrorCaptchaFilePath = genFileNameByUrl(login_url, "dict/ErrorCaptcha.log", ".ErrorCaptcha.log", true);
+        globalUnknownStatusFilePath = genFileNameByUrl(login_url, "dict/UnknownStatus.log", ".UnknownStatus.log", true);
     }
 
     public static long getFileModified(String filePath) {

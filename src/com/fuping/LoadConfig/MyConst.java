@@ -24,6 +24,7 @@ public class MyConst {
     public static String globalLoginSuccessFilePath = null;   //记录密码正确的记录
     public static String globalLoginFailureFilePath = null;   //记录密码错误的记录
     public static String globalErrorCaptchaFilePath = null;   //记录验证错误的记录
+    public static String globalUnknownStatusFilePath = null;   //记录未知状态的记录
 
     //JxBrowser相关配置参数
     public static String GLOBAL_BROWSER_PROXY_STR = null;
