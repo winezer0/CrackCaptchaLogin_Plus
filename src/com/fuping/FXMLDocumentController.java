@@ -1001,8 +1001,8 @@ public class FXMLDocumentController implements Initializable {
                                 if(CURR_LOGIN_STATUS.contains(ERROR_CAPTCHA.name())){
                                     captcha_ident_was_error = true;
                                     MyFileUtils.writeUserPassPairToFile(globalErrorCaptchaFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
-                                    printlnErrorOnUIAndConsole(String.format("验证码识别错误:-> 账号:密码【%s:%s】\n", cur_user, cur_pass));
-                                    print_debug(String.format("验证码识别错误:->\n" +
+                                    printlnErrorOnUIAndConsole(String.format("验证码识别错误 :-> 账号:密码【%s:%s】\n", cur_user, cur_pass));
+                                    print_debug(String.format("验证码识别错误 :->\n" +
                                                     "账号:密码【%s:%s】\n" +
                                                     "跳转情况:%s -> %s->%s\n" +
                                                     "网页标题:%s -> 长度:%s\n" +
@@ -1019,8 +1019,8 @@ public class FXMLDocumentController implements Initializable {
                                     //进行爆破历史记录、不对成功状态加载的数据进行重复爆破
                                     MyFileUtils.writeUserPassPairToFile(globalCrackHistoryFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
                                     MyFileUtils.writeUserPassPairToFile(globalLoginSuccessFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
-                                    printlnInfoOnUIAndConsole(String.format("登录认证成功:-> 账号:密码【%s:%s】\n", cur_user, cur_pass));
-                                    print_debug(String.format("登录认证成功:->\n" +
+                                    printlnInfoOnUIAndConsole(String.format("登录认证成功 :-> 账号:密码【%s:%s】\n", cur_user, cur_pass));
+                                    print_debug(String.format("登录认证成功 :->\n" +
                                                     "账号:密码【%s:%s】\n" +
                                                     "跳转情况:%s -> %s->%s\n" +
                                                     "网页标题:%s -> 长度:%s\n" +
@@ -1038,8 +1038,8 @@ public class FXMLDocumentController implements Initializable {
                                     //进行爆破历史记录、不对错误状态加载的数据进行重复爆破
                                     MyFileUtils.writeUserPassPairToFile(globalCrackHistoryFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
                                     MyFileUtils.writeUserPassPairToFile(globalLoginFailureFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
-                                    printlnErrorOnUIAndConsole(String.format("登录认证失败:-> 账号:密码【%s:%s】\n", cur_user, cur_pass));
-                                    print_debug(String.format("登录认证失败:->\n" +
+                                    printlnErrorOnUIAndConsole(String.format("登录认证失败 :-> 账号:密码【%s:%s】\n", cur_user, cur_pass));
+                                    print_debug(String.format("登录认证失败 :->\n" +
                                                     "账号:密码【%s:%s】\n" +
                                                     "跳转情况:%s -> %s->%s\n" +
                                                     "网页标题:%s -> 长度:%s\n" +
@@ -1060,7 +1060,7 @@ public class FXMLDocumentController implements Initializable {
                                             MyFileUtils.writeUserPassPairToFile(globalCrackHistoryFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
                                         }
                                         MyFileUtils.writeUserPassPairToFile(globalUnknownStatusFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
-                                        printlnErrorOnUIAndConsole(String.format("保存未知状态(%s):->\n" +
+                                        printlnErrorOnUIAndConsole(String.format("保存未知状态(%s) :->\n" +
                                                         "账号:密码【%s:%s】\n" +
                                                         "跳转情况:%s -> %s->%s\n" +
                                                         "网页标题:%s -> 长度:%s\n" +
@@ -1077,7 +1077,7 @@ public class FXMLDocumentController implements Initializable {
                                     }  else {
                                         //对于其他的未知状态,进行下一个账号密码测试
                                         MyFileUtils.writeUserPassPairToFile(globalUnknownStatusFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
-                                        printlnErrorOnUIAndConsole(String.format("未知错误状态(%s):->\n" +
+                                        printlnErrorOnUIAndConsole(String.format("未知错误状态(%s) :->\n" +
                                                         "账号:密码【%s:%s】\n" +
                                                         "跳转情况:%s -> %s->%s\n" +
                                                         "网页标题:%s -> 长度:%s\n" +
