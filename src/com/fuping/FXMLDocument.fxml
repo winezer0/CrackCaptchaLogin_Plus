@@ -38,11 +38,11 @@
                                        <ComboBox fx:id="bro_id_name_box_ele_type_combo" prefHeight="30.0" prefWidth="108.0" promptText="定位方式">
                                           <items>
                                              <FXCollections fx:factory="observableArrayList">
-                                                <String fx:value="id" />
-                                                <String fx:value="name" />
-                                                <String fx:value="class" />
-                                                <String fx:value="css" />
-                                                <String fx:value="xpath" />
+                                                <String fx:value="ID" />
+                                                <String fx:value="NAME" />
+                                                <String fx:value="CLASS" />
+                                                <String fx:value="CSS" />
+                                                <String fx:value="XPATH" />
                                              </FXCollections>
                                           </items>
                                        </ComboBox>
@@ -61,11 +61,11 @@
                                        <ComboBox fx:id="bro_id_pass_box_ele_type_combo" prefHeight="30.0" prefWidth="108.0" promptText="定位方式">
                                           <items>
                                              <FXCollections fx:factory="observableArrayList">
-                                                <String fx:value="id" />
-                                                <String fx:value="name" />
-                                                <String fx:value="class" />
-                                                <String fx:value="css" />
-                                                <String fx:value="xpath" />
+                                                <String fx:value="ID" />
+                                                <String fx:value="NAME" />
+                                                <String fx:value="CLASS" />
+                                                <String fx:value="CSS" />
+                                                <String fx:value="XPATH" />
                                              </FXCollections>
                                           </items>
                                        </ComboBox>
@@ -84,11 +84,11 @@
                                        <ComboBox fx:id="bro_id_submit_btn_ele_type_combo" prefHeight="30.0" prefWidth="108.0" promptText="定位方式">
                                           <items>
                                              <FXCollections fx:factory="observableArrayList">
-                                                <String fx:value="id" />
-                                                <String fx:value="name" />
-                                                <String fx:value="class" />
-                                                <String fx:value="css" />
-                                                <String fx:value="xpath" />
+                                                <String fx:value="ID" />
+                                                <String fx:value="NAME" />
+                                                <String fx:value="CLASS" />
+                                                <String fx:value="CSS" />
+                                                <String fx:value="XPATH" />
                                              </FXCollections>
                                           </items>
                                        </ComboBox>
@@ -128,14 +128,14 @@
                                  <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="108.0" spacing="2.0">
                                     <children>
                                        <Label prefHeight="23.0" prefWidth="108.0" text="实际登录包URL" />
-                                       <ComboBox fx:id="bro_id_login_actual_method_text" prefHeight="30.0" prefWidth="108.0" promptText="请求方法">
+                                       <ComboBox fx:id="bro_id_login_actual_method_combo" prefHeight="30.0" prefWidth="108.0" promptText="请求方法">
                                           <items>
                                              <FXCollections fx:factory="observableArrayList">
-                                                <String fx:value="get" />
-                                                <String fx:value="post" />
-                                                <String fx:value="options" />
-                                                <String fx:value="head" />
-                                                <String fx:value="put" />
+                                                <String fx:value="GET" />
+                                                <String fx:value="POST" />
+                                                <String fx:value="OPTIONS" />
+                                                <String fx:value="HEAD" />
+                                                <String fx:value="PUT" />
                                              </FXCollections>
                                           </items>
                                        </ComboBox>
@@ -156,13 +156,13 @@
                                        <Label prefHeight="23.0" prefWidth="108.0" text="字典组合设置" />
                                        <ComboBox fx:id="bro_id_dict_compo_mode_combo" prefHeight="23.0" prefWidth="108.0" promptText="字典组合方式">
                                           <value>
-                                             <String fx:value="cartesian" />
+                                             <String fx:value="CARTESIAN" />
                                           </value>
                                           <items>
                                              <FXCollections fx:factory="observableArrayList">
-                                                <String fx:value="cartesian" />
-                                                <String fx:value="pitchfork" />
-                                                <String fx:value="pair_file" />
+                                                <String fx:value="CARTESIAN" />
+                                                <String fx:value="PITCHFORK" />
+                                                <String fx:value="PAIR_FILE" />
                                              </FXCollections>
                                           </items>
                                        </ComboBox>
@@ -289,14 +289,14 @@
          <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="0.0" spacing="2.0">
             <children>
                <Label prefHeight="23.0" prefWidth="108" text="验证码图片地址" />
-               <ComboBox fx:id="bro_id_captcha_actual_method_text" prefHeight="30.0" prefWidth="108.0" promptText="请求方法">
+               <ComboBox fx:id="bro_id_captcha_actual_method_combo" prefHeight="30.0" prefWidth="108.0" promptText="请求方法">
                   <items>
                      <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="get" />
-                        <String fx:value="post" />
-                        <String fx:value="options" />
-                        <String fx:value="head" />
-                        <String fx:value="put" />
+                        <String fx:value="GET" />
+                        <String fx:value="POST" />
+                        <String fx:value="OPTIONS" />
+                        <String fx:value="HEAD" />
+                        <String fx:value="PUT" />
                      </FXCollections>
                   </items>
                </ComboBox>
@@ -315,11 +315,11 @@
                <ComboBox fx:id="bro_id_captcha_box_ele_type_combo" prefHeight="30.0" prefWidth="108.0" promptText="定位方式">
                   <items>
                      <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="id" />
-                        <String fx:value="name" />
-                        <String fx:value="class" />
-                        <String fx:value="css" />
-                        <String fx:value="xpath" />
+                        <String fx:value="ID" />
+                        <String fx:value="NAME" />
+                        <String fx:value="CLASS" />
+                        <String fx:value="CSS" />
+                        <String fx:value="XPATH" />
                      </FXCollections>
                   </items>
                </ComboBox>

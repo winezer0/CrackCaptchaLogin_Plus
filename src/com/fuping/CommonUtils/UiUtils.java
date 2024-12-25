@@ -72,8 +72,8 @@ public class UiUtils {
     public static Constant.EleFoundStatus setInputValueByJS(Browser browser, String locateInfo, String locateType, String inputText) {
         Constant.EleFoundStatus action_string;
         String jsCode = null;
-        switch (locateType.toLowerCase()) {
-            case "css":
+        switch (locateType.toUpperCase()) {
+            case "CSS":
                 // JavaScript code to find an element by CSS selector and set its value.
                 jsCode = "function setInputValueByCSS(cssSelector, value) {" +
                         "   try {" +
@@ -92,7 +92,7 @@ public class UiUtils {
                         "}" +
                         "setInputValueByCSS('" + locateInfo.replace("'", "\\'") + "', '" + inputText.replace("'", "\\'") + "');";
                 break;
-            case "xpath":
+            case "XPATH":
                 // JavaScript code to find an element by XPath and set its value.
                 jsCode = "function setInputValueByXPath(xpath, value) {" +
                         "   try {" +
@@ -112,9 +112,9 @@ public class UiUtils {
                         "}" +
                         "setInputValueByXPath('" + locateInfo.replace("'", "\\'") + "', '" + inputText.replace("'", "\\'") + "');";
                 break;
-            case "id":
-            case "name":
-            case "class":
+            case "ID":
+            case "NAME":
+            case "CLASS":
             default:
                 printlnErrorOnUIAndConsole("Js Mode Not Support [id|name|class] Mode!!! Please Input [CSS] or [XPATH] Locate Info Again.");
                 break;

@@ -151,20 +151,20 @@ public class BrowserUtils {
     public static InputElement findInputElementByOption(DOMDocument doc, String elementValue, String selectOption ) {
         //输入用户名元素 //需要添加输入XPath|css元素
         InputElement inputElement;
-        switch (selectOption.toLowerCase()) {
-            case "id":
+        switch (selectOption.toUpperCase()) {
+            case "ID":
                 inputElement = (InputElement) doc.findElement(By.id(elementValue));
                 break;
-            case "name":
+            case "NAME":
                 inputElement = (InputElement) doc.findElement(By.name(elementValue));
                 break;
-            case "class":
+            case "CLASS":
                 inputElement = (InputElement) doc.findElement(By.className(elementValue));
                 break;
-            case "css":
+            case "CSS":
                 inputElement = (InputElement) doc.findElement(By.cssSelector(elementValue));
                 break;
-            case "xpath":
+            case "XPATH":
             default:
                 inputElement = (InputElement) doc.findElement(By.xpath(elementValue));
         }
@@ -174,20 +174,20 @@ public class BrowserUtils {
     public static Element findElementByOption(DOMDocument doc, String elementValue, String selectOption ) {
         //输入用户名元素 //需要添加输入XPath|css元素
         Element element;
-        switch (selectOption.toLowerCase()) {
-            case "id":
+        switch (selectOption.toUpperCase()) {
+            case "ID":
                 element = (Element) doc.findElement(By.id(elementValue));
                 break;
-            case "name":
+            case "NAME":
                 element = (Element) doc.findElement(By.name(elementValue));
                 break;
-            case "class":
+            case "CLASS":
                 element = (Element) doc.findElement(By.className(elementValue));
                 break;
-            case "css":
+            case "CSS":
                 element = (Element) doc.findElement(By.cssSelector(elementValue));
                 break;
-            case "xpath":
+            case "XPATH":
             default:
                 element = (Element) doc.findElement(By.xpath(elementValue));
         }
