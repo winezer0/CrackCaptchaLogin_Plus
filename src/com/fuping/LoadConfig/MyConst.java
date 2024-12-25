@@ -3,6 +3,8 @@ package com.fuping.LoadConfig;
 import com.fuping.LoadDict.UserPassPair;
 
 import static com.fuping.LoadConfig.Constant.DictMode.CARTESIAN;
+import static com.fuping.LoadConfig.Constant.EleFoundStatus.BREAK;
+import static com.fuping.LoadConfig.Constant.EleFoundStatus.CONTINUE;
 import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class MyConst {
@@ -48,7 +50,8 @@ public class MyConst {
 
     //登录配置参数
     public static String default_login_access_url = null;
-    public static String default_login_actual_url = null;  //登录的实际URL
+    public static String default_login_actual_url = null;  //登录包的实际请求URL
+    public static String default_login_actual_method = null;  //登录包的实际请求方法
 
     public static String default_name_box_ele_value = null;
     public static String default_name_box_ele_type = null;
@@ -85,7 +88,9 @@ public class MyConst {
     public static String default_resp_key_failure_regex = null;
     public static String default_resp_key_captcha_regex = null;
 
-    public static String default_captcha_actual_url = null;
+    public static String default_captcha_actual_url = null; //验证码请求包的实际请求URL
+    public static String default_captcha_actual_method = null;  //验证码请求包的实际请求方法
+
     public static String default_captcha_box_ele_value = null;
     public static String default_captcha_box_ele_type = null;
 
@@ -144,6 +149,7 @@ public class MyConst {
         //加载默认的登录框配置
         default_login_access_url = configReader.getString("login_access_url", "http://127.0.0.1/demo/index.php/Home/Login/login.html");
         default_login_actual_url = configReader.getString("login_actual_url", null);
+        default_login_actual_method = configReader.getString("login_actual_method", "POST");
 
         default_name_box_ele_value = configReader.getString("name_box_ele_value", "username");
         default_name_box_ele_type = configReader.getString("name_box_ele_type", null);
@@ -176,6 +182,8 @@ public class MyConst {
         default_locale_identify_switch = configReader.isTrue("locale_Identify", false);
 
         default_captcha_actual_url = configReader.getString("captcha_actual_url", null);
+        default_captcha_actual_method = configReader.getString("captcha_actual_method", "GET");
+
         default_captcha_box_ele_value = configReader.getString("captcha_box_ele_value", null);
         default_captcha_box_ele_type = configReader.getString("captcha_box_ele_type", null);
 
@@ -190,10 +198,10 @@ public class MyConst {
         GLOBAL_LOCALE_TESS_DATA_NAME = configReader.getString("locale_tess_data_name", null);
 
         //指定对应的操作
-        GLOBAL_BROWSER_CLOSE_ACTION = configReader.getString("browser_close_action", "break");
-        GLOBAL_FIND_ELE_ILLEGAL_ACTION = configReader.getString("find_ele_illegal_action", "continue");
-        GLOBAL_FIND_ELE_NULL_ACTION = configReader.getString("find_ele_null_action", "continue");
-        GLOBAL_FIND_ELE_EXCEPTION_ACTION = configReader.getString("find_ele_exception_action", "continue");
+        GLOBAL_BROWSER_CLOSE_ACTION = configReader.getString("browser_close_action", BREAK.name());
+        GLOBAL_FIND_ELE_ILLEGAL_ACTION = configReader.getString("find_ele_illegal_action", CONTINUE.name());
+        GLOBAL_FIND_ELE_NULL_ACTION = configReader.getString("find_ele_null_action", CONTINUE.name());
+        GLOBAL_FIND_ELE_EXCEPTION_ACTION = configReader.getString("find_ele_exception_action", CONTINUE.name());
 
         GLOBAL_FIND_ELE_DELAY_TIME = Integer.parseInt(configReader.getString("find_ele_delay_time", "500"));
         GLOBAL_FIND_ELERET_RYTIMES = Integer.parseInt(configReader.getString("find_ele_retry_times", "6"));

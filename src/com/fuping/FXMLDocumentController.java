@@ -128,6 +128,11 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextField bro_id_captcha_regex_text;
 
+    @FXML
+    private ComboBox<String> bro_id_login_actual_method_combo; //限定登录包的请求方法
+    @FXML
+    private ComboBox<String> bro_id_captcha_actual_method_combo; //限定验证码包的请求方法
+
     //输出相关
     @FXML
     private TextArea bro_id_output_text_area; // 注意：这里不应该使用static，除非有特殊需求
@@ -141,8 +146,11 @@ public class FXMLDocumentController implements Initializable {
     private List<String> login_about_urls = null;  //存储当前URL相关的多个URl
     private String login_access_url = null;  //设置当前登录url的全局变量用于后续调用
     private String login_actual_url = null;  //设置当前登录HTTP报文的URL地址用于后续调用 登录的实际URL
+    private String login_actual_method = null;  //设置当前登录HTTP报文的请求方法
 
-    private String captcha_request_url = null;  //设置当前登录验证码url用于后续调用
+    private String captcha_actual_url = null;  //设置当前登录验证码url用于后续调用
+    private String captcha_actual_method = null;  //设置当前登录验证码的请求方法
+
     private boolean captcha_ident_was_error = false; //设置当前验证码识别错误状态
 
     private Browser browser = null;
@@ -404,7 +412,7 @@ public class FXMLDocumentController implements Initializable {
         //设置JxBrowser中网络委托的对象，以实现对浏览器的网络请求和响应的控制和处理。 //更详细的请求和响应处理,含保存验证码图片
         browser.getContext().getNetworkService().setNetworkDelegate(
                 new MyNetworkDelegate(
-                        this.captcha_request_url,
+                        this.captcha_actual_url,
                         this.login_actual_url,
                         this.bro_id_match_login_url_check.isSelected(),
                         this.bro_id_captcha_regex_text.getText(),
@@ -449,28 +457,33 @@ public class FXMLDocumentController implements Initializable {
 
         //设置登录包URL框
         setWithCheck(this.bro_id_login_actual_url_text, default_login_actual_url);
+        this.bro_id_login_actual_url_text.setTooltip(new Tooltip("登录包的实际请求URL"));
+
+        setWithCheck(this.bro_id_login_actual_method_combo, default_login_actual_method);
+        this.bro_id_login_actual_method_combo.setTooltip(new Tooltip("登录包的实际请求方法"));
 
         //设置登录框
         setWithCheck(this.bro_id_name_box_ele_text, default_name_box_ele_value);
-        setWithCheck(this.bro_id_name_box_ele_type_combo, default_name_box_ele_type);
         this.bro_id_name_box_ele_text.setTooltip(new Tooltip("账号框元素定位方式和对应值"));
+        setWithCheck(this.bro_id_name_box_ele_type_combo, default_name_box_ele_type);
         this.bro_id_name_box_ele_type_combo.setTooltip(new Tooltip("账号框元素定位方式和对应值"));
 
         //设置密码框
         setWithCheck(this.bro_id_pass_box_ele_text, default_pass_box_ele_value);
-        setWithCheck(this.bro_id_pass_box_ele_type_combo, default_pass_box_ele_type);
         this.bro_id_pass_box_ele_text.setTooltip(new Tooltip("密码框元素定位方式和对应值"));
+        setWithCheck(this.bro_id_pass_box_ele_type_combo, default_pass_box_ele_type);
         this.bro_id_pass_box_ele_type_combo.setTooltip(new Tooltip("密码框元素定位方式和对应值"));
 
         //设置提交按钮
         setWithCheck(this.bro_id_submit_btn_ele_text, default_submit_btn_ele_value);
-        setWithCheck(this.bro_id_submit_btn_ele_type_combo, default_submit_btn_ele_type);
         this.bro_id_submit_btn_ele_text.setTooltip(new Tooltip("提交按钮元素定位方式和对应值"));
+        setWithCheck(this.bro_id_submit_btn_ele_type_combo, default_submit_btn_ele_type);
         this.bro_id_submit_btn_ele_type_combo.setTooltip(new Tooltip("提交按钮元素定位方式和对应值"));
 
         //设置浏览器选项
         setWithCheck(this.bro_id_show_browser_check, default_show_browser_switch);
-        this.bro_id_exclude_history_check.setTooltip(new Tooltip("显示浏览器到窗口"));
+        this.bro_id_show_browser_check.setTooltip(new Tooltip("显示浏览器到窗口"));
+
         setWithCheck(this.bro_id_exclude_history_check, GLOBAL_EXCLUDE_HISTORY_SWITCH);
         this.bro_id_exclude_history_check.setTooltip(new Tooltip("排除已测试的历史账号密码"));
 
@@ -512,6 +525,11 @@ public class FXMLDocumentController implements Initializable {
         setWithCheck(default_locale_identify_switch ? this.bro_id_locale_ident_flag_radio : this.bro_id_yzm_remote_ident_radio, true);
         //设置验证码属性
         setWithCheck(this.bro_id_captcha_actual_url_text, default_captcha_actual_url);
+        this.bro_id_captcha_actual_url_text.setTooltip(new Tooltip("验证码请求包的实际请求URL"));
+        setWithCheck(this.bro_id_captcha_actual_method_combo, default_captcha_actual_method);
+        this.bro_id_captcha_actual_method_combo.setTooltip(new Tooltip("验证码请求包的实际请求方法"));
+
+
         setWithCheck(this.bro_id_captcha_box_ele_text, default_captcha_box_ele_value);
         setWithCheck(this.bro_id_captcha_box_ele_type_combo, default_captcha_box_ele_type);
         this.bro_id_captcha_box_ele_text.setTooltip(new Tooltip("验证码输入框元素定位方式和对应值"));
@@ -609,10 +627,11 @@ public class FXMLDocumentController implements Initializable {
                 //获取指定登录包相关的URL、不指定也能用
                 if (!isEmptyIfStr(this.bro_id_login_actual_url_text.getText().trim())){
                     login_actual_url = this.bro_id_login_actual_url_text.getText().trim();
+                    login_actual_method = this.bro_id_login_actual_method_combo.getValue();
                     login_about_urls.add(login_actual_url); //把登录包URL也加入相关URL中, 可能不需要
                 }
 
-                printlnDebugOnUIAndConsole(String.format("指定登录访问URL:%s 登录包URL为:%s 登录相关URL为:%s", login_access_url, login_actual_url, login_url_text));
+                printlnDebugOnUIAndConsole(String.format("指定登录访问URL:[%s] 登录包URL为:[%s:%s] 登录相关URL为:[%s]", login_access_url, login_actual_method, login_actual_url, login_url_text));
             }
 
             //基于登录URL初始化|URL更新|日志文件配置
@@ -690,13 +709,14 @@ public class FXMLDocumentController implements Initializable {
 
             //获取验证码URL
             if (this.bro_id_ident_captcha_switch_check.isSelected()){
-                this.captcha_request_url = this.bro_id_captcha_actual_url_text.getText().trim();
+                this.captcha_actual_url = this.bro_id_captcha_actual_url_text.getText().trim();
+                this.captcha_actual_method = this.bro_id_captcha_actual_method_combo.getValue();
             }
 
             //设置JxBrowser中网络委托的对象，以实现对浏览器的网络请求和响应的控制和处理。 //更详细的请求和响应处理,含保存验证码图片
             browser.getContext().getNetworkService().setNetworkDelegate(
                     new MyNetworkDelegate(
-                            this.captcha_request_url,
+                            this.captcha_actual_url,
                             this.login_actual_url,
                             this.bro_id_match_login_url_check.isSelected(),
                             this.bro_id_captcha_regex_text.getText(),
