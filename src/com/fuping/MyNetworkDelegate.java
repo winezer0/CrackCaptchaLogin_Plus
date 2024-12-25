@@ -38,8 +38,13 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
 
     private boolean isCompleteAuth;
     private boolean isCancelAuth;
-    private String requestCaptchaUrl;  //验证码请求包URL
-    private String requestLoginUrl; //登录包请求URL
+
+    private String captchaActualUrl;  //验证码请求包URL
+    private String captchaActualMethod;  //验证码请求包URL的请求方法
+
+    private String loginActualUrl; //登录包请求URL
+    private String loginActualMethod; //登录包请求URL的请求方法
+
     private boolean matchLoginUrl;
     //private long current_id;
 
@@ -52,15 +57,20 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
     private AtomicBoolean isCapturingCaptcha = new AtomicBoolean(false); // 用于线程安全
 
     /**
-     * @param requestCaptchaUrl 验证码相关URL 支持正则格式
-     * @param requestLoginUrl   登录包相关URL 支持正则格式
+     * @param captchaActualUrl 验证码相关URL 支持正则格式
+     * @param loginActualUrl   登录包相关URL 支持正则格式
      * @param matchLoginUrl     是否匹配登录包URL 否的话在所有请求中都取查找登录匹配结果关键字
      */
-    public MyNetworkDelegate(String requestCaptchaUrl, String requestLoginUrl, boolean matchLoginUrl,
+    public MyNetworkDelegate(String captchaActualUrl, String captchaActualMethod,
+                             String loginActualUrl, String loginActualMethod,
+                             boolean matchLoginUrl,
                              String captchaFailKey, String loginFailureKey, String loginSuccessKey)
     {
-        this.requestCaptchaUrl = requestCaptchaUrl;
-        this.requestLoginUrl = requestLoginUrl;
+        this.captchaActualUrl = captchaActualUrl;
+        this.captchaActualMethod = captchaActualMethod;
+        this.loginActualUrl = loginActualUrl;
+        this.loginActualMethod = loginActualMethod;
+
         this.matchLoginUrl = matchLoginUrl;
 
         this.captchaFailKey = captchaFailKey;
@@ -91,23 +101,30 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
         //允许您直接响应请求而不实际发送它，或者返回 null 表示继续正常的请求流程。
         //super.onSendHeaders(params);
         String getReqURL = params.getURL();
+        String getMethod = params.getMethod();
         //需要判断那think php的情况，baseurl都是一样的，不能作为验证码图片URL
-        if (this.requestCaptchaUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestCaptchaUrl)) {
+
+        if(isSimilarLinkAndMethod(getReqURL, this.captchaActualUrl, getMethod, this.captchaActualMethod)){
             this.tmpCaptchaBytes = new byte[0];
             params.getHeadersEx().setHeader("Accept-Encoding", "");
             //print_debug(String.format("修改验证码请求头 BeforeSendHeaders: %s", getReqURL));
         }
     }
 
+    private boolean isSimilarLinkAndMethod(String curUrl, String exceptUrl, String curMethod, String exceptMethod){
+        return curUrl != null && curMethod.equalsIgnoreCase(exceptMethod) && ElementUtils.isSimilarLink(curUrl, exceptUrl);
+    }
+
     @Override
     //在浏览器实际发送请求头之后立即调用
     public void onSendHeaders(SendHeadersParams params) {
         String getReqURL = params.getURL();
-        if (this.requestCaptchaUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestCaptchaUrl)) {
+        String getMethod = params.getMethod();
+        if(isSimilarLinkAndMethod(getReqURL, this.captchaActualUrl, getMethod, this.captchaActualMethod)){
             print_debug(String.format("正在发起验证码请求 onSendHeaders: %s", getReqURL));
         }
 
-        if (this.requestLoginUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestLoginUrl) && params.getMethod().equalsIgnoreCase("POST")) {
+        if(isSimilarLinkAndMethod(getReqURL, this.loginActualUrl, getMethod, this.loginActualMethod)){
             print_debug(String.format("正在发起登录包请求 onSendHeaders: %s", getReqURL));
         }
     }
@@ -117,12 +134,13 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
     //当接收到部分响应数据时调用
     public void onDataReceived(DataReceivedParams paramDataReceivedParams) {
         String getReqURL = paramDataReceivedParams.getURL();
-        if (this.requestCaptchaUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestCaptchaUrl)) {
+        String getMethod = paramDataReceivedParams.getMethod();
+        if(isSimilarLinkAndMethod(getReqURL, this.captchaActualUrl, getMethod, this.captchaActualMethod)){
             //存储验证码数据
-            storeCaptchaData(getReqURL, paramDataReceivedParams);
+            storeCaptchaData(getReqURL, getMethod, paramDataReceivedParams);
         } else {
             //检查登录关键字匹配状态
-            checkLoginStatusOnBody(getReqURL, paramDataReceivedParams);
+            checkLoginStatusOnBody(getReqURL, getMethod, paramDataReceivedParams);
         }
     }
 
@@ -137,28 +155,29 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
     public void onHeadersReceived(HeadersReceivedParams params) {
         //super.onHeadersReceived(params);
         String getReqURL = params.getURL();
-        if (this.requestCaptchaUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestCaptchaUrl)) {
+        String getMethod = params.getMethod();
+        if (isSimilarLinkAndMethod(getReqURL, this.captchaActualUrl, getMethod, this.captchaActualMethod)){
             print_debug(String.format("正在接受验证码数据头部 onHeadersReceived: %s", getReqURL));
         }
 
-        if (this.requestLoginUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestLoginUrl) && params.getMethod().equalsIgnoreCase("POST")) {
+        if (isSimilarLinkAndMethod(getReqURL, this.loginActualUrl, getMethod, this.loginActualMethod)){
             print_debug(String.format("正在接受并匹配登录包响应头部 onHeadersReceived: %s", getReqURL));
             //部分情况下需要从响应头匹配 Location 字段来判断是否成功登录
-            checkLoginStatusOnHeaders(getReqURL, concatHeaders(params.getHeadersEx().getHeaders()));
+            checkLoginStatusOnHeaders(getReqURL, getMethod, concatHeaders(params.getHeadersEx().getHeaders()));
         }
     }
-
 
     @Override
     //当请求完成（无论是成功还是失败）时调用
     public void onCompleted(RequestCompletedParams params) {
         //super.onCompleted(params);
         String getReqURL = params.getURL();
-        if (this.requestCaptchaUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestCaptchaUrl)) {
+        String getMethod = params.getMethod();
+        if(isSimilarLinkAndMethod(getReqURL, this.captchaActualUrl, getMethod, this.captchaActualMethod)){
             //print_debug(String.format("验证码URL请求完成 onHeadersReceived: %s", getReqURL));
         }
 
-        if (this.requestLoginUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestLoginUrl) && params.getMethod().equalsIgnoreCase("POST")) {
+        if (isSimilarLinkAndMethod(getReqURL, this.loginActualUrl, getMethod, this.loginActualMethod)){
             print_debug(String.format("登陆包URL请求完成 onHeadersReceived: %s", getReqURL));
         }
     }
@@ -278,13 +297,13 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
      *
      * @param paramDataReceivedParams 包含接收的数据和URL等信息的参数对象
      */
-    public void storeCaptchaData(String getReqURL, DataReceivedParams paramDataReceivedParams) {
+    public void storeCaptchaData(String getReqURL, String getMethod, DataReceivedParams paramDataReceivedParams) {
         if (isCapturingCaptcha.get()) {
             return; // 如果已经在捕获验证码，则直接返回
         }
 
         // 如果当前URL是验证码URL请求,就开始获取验证码图片数据
-        if (this.requestCaptchaUrl != null && ElementUtils.isSimilarLink(getReqURL, this.requestCaptchaUrl)) {
+        if(isSimilarLinkAndMethod(getReqURL, this.captchaActualUrl, getMethod, this.captchaActualMethod)){
             byte[] receivedData = paramDataReceivedParams.getData();
             try {
                 isCapturingCaptcha.set(true);
@@ -310,7 +329,7 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
     }
 
 
-    public void checkLoginStatusOnBody(String getReqURL, DataReceivedParams paramDataReceivedParams) {
+    public void checkLoginStatusOnBody(String getReqURL, String getMethod, DataReceivedParams paramDataReceivedParams) {
 
         try {
             String charset = paramDataReceivedParams.getCharset();
@@ -318,8 +337,8 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
                 charset = "UTF-8"; // 使用大写的 UTF-8 作为标准
             }
             // 检查是否为精准匹配模式
-            if (this.matchLoginUrl && this.requestLoginUrl != null) {
-                if (ElementUtils.isSimilarLink(getReqURL, this.requestLoginUrl) && paramDataReceivedParams.getMethod().equalsIgnoreCase("POST")) {
+            if (this.matchLoginUrl && this.loginActualUrl != null) {
+                if (isSimilarLinkAndMethod(getReqURL, this.loginActualUrl, getMethod, this.loginActualMethod)) {
                     print_debug("当前为精准匹配模式...");
                     handleLoginStatus(getReqURL, new String(paramDataReceivedParams.getData(), charset), true, false);
                 }
@@ -336,10 +355,10 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
         }
     }
 
-    public void checkLoginStatusOnHeaders(String getReqURL, String receivedHeaders) {
+    public void checkLoginStatusOnHeaders(String getReqURL, String getMethod, String receivedHeaders) {
         // 检查是否为精准匹配模式
-        if (this.matchLoginUrl && this.requestLoginUrl != null) {
-            if (ElementUtils.isSimilarLink(getReqURL, this.requestLoginUrl)) {
+        if (this.matchLoginUrl && this.loginActualUrl != null) {
+            if (isSimilarLinkAndMethod(getReqURL, this.loginActualUrl, getMethod, this.loginActualMethod)) {
                 handleLoginStatus(getReqURL, receivedHeaders, true, true);
             }
         } else {

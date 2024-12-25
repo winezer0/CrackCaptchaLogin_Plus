@@ -413,7 +413,9 @@ public class FXMLDocumentController implements Initializable {
         browser.getContext().getNetworkService().setNetworkDelegate(
                 new MyNetworkDelegate(
                         this.captcha_actual_url,
+                        this.captcha_actual_method,
                         this.login_actual_url,
+                        this.login_actual_method,
                         this.bro_id_match_login_url_check.isSelected(),
                         this.bro_id_captcha_regex_text.getText(),
                         this.bro_id_failure_regex_text.getText(),
@@ -716,7 +718,9 @@ public class FXMLDocumentController implements Initializable {
             browser.getContext().getNetworkService().setNetworkDelegate(
                     new MyNetworkDelegate(
                             this.captcha_actual_url,
+                            this.captcha_actual_method,
                             this.login_actual_url,
+                            this.login_actual_method,
                             this.bro_id_match_login_url_check.isSelected(),
                             this.bro_id_captcha_regex_text.getText(),
                             this.bro_id_failure_regex_text.getText(),
