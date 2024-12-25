@@ -118,6 +118,7 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
     @Override
     //在浏览器实际发送请求头之后立即调用
     public void onSendHeaders(SendHeadersParams params) {
+/*
         String getReqURL = params.getURL();
         String getMethod = params.getMethod();
         if(isSimilarLinkAndMethod(getReqURL, this.captchaActualUrl, getMethod, this.captchaActualMethod)){
@@ -125,8 +126,9 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
         }
 
         if(isSimilarLinkAndMethod(getReqURL, this.loginActualUrl, getMethod, this.loginActualMethod)){
-            print_debug(String.format("正在发起登录包请求 onSendHeaders: %s", getReqURL));
+           print_debug(String.format("正在发起登录包请求 onSendHeaders: %s", getReqURL));
         }
+*/
     }
 
 

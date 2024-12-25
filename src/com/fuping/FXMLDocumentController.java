@@ -998,54 +998,53 @@ public class FXMLDocumentController implements Initializable {
                                 print_debug(String.format("本次 Crack Login 状态: %s", CURR_LOGIN_STATUS));
 
                                 //判断登录状态是否时验证码码错误,是的话,就不能记录到爆破历史中
-                                if(CURR_LOADING_STATUS.contains(LOADING_FINISH.name()) && CURR_LOGIN_STATUS.contains(ERROR_CAPTCHA.name())){
+                                if(CURR_LOGIN_STATUS.contains(ERROR_CAPTCHA.name())){
                                     captcha_ident_was_error = true;
                                     MyFileUtils.writeUserPassPairToFile(globalErrorCaptchaFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
-                                    printlnErrorOnUIAndConsole(String.format("验证码识别错误|||" +
-                                                    "账号:密码【%s:%s】\n" +
-                                                    "跳转情况:%s -> %s->%s\n" +
-                                                    "网页标题:%s -> 长度:%s\n",
-                                            cur_user, cur_pass,
-                                            isPageForward, login_access_url, cur_url,
-                                            cur_title, cur_length));
-                                    //不对统计计数进行增加, 需要重新测试本目标
-                                } else if(CURR_LOADING_STATUS.contains(LOADING_FINISH.name()) && CURR_LOGIN_STATUS.contains(LOGIN_SUCCESS.name())){
-                                    //进行爆破历史记录、不对成功状态加载的数据进行重复爆破
-                                    MyFileUtils.writeUserPassPairToFile(globalCrackHistoryFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
-                                    MyFileUtils.writeUserPassPairToFile(globalLoginSuccessFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
-                                    printlnInfoOnUIAndConsole(String.format("登录认证成功|||" +
-                                                    "账号:密码【%s:%s】\n" +
-                                                    "跳转情况:%s -> %s->%s\n" +
-                                                    "网页标题:%s -> 长度:%s\n",
-                                            cur_user, cur_pass,
-                                            isPageForward, login_access_url, cur_url,
-                                            cur_title, cur_length));
-
-                                    //对统计计数进行增加
-                                    index ++;
-                                } else if(CURR_LOADING_STATUS.contains(LOADING_FINISH.name()) && CURR_LOGIN_STATUS.contains(LOGIN_FAILURE.name())){
-                                    //进行爆破历史记录、不对错误状态加载的数据进行重复爆破
-                                    MyFileUtils.writeUserPassPairToFile(globalCrackHistoryFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
-                                    MyFileUtils.writeUserPassPairToFile(globalLoginFailureFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
-                                    printlnErrorOnUIAndConsole(String.format("登录认证失败|||账号:密码【%s:%s】\n" +
-                                                    "跳转情况:%s -> %s->%s\n" +
-                                                    "网页标题:%s -> 长度:%s\n",
-                                            cur_user, cur_pass,
-                                            isPageForward, login_access_url, cur_url,
-                                            cur_title, cur_length));
-                                    //对统计计数进行增加
-                                    index ++;
-                                } else if (bro_id_store_unknown_status_check.isSelected() && CURR_LOADING_STATUS.contains(LOADING_UNKNOWN.name())){
-                                    //动态判断对于 const_loading_unknown 状态的是响应是否保存到结果中
-                                    //进行爆破历史记录、不对未知状态加载的数据进行重复爆破
-                                    MyFileUtils.writeUserPassPairToFile(globalCrackHistoryFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
-                                    MyFileUtils.writeUserPassPairToFile(globalUnknownStatusFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
-                                    printlnErrorOnUIAndConsole(String.format("保存未知状态|||" +
+                                    printlnErrorOnUIAndConsole(String.format("验证码识别错误:-> 账号:密码【%s:%s】\n", cur_user, cur_pass));
+                                    print_debug(String.format("验证码识别错误:->\n" +
                                                     "账号:密码【%s:%s】\n" +
                                                     "跳转情况:%s -> %s->%s\n" +
                                                     "网页标题:%s -> 长度:%s\n" +
-                                                    "加载状态:%s\n" +
-                                                    "登录状态:%s\n",
+                                                    "加载状态:[%s]\n" +
+                                                    "登录状态:[%s]\n",
+                                            cur_user, cur_pass,
+                                            isPageForward, login_access_url, cur_url,
+                                            cur_title, cur_length,
+                                            CURR_LOADING_STATUS, CURR_LOGIN_STATUS
+                                    ));
+
+                                    //不对统计计数进行增加, 需要重新测试本目标
+                                } else if(CURR_LOGIN_STATUS.contains(LOGIN_SUCCESS.name())){
+                                    //进行爆破历史记录、不对成功状态加载的数据进行重复爆破
+                                    MyFileUtils.writeUserPassPairToFile(globalCrackHistoryFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
+                                    MyFileUtils.writeUserPassPairToFile(globalLoginSuccessFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
+                                    printlnInfoOnUIAndConsole(String.format("登录认证成功:-> 账号:密码【%s:%s】\n", cur_user, cur_pass));
+                                    print_debug(String.format("登录认证成功:->\n" +
+                                                    "账号:密码【%s:%s】\n" +
+                                                    "跳转情况:%s -> %s->%s\n" +
+                                                    "网页标题:%s -> 长度:%s\n" +
+                                                    "加载状态:[%s]\n" +
+                                                    "登录状态:[%s]\n",
+                                            cur_user, cur_pass,
+                                            isPageForward, login_access_url, cur_url,
+                                            cur_title, cur_length,
+                                            CURR_LOADING_STATUS, CURR_LOGIN_STATUS
+                                    ));
+
+                                    //对统计计数进行增加
+                                    index ++;
+                                } else if(CURR_LOGIN_STATUS.contains(LOGIN_FAILURE.name())){
+                                    //进行爆破历史记录、不对错误状态加载的数据进行重复爆破
+                                    MyFileUtils.writeUserPassPairToFile(globalCrackHistoryFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
+                                    MyFileUtils.writeUserPassPairToFile(globalLoginFailureFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
+                                    printlnErrorOnUIAndConsole(String.format("登录认证失败:-> 账号:密码【%s:%s】\n", cur_user, cur_pass));
+                                    print_debug(String.format("登录认证失败:->\n" +
+                                                    "账号:密码【%s:%s】\n" +
+                                                    "跳转情况:%s -> %s->%s\n" +
+                                                    "网页标题:%s -> 长度:%s\n" +
+                                                    "加载状态:[%s]\n" +
+                                                    "登录状态:[%s]\n",
                                             cur_user, cur_pass,
                                             isPageForward, login_access_url, cur_url,
                                             cur_title, cur_length,
@@ -1053,29 +1052,53 @@ public class FXMLDocumentController implements Initializable {
                                     ));
                                     //对统计计数进行增加
                                     index ++;
-                                }  else {
-                                    //对于其他的未知状态,进行下一个账号密码测试
-                                    MyFileUtils.writeUserPassPairToFile(globalUnknownStatusFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
-                                    printlnErrorOnUIAndConsole(String.format("忽略意外状态|||" +
-                                                    "账号:密码【%s:%s】\n" +
-                                                    "跳转情况:%s -> %s->%s\n" +
-                                                    "网页标题:%s -> 长度:%s\n" +
-                                                    "加载状态:%s\n" +
-                                                    "登录状态:%s\n",
-                                            cur_user, cur_pass,
-                                            isPageForward, login_access_url, cur_url,
-                                            cur_title, cur_length,
-                                            CURR_LOADING_STATUS, CURR_LOGIN_STATUS
-                                            ));
+                                } else {
+                                    //响应状态已更新为未知状态，表名已经匹配过，但是没有正常匹配
+                                    if ( CURR_LOADING_STATUS.contains(LOADING_UNKNOWN.name())){
+                                        if (bro_id_store_unknown_status_check.isSelected()){
+                                            //进行爆破历史记录、不对未知状态加载的数据进行重复爆破
+                                            MyFileUtils.writeUserPassPairToFile(globalCrackHistoryFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
+                                        }
+                                        MyFileUtils.writeUserPassPairToFile(globalUnknownStatusFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
+                                        printlnErrorOnUIAndConsole(String.format("保存未知状态(%s):->\n" +
+                                                        "账号:密码【%s:%s】\n" +
+                                                        "跳转情况:%s -> %s->%s\n" +
+                                                        "网页标题:%s -> 长度:%s\n" +
+                                                        "加载状态:[%s]\n" +
+                                                        "登录状态:[%s]\n",
+                                                bro_id_store_unknown_status_check.isSelected(),
+                                                cur_user, cur_pass,
+                                                isPageForward, login_access_url, cur_url,
+                                                cur_title, cur_length,
+                                                CURR_LOADING_STATUS, CURR_LOGIN_STATUS
+                                        ));
+                                        //对统计计数进行增加
+                                        index ++;
+                                    }  else {
+                                        //对于其他的未知状态,进行下一个账号密码测试
+                                        MyFileUtils.writeUserPassPairToFile(globalUnknownStatusFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
+                                        printlnErrorOnUIAndConsole(String.format("未知错误状态(%s):->\n" +
+                                                        "账号:密码【%s:%s】\n" +
+                                                        "跳转情况:%s -> %s->%s\n" +
+                                                        "网页标题:%s -> 长度:%s\n" +
+                                                        "加载状态:[%s]\n" +
+                                                        "登录状态:[%s]\n",
+                                                bro_id_store_unknown_status_check.isSelected(),
+                                                cur_user, cur_pass,
+                                                isPageForward, login_access_url, cur_url,
+                                                cur_title, cur_length,
+                                                CURR_LOADING_STATUS, CURR_LOGIN_STATUS
+                                        ));
 
-                                    //判断当前是不是固定加载模式,是的话就自动添加一点加载时间
-                                    if(!bro_id_submit_auto_wait_check.isSelected() && bro_submit_fixed_wait_time < GLOBAL_SUBMIT_AUTO_WAIT_LIMIT) {
-                                        bro_submit_fixed_wait_time += 1000;
-                                        printlnInfoOnUIAndConsole(String.format("等待超时|||自动更新等待时间至[%s]", bro_submit_fixed_wait_time));
+                                        //判断当前是不是固定加载模式,是的话就自动添加一点加载时间
+                                        if(!bro_id_submit_auto_wait_check.isSelected() && bro_submit_fixed_wait_time < GLOBAL_SUBMIT_AUTO_WAIT_LIMIT) {
+                                            bro_submit_fixed_wait_time += 1000;
+                                            printlnInfoOnUIAndConsole(String.format("等待超时|||自动更新等待时间至[%s]", bro_submit_fixed_wait_time));
+                                        }
+
+                                        //对于未知加载状态的数据进行跳过，但是不保存，防止死循环的发生
+                                        index ++;
                                     }
-
-                                    //对于未知加载状态的数据进行跳过，但是不保存，防止死循环的发生
-                                    index ++;
                                 }
                             }
 
