@@ -2,6 +2,9 @@ import base64
 import ddddocr
 from flask import Flask, request
 from datetime import datetime
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
