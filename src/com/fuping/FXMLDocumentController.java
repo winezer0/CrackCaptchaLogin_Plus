@@ -738,6 +738,7 @@ public class FXMLDocumentController implements Initializable {
                     try {
                         //记录是否发生超时错误,是的话后续就需要重新访问页面了 用于在设置了每次不自动访问登录页的场景下
                         boolean occurAccessUrlError = false;
+                        //记录本次循环的错误次数
                         Integer localEleErrorCounts = 0;
                         //遍历账号密码字典
                         for (int index = 0; index < globalUserPassPairsArray.length;) {
@@ -758,6 +759,9 @@ public class FXMLDocumentController implements Initializable {
                             if (localEleErrorCounts > 10) {
                                 throw new TimeoutException("Too many errors: " + localEleErrorCounts);
                             }
+
+                            //假设本次爆破发生错误
+                            localEleErrorCounts++;
 
                             //输出当前即将测试的数据
                             printlnInfoOnUIAndConsole(String.format("当前进度 [%s/%s] <--> [%s] [%s]", index+1, globalUserPassPairsArray.length, userPassPair, login_access_url));
@@ -831,7 +835,6 @@ public class FXMLDocumentController implements Initializable {
                             DOMDocument document = browser.getDocument();
                             //输入用户名
                             EleFoundStatus eleFoundStatusAction;
-                            localEleErrorCounts += 1;
                             if (executeJavaScriptMode){
                                 eleFoundStatusAction = setInputValueByJS(browser, bro_name_box_ele_text, bro_name_box_ele_type,  cur_user);
                             } else {
@@ -848,7 +851,6 @@ public class FXMLDocumentController implements Initializable {
                             }
 
                             //查找密码输入框
-                            localEleErrorCounts += 1;
                             if (executeJavaScriptMode){
                                 eleFoundStatusAction = setInputValueByJS(browser, bro_pass_box_ele_text, bro_pass_box_ele_type,  cur_pass);
                             } else {
@@ -887,11 +889,11 @@ public class FXMLDocumentController implements Initializable {
                                 if(isEmptyIfStr(captchaText)){
                                     printlnErrorOnUIAndConsole(String.format("识别验证码失败 (结果为空) 重新测试...", captchaText));
                                     captcha_ident_was_error = true;
+                                    localEleErrorCounts--; //验证码错误时重置
                                     continue;
                                 }
 
                                 //输入验证码元素 并检查输入状态
-                                localEleErrorCounts += 1;
                                 if (executeJavaScriptMode){
                                     eleFoundStatusAction = setInputValueByJS(browser, bro_captcha_box_ele_text, bro_captcha_box_ele_type,  captchaText);
                                 } else {
@@ -910,7 +912,6 @@ public class FXMLDocumentController implements Initializable {
 
                             //定位提交按钮, 并填写按钮
                             EleFoundStatus EleFoundStatusForSubmitBtn = SUCCESS;
-                            localEleErrorCounts += 1;
                             try {
                                 Element submitElement = findElementByOption(document, bro_submit_btn_ele_text, bro_id_submit_btn_ele_type);
                                 submitElement.click();
@@ -935,7 +936,7 @@ public class FXMLDocumentController implements Initializable {
                                 }
                             }
 
-                            //充值查找错误计数
+                            //完成监测时重置查找错误计数
                             localEleErrorCounts = 0;
 
                             //在当前编辑区域（可能是文本框或富文本编辑器等）的光标位置插入一个新的空行，类似于按下回车键创建一个新行。

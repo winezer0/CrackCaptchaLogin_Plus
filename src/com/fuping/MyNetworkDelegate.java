@@ -164,10 +164,22 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
             print_debug(String.format("正在接受验证码数据头部 onHeadersReceived: %s", currUrl));
         }
 
-        if (isSimilarLinkAndMethod(currUrl, this.loginActualUrl, currMethod, this.loginActualMethod)){
-            print_debug(String.format("正在接受并匹配登录包响应头部 onHeadersReceived: %s", currUrl));
-            //部分情况下需要从响应头匹配 Location 字段来判断是否成功登录
-            checkLoginStatusOnHeaders(currUrl, currMethod, concatHeaders(params.getHeadersEx().getHeaders()));
+        //部分情况下需要从响应头匹配 Location 字段来判断是否成功登录
+        if(matchLoginUrl && this.loginActualUrl != null){
+            //在精准模式进行响应头匹配
+            if (isSimilarLinkAndMethod(currUrl, this.loginActualUrl, currMethod, this.loginActualMethod)){
+                print_debug(String.format("当前进入精准匹配模式 ON Headers: [%s] [%s]...", currMethod, currUrl));
+                String receivedHeaders = concatHeaders(params.getHeadersEx().getHeaders());
+                handleLoginStatus(currUrl, receivedHeaders, true);
+            }
+        }else {
+            //非精准模式下对常见的静态后缀进行排除、然后进行检查
+            String urlSuffix = new HttpUrlInfo(currUrl).getSuffix();
+            if (!isEqualsOneKey(urlSuffix, GLOBAL_MATCH_BLOCK_SUFFIX, false)){
+                print_debug(String.format("当前进入粗略匹配模式 ON Headers: [%s->%s] NOT IN [%s]...",currUrl, urlSuffix, GLOBAL_MATCH_BLOCK_SUFFIX));
+                String receivedHeaders = concatHeaders(params.getHeadersEx().getHeaders());
+                handleLoginStatus(currUrl, receivedHeaders, true);
+            }
         }
     }
 
@@ -344,14 +356,18 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
             // 检查是否为精准匹配模式
             if (this.matchLoginUrl && this.loginActualUrl != null) {
                 if (isSimilarLinkAndMethod(currUrl, this.loginActualUrl, currMethod, this.loginActualMethod)) {
-                    print_debug("当前为精准匹配模式...");
-                    handleLoginStatus(currUrl, new String(receivedParams.getData(), charset), true, false);
+                    print_debug(String.format("当前进入精准匹配模式 ON body: [%s] [%s]...", currMethod, currUrl));
+                    String receiveData = new String(receivedParams.getData(), charset);
+                    if (receiveData.contains("GB2312")) receiveData = new String(receivedParams.getData(), "GB2312");
+                    handleLoginStatus(currUrl, receiveData, false);
                 }
             } else {
                 String urlSuffix = new HttpUrlInfo(currUrl).getSuffix();
-                if (isEqualsOneKey(urlSuffix, GLOBAL_MATCH_BLOCK_SUFFIX, true)){
-                    print_debug("当前为粗略匹配模式...");
-                    handleLoginStatus(currUrl, new String(receivedParams.getData(), charset), false, false);
+                if (!isEqualsOneKey(urlSuffix, GLOBAL_MATCH_BLOCK_SUFFIX, false)){
+                    String receiveData = new String(receivedParams.getData(), charset);
+                    if (receiveData.contains("GB2312")) receiveData = new String(receivedParams.getData(), "GB2312");
+                    print_debug(String.format("当前进入粗略匹配模式 ON body: [%s->%s] NOT IN [%s]...",currUrl, urlSuffix, GLOBAL_MATCH_BLOCK_SUFFIX));
+                    handleLoginStatus(currUrl, receiveData, false);
                 }
             }
         } catch (UnsupportedEncodingException e) {
@@ -360,21 +376,7 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
         }
     }
 
-    public void checkLoginStatusOnHeaders(String currUrl, Constant.HttpMethod currMethod, String receivedHeaders) {
-        // 检查是否为精准匹配模式
-        if (this.matchLoginUrl && this.loginActualUrl != null) {
-            if (isSimilarLinkAndMethod(currUrl, this.loginActualUrl, currMethod, this.loginActualMethod)) {
-                handleLoginStatus(currUrl, receivedHeaders, true, true);
-            }
-        } else {
-            String urlSuffix = new HttpUrlInfo(currUrl).getSuffix();
-            if (isEqualsOneKey(urlSuffix, GLOBAL_MATCH_BLOCK_SUFFIX, true)){
-                handleLoginStatus(currUrl, receivedHeaders, false, true);
-            }
-        }
-    }
-
-    private void handleLoginStatus(String currUrl, String receiveData, Boolean matchLoginUrl, Boolean isHeader) {
+    private void handleLoginStatus(String currUrl, String receiveData, Boolean isHeader) {
         String foundStrForLoginSuccess = ElementUtils.FoundContainSubString(receiveData, loginSuccessKey);
         String foundStrForLoginFailure = ElementUtils.FoundContainSubString(receiveData, loginFailureKey);
         String foundStrForCaptchaFail = ElementUtils.FoundContainSubString(receiveData, captchaFailKey);
@@ -419,7 +421,7 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
             }
         }
 
-        if (notEmptyStrNum == 0 && matchLoginUrl && !isHeader && isEmptyObj(FXMLDocumentController.CURR_LOGIN_STATUS)){
+        if (notEmptyStrNum == 0 && !isHeader && isEmptyObj(FXMLDocumentController.CURR_LOGIN_STATUS)){
             //printlnErrorOnUIAndConsole(String.format("当前请求[%s]所有响应关键字匹配出错!!\n响应长度:[%s]响应内容:[%s]", currUrl, receive.length(), receive));
             printlnErrorOnUIAndConsole(String.format("当前请求[%s]响应关键字匹配失败!!响应长度:[%s]", currUrl, receiveData.length()));
         }

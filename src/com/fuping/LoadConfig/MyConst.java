@@ -12,7 +12,7 @@ import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class MyConst {
     //设置配置参数名称
-    public static String globalProgramVersion = "NOVASEC 3.9.2 20241225" ;
+    public static String globalProgramVersion = "NOVASEC 3.9.3 20241228" ;
 
     // 私有静态成员变量，用于保存单例实例
     private static MyConst MyConstInstance;
