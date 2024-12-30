@@ -9,6 +9,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 app = Flask(__name__)
 app.config['DEBUG'] = True
 ocr = ddddocr.DdddOcr()
+# 内置有两套ocr模型，默认情况下不会自动切换，需要在初始化ddddocr的时候通过参数进行切换
 
 
 @app.route('/', methods=["POST"])

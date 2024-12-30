@@ -163,8 +163,6 @@ public class FXMLDocumentController implements Initializable {
 
     //识别验证码的函数, 便于合并
     private String identCaptcha(boolean remoteIdentFlag, String imagePath, byte[] imageBytes){
-        if (!remoteIdentFlag) printlnInfoOnUIAndConsole("已选择本地验证码识别模式....");
-
         //获取验证码筛选条件
         String ident_format_length = this.bro_id_ident_format_length_text.getText(); //期望长度
         String ident_format_regex = this.bro_id_ident_format_regex_text.getText(); //期望格式
@@ -223,9 +221,9 @@ public class FXMLDocumentController implements Initializable {
                 } else {
                     captcha_indent_text = localeIdentCaptcha(imageBytes, ident_format_regex, ident_format_length, GLOBAL_LOCALE_TESS_DATA_NAME);
                 }
-                printlnDebugOnUIAndConsole(String.format("验证码 本地识别结果: [%s]", captcha_indent_text));
+                printlnInfoOnUIAndConsole(String.format("验证码 本地识别结果: [%s]", captcha_indent_text));
             } catch (Exception e) {
-                printlnErrorOnUIAndConsole(String.format("验证码 本地识别出错: [%s]", e.getMessage()));
+                printlnInfoOnUIAndConsole(String.format("验证码 本地识别出错: [%s]", e.getMessage()));
                 e.printStackTrace();
             }
         }
