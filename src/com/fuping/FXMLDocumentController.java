@@ -162,7 +162,9 @@ public class FXMLDocumentController implements Initializable {
     private boolean executeJavaScriptMode = false;
 
     //识别验证码的函数, 便于合并
-    private String identCaptcha(boolean remoteIdent, String imagePath, byte[] imageBytes){
+    private String identCaptcha(boolean remoteIdentFlag, String imagePath, byte[] imageBytes){
+        if (!remoteIdentFlag) printlnInfoOnUIAndConsole("已选择本地验证码识别模式....");
+
         //获取验证码筛选条件
         String ident_format_length = this.bro_id_ident_format_length_text.getText(); //期望长度
         String ident_format_regex = this.bro_id_ident_format_regex_text.getText(); //期望格式
@@ -171,7 +173,7 @@ public class FXMLDocumentController implements Initializable {
         //记录验证码识别结果
         String captcha_indent_text = null;
         //远程识别模式
-        if(remoteIdent){
+        if(remoteIdentFlag){
             //获取是被接口信息接口URL
             String remote_ident_url_text = this.bro_id_remote_ident_url_text.getText().trim();
             if (isEmptyIfStr(remote_ident_url_text)){
@@ -563,7 +565,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML //测试验证码识别功能是否正常
     public void bro_id_remote_ident_test_run(ActionEvent event) {
         //获取识别方式
-        boolean remoteIdent = this.bro_id_yzm_remote_ident_radio.isSelected();
+        boolean remoteIdentFlag = this.bro_id_yzm_remote_ident_radio.isSelected();
 
         //获取验证码输入URL的内容
         String bro_captcha_url_text = this.bro_id_captcha_actual_url_text.getText().trim();
@@ -577,7 +579,7 @@ public class FXMLDocumentController implements Initializable {
             public void run() {
                 String imagePath = LoadImageToFile(bro_captcha_url_text, "TestRemote.jpg");
                 printlnDebugOnUIAndConsole(String.format("Stored Image [%s] To [%s]", bro_captcha_url_text, imagePath));
-                identCaptcha(remoteIdent, imagePath, null);
+                identCaptcha(remoteIdentFlag, imagePath, null);
             }
         }).start();
     }
@@ -884,7 +886,8 @@ public class FXMLDocumentController implements Initializable {
                                 }
 
                                 //开始验证码识别
-                                String captchaText = identCaptcha(bro_id_yzm_remote_ident_radio.isSelected(), null, fxmlInstance.captchaPictureData);
+                                boolean remoteIdentFlag = bro_id_yzm_remote_ident_radio.isSelected();
+                                String captchaText = identCaptcha(remoteIdentFlag, null, fxmlInstance.captchaPictureData);
                                 //判断验证码 是否是否正确
                                 if(isEmptyIfStr(captchaText)){
                                     printlnErrorOnUIAndConsole(String.format("识别验证码失败 (结果为空) 重新测试...", captchaText));
