@@ -1,2 +1,0 @@
-python3 xiapao_server.py
-pause
