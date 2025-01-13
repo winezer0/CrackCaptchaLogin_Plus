@@ -1,0 +1,2 @@
+python3 xiapao_update.py
+pause
