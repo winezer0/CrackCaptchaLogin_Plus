@@ -1,25 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
-from collections import deque
-
-from flask import Flask, request, jsonify, render_template_string
 import base64
-import json
-import ddddocr
-from urllib.parse import parse_qs
-from PIL import ImageFile
-import requests
-import time
+import os
 import re
+import time
+from collections import deque
+from urllib.parse import parse_qs
+
+import ddddocr
+import requests
+from PIL import ImageFile
+from flask import Flask, request, jsonify, render_template_string
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 app = Flask(__name__)
-count = 50  # 保存多少个验证码及结果
-ocr = ddddocr.DdddOcr()
+
+# ocr = ddddocr.DdddOcr()
+ocr = ddddocr.DdddOcr(beta=True)
 
 LOG_FILE = 'temp/log.txt'
+LOG_COUNT = 50  # 保存多少个验证码及结果
 
 
 @app.route('/')
@@ -48,7 +49,7 @@ def index():
 
 
 @app.route('/imgurl', methods=['POST'])
-def imgurl():
+def img_url_ocr():
     req_datas = request.data.decode()
     json_req_datas = {k: v[0] for k, v in parse_qs(req_datas).items()}
 
@@ -114,36 +115,16 @@ def imgurl():
             return jsonify({"result": ocr_text})
 
         # 简单判断当前验证码数据格式
-        if re.findall('"\s*:\s*.?"', CAPTCHA):
-            print("json格式")
-            CAPTCHA = CAPTCHA.split('"')
-            CAPTCHA.sort(key=lambda i: len(i), reverse=True)
-            CAPTCHA = CAPTCHA[0].split(',')
-            CAPTCHA.sort(key=lambda i: len(i), reverse=True)
-            CAPTCHA_base64 = CAPTCHA[0]
-            text_img = False
-        elif re.findall('data:image/\D*;base64,', CAPTCHA):
-            print("base64格式")
-            CAPTCHA = CAPTCHA.split(',')
-            CAPTCHA.sort(key=lambda i: len(i), reverse=True)
-            CAPTCHA_base64 = CAPTCHA[0]
-            text_img = False
-        else:
-            print("图片格式")
-            text_img = True
+        img_is_bin, captcha_base64 = guess_captcha_format(CAPTCHA)
 
         # 保存验证码图片
-        img_name = time.time()
-        img_bytes = response.content if text_img else base64.b64decode(CAPTCHA_base64)
+        img_bytes = response.content if img_is_bin else base64.b64decode(captcha_base64)
 
         # 进行验证码识别
-        ocr.set_ranges(int(xp_set_ranges))
-        ocr_result = ocr.classification(img_bytes, probability=True)
-        ocr_text = "".join(ocr_result['charsets'][i.index(max(i))] for i in ocr_result['probability'])
-        print(f'识别结果:{ocr_text}')
-
+        img_time = time.time()
+        ocr_text = ddddocr_ocr(img_bytes, xp_set_ranges)
         # 保存最新count个的验证码及识别结果
-        save_latest_entries(img_name, img_bytes, ocr_text, xp_type, count=count)
+        save_latest_entries(img_bytes, ocr_text, img_time, xp_type, count=LOG_COUNT)
         return ocr_text, 200
 
     except Exception as error:
@@ -151,7 +132,37 @@ def imgurl():
         return error, 500
 
 
-def save_latest_entries(img_name, img_bytes, ocr_text,  xp_type, count=count):
+def guess_captcha_format(CAPTCHA):
+    img_is_bin = True
+    captcha_base64 = None
+    if re.findall('"\s*:\s*.?"', CAPTCHA):
+        print("img data is [base64 json] format")
+        CAPTCHA = CAPTCHA.split('"')
+        CAPTCHA.sort(key=lambda i: len(i), reverse=True)
+        CAPTCHA = CAPTCHA[0].split(',')
+        CAPTCHA.sort(key=lambda i: len(i), reverse=True)
+        captcha_base64 = CAPTCHA[0]
+        img_is_bin = False
+    elif re.findall('data:image/\D*;base64,', CAPTCHA):
+        print("img data is [base64] format")
+        CAPTCHA = CAPTCHA.split(',')
+        CAPTCHA.sort(key=lambda i: len(i), reverse=True)
+        captcha_base64 = CAPTCHA[0]
+        img_is_bin = False
+    else:
+        print("img data is [bin] format")
+    return img_is_bin, captcha_base64
+
+
+def ddddocr_ocr(img_bytes, xp_set_ranges):
+    ocr.set_ranges(int(xp_set_ranges))
+    ocr_result = ocr.classification(img_bytes, probability=True)
+    ocr_text = "".join(ocr_result['charsets'][i.index(max(i))] for i in ocr_result['probability'])
+    print(f'识别结果:{ocr_text}')
+    return ocr_text
+
+
+def save_latest_entries(img_bytes, ocr_text, img_time, xp_type, count=LOG_COUNT):
     log_entry_format = '<tr align=center><td><img src="data:image/png;base64,%s"/></td><td>%s</td><td>%s</td><td>%s</td></tr>\n'
 
     # 确保日志文件所在的目录存在
@@ -171,7 +182,7 @@ def save_latest_entries(img_name, img_bytes, ocr_text,  xp_type, count=count):
     new_entry = log_entry_format % (
         base64.b64encode(img_bytes).decode("utf-8"),
         ocr_text,
-        time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(img_name))),
+        time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(img_time))),
         xp_type
     )
 
