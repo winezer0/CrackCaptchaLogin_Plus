@@ -1,2 +1,0 @@
-python ddddocr_api_simple.py
-pause
