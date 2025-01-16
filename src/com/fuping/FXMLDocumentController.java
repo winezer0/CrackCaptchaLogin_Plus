@@ -740,6 +740,8 @@ public class FXMLDocumentController implements Initializable {
                         boolean occurAccessUrlError = false;
                         //记录本次循环的错误次数
                         Integer localEleErrorCounts = 0;
+                        //提交等待时间 由于需要动态变化 因此需要移动到循环外面
+                        Integer bro_submit_fixed_wait_time = fxmlInstance.bro_id_submit_fixed_wait_time_combo.getValue();
                         //遍历账号密码字典
                         for (int index = 0; index < globalUserPassPairsArray.length;) {
                             // 记录程序开始时间
@@ -768,8 +770,6 @@ public class FXMLDocumentController implements Initializable {
 
                             //请求间隔设置
                             Integer bro_login_page_wait_time = fxmlInstance.bro_id_login_page_wait_time_combo.getValue();
-                            //提交等待时间
-                            Integer bro_submit_fixed_wait_time = fxmlInstance.bro_id_submit_fixed_wait_time_combo.getValue();
 
                             //设置初始化Cookies字符串 用于满足Cookie不存在时不能直接访问登录页面的情况
                             if (index == 0 && GLOBAL_BROWSER_INIT_COOKIES != null && !GLOBAL_BROWSER_INIT_COOKIES.trim().isEmpty()){
