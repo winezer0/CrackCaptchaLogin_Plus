@@ -127,7 +127,7 @@
                                  </HBox>
                                  <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="108.0" spacing="2.0">
                                     <children>
-                                       <Label prefHeight="23.0" prefWidth="108.0" text="实际登录包URL" />
+                                       <Label prefHeight="23.0" prefWidth="108.0" text="响应匹配URL" />
                                        <ComboBox fx:id="bro_id_login_actual_method_combo" prefHeight="30.0" prefWidth="108.0" promptText="请求方法">
                                           <items>
                                              <FXCollections fx:factory="observableArrayList">
@@ -167,7 +167,7 @@
                                           </items>
                                        </ComboBox>
                                        <CheckBox fx:id="bro_id_exclude_history_check" mnemonicParsing="true" prefHeight="23.0" prefWidth="108.0" text="历史爆破过滤" />
-                                       <CheckBox fx:id="bro_id_store_unknown_status_check" mnemonicParsing="false" prefHeight="23.0" prefWidth="108.0" text="保存异常状态"/>
+                                       <CheckBox fx:id="bro_id_store_unknown_status_check" mnemonicParsing="false" prefHeight="23.0" prefWidth="108.0" text="保存未知状态"/>
                                     </children>
                                     <padding>
                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
