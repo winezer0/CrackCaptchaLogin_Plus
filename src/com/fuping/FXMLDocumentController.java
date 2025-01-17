@@ -143,6 +143,7 @@ public class FXMLDocumentController implements Initializable {
     public static byte[] captchaPictureData; //存储验证码数据
     public static String CURR_LOADING_STATUS; //记录当前页面加载状态
     public static String CURR_LOGIN_STATUS; //记录当前登录爆破加载状态
+    public static boolean Trigger_Redirection=false; //爆破过程中触发重定向
 
     private List<String> login_about_urls = null;  //存储当前URL相关的多个URl
     private String login_access_url = null;  //设置当前登录url的全局变量用于后续调用
@@ -963,7 +964,7 @@ public class FXMLDocumentController implements Initializable {
                                     //继续等待
                                     Thread.sleep(GLOBAL_SUBMIT_AUTO_WAIT_INTERVAL);
                                 }
-                            } else {
+                            } else  {
                                 Thread.sleep( bro_submit_fixed_wait_time>0 ? bro_submit_fixed_wait_time : 2000);
                             }
 
@@ -981,7 +982,8 @@ public class FXMLDocumentController implements Initializable {
                             int cur_length = browser.getHTML().length();
 
                             //判断是否跳转
-                            boolean isPageForward = !urlRemoveQuery(login_access_url).equalsIgnoreCase(urlRemoveQuery(cur_url));
+                            boolean isPageForward = Trigger_Redirection || !urlRemoveQuery(login_access_url).equalsIgnoreCase(urlRemoveQuery(cur_url));
+                            Trigger_Redirection = false; //重置全局重定向标记状态
                             //对于所有状态都进行日志记录
                             String title = "是否跳转,登录URL,测试账号,测试密码,跳转URL,网页标题,内容长度,爆破状态,加载状态";
                             MyFileUtils.writeTitleToFile(globalCrackLogRecodeFilePath, title);
@@ -1058,10 +1060,13 @@ public class FXMLDocumentController implements Initializable {
                                     index ++;
                                 } else {
                                     //响应状态已更新为未知状态，表名已经匹配过，但是没有正常匹配
-                                    if ( CURR_LOADING_STATUS.contains(LOADING_UNKNOWN.name())){
-                                        if (bro_id_store_unknown_status_check.isSelected()){
+                                    if (CURR_LOADING_STATUS.contains(LOADING_UNKNOWN.name())||Trigger_Redirection){
+                                        if (bro_id_store_unknown_status_check.isSelected()||Trigger_Redirection){
                                             //进行爆破历史记录、不对未知状态加载的数据进行重复爆破
                                             MyFileUtils.writeUserPassPairToFile(globalCrackHistoryFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
+                                            //对于触发了重定向的数据要进行保存,大概率是登陆成功了
+                                            if (Trigger_Redirection)
+                                                printlnInfoOnUIAndConsole("[!] 触发未知状态及重定向, 可能登录成功...");
                                         }
                                         MyFileUtils.writeUserPassPairToFile(globalUnknownStatusFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
                                         printlnErrorOnUIAndConsole(String.format("保存未知状态(%s) :->\n" +
@@ -1077,7 +1082,6 @@ public class FXMLDocumentController implements Initializable {
                                                 CURR_LOADING_STATUS, CURR_LOGIN_STATUS
                                         ));
                                         //对统计计数进行增加
-                                        index ++;
                                     }  else {
                                         //对于其他的未知状态,进行下一个账号密码测试
                                         MyFileUtils.writeUserPassPairToFile(globalUnknownStatusFilePath, GLOBAL_PAIR_SEPARATOR, userPassPair);
@@ -1101,8 +1105,8 @@ public class FXMLDocumentController implements Initializable {
                                         }
 
                                         //对于未知加载状态的数据进行跳过，但是不保存，防止死循环的发生
-                                        index ++;
                                     }
+                                    index ++;
                                 }
                             }
 
@@ -1123,9 +1127,12 @@ public class FXMLDocumentController implements Initializable {
                         }else if (e.getMessage().contains("Failed to send message")) {
                             stopCrackStatus=false;
                             printlnDebugOnUIAndConsole("发生已知异常[Failed to send message !!!] | 即将重试...");
+                        }else if (e.getMessage().contains("Failed to send message")) {
+                            stopCrackStatus=false;
+                            printlnDebugOnUIAndConsole("发生已知异常[Failed to send message !!!] | 即将重试...");
                         } else {
                             // 其他类型的 IllegalStateException
-                            stopCrackStatus=GLOBAL_UNKNOWN_ERROR_NOT_STOP;
+                            stopCrackStatus=!GLOBAL_UNKNOWN_ERROR_NOT_STOP;
                             e.printStackTrace();
                             printlnErrorOnUIAndConsole(String.format("发生未知异常:[%s]|StopCrack:[%s]", e.getMessage(), stopCrackStatus));
                         }

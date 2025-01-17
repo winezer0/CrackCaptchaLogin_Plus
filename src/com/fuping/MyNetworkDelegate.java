@@ -33,6 +33,7 @@ import static com.fuping.LoadConfig.Constant.LoadingStatus.LOADING_FINISH;
 import static com.fuping.LoadConfig.Constant.LoginStatus.*;
 import static com.fuping.LoadConfig.MyConst.GLOBAL_MATCH_BLOCK_SUFFIX;
 import static com.fuping.PrintLog.PrintLog.print_debug;
+import static com.fuping.PrintLog.PrintLog.print_info;
 
 public class MyNetworkDelegate extends DefaultNetworkDelegate {
 
@@ -42,10 +43,10 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
     private String captchaActualUrl;  //验证码请求包URL
     private Constant.HttpMethod captchaActualMethod;  //验证码请求包URL的请求方法
 
-    private String loginActualUrl; //登录包请求URL
-    private Constant.HttpMethod loginActualMethod; //登录包请求URL的请求方法
+    private String matchRespUrl; //登录包请求URL
+    private Constant.HttpMethod matchRespMethod; //登录包请求URL的请求方法
 
-    private boolean matchLoginUrl;
+    private boolean onlyMatchRespUrl;  //仅匹配指定URL的响应
     //private long current_id;
 
     private byte[] tmpCaptchaBytes = new byte[0]; // 使用byte数组代替Appendable
@@ -58,24 +59,23 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
 
     /**
      * @param captchaActualUrl 验证码相关URL 支持正则格式
-     * @param loginActualUrl   登录包相关URL 支持正则格式
-     * @param matchLoginUrl     是否匹配登录包URL 否的话在所有请求中都取查找登录匹配结果关键字
+     * @param matchRespUrl   登录包相关URL 支持正则格式
+     * @param onlyMatchRespUrl 是否仅匹配指定URL的响应 否的话在所有请求中都取查找登录匹配结果关键字
      */
     public MyNetworkDelegate(String captchaActualUrl, Constant.HttpMethod captchaActualMethod,
-                             String loginActualUrl, Constant.HttpMethod loginActualMethod,
-                             boolean matchLoginUrl, String captchaFailKey, String loginFailureKey, String loginSuccessKey)
+                             String matchRespUrl, Constant.HttpMethod matchRespMethod,
+                             boolean onlyMatchRespUrl, String captchaFailKey, String loginFailureKey, String loginSuccessKey)
     {
         this.captchaActualUrl = captchaActualUrl;
         this.captchaActualMethod = captchaActualMethod;
-        this.loginActualUrl = loginActualUrl;
-        this.loginActualMethod = loginActualMethod;
 
-        this.matchLoginUrl = matchLoginUrl;
+        this.onlyMatchRespUrl = onlyMatchRespUrl;
+        this.matchRespUrl = matchRespUrl;
+        this.matchRespMethod = matchRespMethod;
 
         this.captchaFailKey = captchaFailKey;
         this.loginFailureKey = loginFailureKey;
         this.loginSuccessKey = loginSuccessKey;
-
     }
 
 
@@ -165,9 +165,9 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
         }
 
         //部分情况下需要从响应头匹配 Location 字段来判断是否成功登录
-        if(matchLoginUrl && this.loginActualUrl != null){
+        if(onlyMatchRespUrl && this.matchRespUrl != null){
             //在精准模式进行响应头匹配
-            if (isSimilarLinkAndMethod(currUrl, this.loginActualUrl, currMethod, this.loginActualMethod)){
+            if (isSimilarLinkAndMethod(currUrl, this.matchRespUrl, currMethod, this.matchRespMethod)){
                 print_debug(String.format("当前进入精准匹配模式 ON Headers: [%s] [%s]...", currMethod, currUrl));
                 String receivedHeaders = concatHeaders(params.getHeadersEx().getHeaders());
                 handleLoginStatus(currUrl, receivedHeaders, true);
@@ -193,7 +193,7 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
             //print_debug(String.format("验证码URL请求完成 onHeadersReceived: %s", currUrl));
         }
 
-        if (isSimilarLinkAndMethod(currUrl, this.loginActualUrl, currMethod, this.loginActualMethod)){
+        if (isSimilarLinkAndMethod(currUrl, this.matchRespUrl, currMethod, this.matchRespMethod)){
             print_debug(String.format("登陆包URL请求完成 onHeadersReceived: %s", currUrl));
             //此处应该可以更新加载状态为 已完成  FXMLDocumentController.CURR_LOADING_STATUS = LOADING_FINISH.name();
         }
@@ -203,6 +203,8 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
     //在浏览器准备跟随重定向之前调用
     public void onBeforeRedirect(BeforeRedirectParams params) {
         super.onBeforeRedirect(params);
+        FXMLDocumentController.Trigger_Redirection = true;
+        print_info(String.format("[*] 触发重定向:%s -> %s",params.getURL(), params.getNewURL()));
     }
 
     @Override
@@ -354,8 +356,8 @@ public class MyNetworkDelegate extends DefaultNetworkDelegate {
                 charset = "UTF-8"; // 使用大写的 UTF-8 作为标准
             }
             // 检查是否为精准匹配模式
-            if (this.matchLoginUrl && this.loginActualUrl != null) {
-                if (isSimilarLinkAndMethod(currUrl, this.loginActualUrl, currMethod, this.loginActualMethod)) {
+            if (this.onlyMatchRespUrl && this.matchRespUrl != null) {
+                if (isSimilarLinkAndMethod(currUrl, this.matchRespUrl, currMethod, this.matchRespMethod)) {
                     print_debug(String.format("当前进入精准匹配模式 ON body: [%s] [%s]...", currMethod, currUrl));
                     String receiveData = new String(receivedParams.getData(), charset);
                     if (receiveData.contains("GB2312")) receiveData = new String(receivedParams.getData(), "GB2312");
