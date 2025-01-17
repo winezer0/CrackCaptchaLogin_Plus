@@ -217,7 +217,7 @@
                                        <CheckBox fx:id="bro_id_submit_auto_wait_check" mnemonicParsing="false" onAction="#change_submit_auto_wait_action"  prefHeight="23.0" prefWidth="108.0" text="自动等待模式" />
                                        <CheckBox fx:id="bro_id_use_browser_proxy" mnemonicParsing="false" onAction="#change_browser_proxy_action" prefHeight="23.0" prefWidth="108.0" text="代理浏览器"/>
                                        <CheckBox fx:id="bro_id_js_mode_check" mnemonicParsing="false" onAction="#change_js_mode_action" prefHeight="23.0" prefWidth="108.0" text="JS定位模式" />
-                                       <CheckBox fx:id="bro_id_match_login_url_check" mnemonicParsing="false" onAction="#change_match_login_url_action" prefHeight="23.0" prefWidth="108.0" text="仅匹配登录包" />
+                                       <CheckBox fx:id="bro_id_match_login_url_check" mnemonicParsing="false" onAction="#change_match_login_url_action" prefHeight="23.0" prefWidth="108.0" text="仅匹配指定包" />
                                        <CheckBox fx:id="bro_id_ident_captcha_switch_check" mnemonicParsing="false" onAction="#captcha_identify_action" prefHeight="23.0" prefWidth="108.0" text="识别验证码"/>
                                        <CheckBox fx:id="bro_id_show_browser_check" mnemonicParsing="true" onAction="#show_browser_action" prefHeight="23.0" prefWidth="108.0" text="显示浏览器" />
                                     </children>
