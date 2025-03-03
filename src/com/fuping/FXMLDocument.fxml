@@ -34,6 +34,32 @@
                               <VBox spacing="2.0" VBox.vgrow="ALWAYS">
                                  <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="0.0" spacing="2.0">
                                     <children>
+                                       <Label prefHeight="23.0" prefWidth="108.0" text="预点击操作" />
+                                       <ComboBox fx:id="bro_id_pre_click_ele_type_combo" prefHeight="30.0" prefWidth="108.0" promptText="定位方式">
+                                          <items>
+                                             <FXCollections fx:factory="observableArrayList">
+                                                <String fx:value="ID" />
+                                                <String fx:value="NAME" />
+                                                <String fx:value="CLASS" />
+                                                <String fx:value="CSS" />
+                                                <String fx:value="XPATH" />
+                                             </FXCollections>
+                                          </items>
+                                       </ComboBox>
+                                       <TextField fx:id="bro_id_pre_click_ele_text" promptText="预点击元素定位信息[暂未完成]" text="" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                    <VBox.margin>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </VBox.margin>
+                                    <padding>
+                                       <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                 </HBox>
+                              </VBox>
+                              <Separator prefWidth="200.0" />
+                              <VBox spacing="2.0" VBox.vgrow="ALWAYS">
+                                 <HBox alignment="CENTER_LEFT" prefHeight="12.0" prefWidth="0.0" spacing="2.0">
+                                    <children>
                                        <Label prefHeight="23.0" prefWidth="108.0" text="识别账号输入框" />
                                        <ComboBox fx:id="bro_id_name_box_ele_type_combo" prefHeight="30.0" prefWidth="108.0" promptText="定位方式">
                                           <items>

@@ -12,7 +12,7 @@ import static com.fuping.PrintLog.PrintLog.print_debug;
 
 public class MyConst {
     //设置配置参数名称
-    public static String globalProgramVersion = "NOVASEC 3.9.3 20241228" ;
+    public static String globalProgramVersion = "NOVASEC 3.9.5 20250303" ;
 
     // 私有静态成员变量，用于保存单例实例
     private static MyConst MyConstInstance;
@@ -56,6 +56,9 @@ public class MyConst {
     public static String default_login_access_url = null;
     public static String default_login_actual_url = null;  //登录包的实际请求URL
     public static Constant.HttpMethod default_login_actual_method = null;  //登录包的实际请求方法
+
+    public static String default_pre_click_ele_value = null;
+    public static Constant.EleFindType default_pre_click_ele_type = null;
 
     public static String default_name_box_ele_value = null;
     public static Constant.EleFindType default_name_box_ele_type = null;
@@ -154,6 +157,9 @@ public class MyConst {
         default_login_access_url = configReader.getString("login_access_url", "http://127.0.0.1/demo/index.php/Home/Login/login.html");
         default_login_actual_url = configReader.getString("login_actual_url", null);
         default_login_actual_method = Constant.HttpMethod.fromString(configReader.getString("login_actual_method", POST.name()));
+
+        default_pre_click_ele_value = configReader.getString("pre_click_ele_value", "");
+        default_pre_click_ele_type = Constant.EleFindType.fromString(configReader.getString("pre_click_ele_type", XPATH.name()));
 
         default_name_box_ele_value = configReader.getString("name_box_ele_value", "username");
         default_name_box_ele_type = Constant.EleFindType.fromString(configReader.getString("name_box_ele_type", XPATH.name()));

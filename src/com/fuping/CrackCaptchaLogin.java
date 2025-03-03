@@ -48,7 +48,7 @@ public class CrackCaptchaLogin extends Application {
         Parent root = loader.load();
 
         primaryStage.setScene(new Scene(root, 1000, 700));
-        primaryStage.setTitle(String.format("小米范验证码登录爆破工具(%s)", globalProgramVersion));
+        primaryStage.setTitle(String.format("Crack Captcha Login By Browser (%s)", globalProgramVersion));
         // 确保 Stage 是可调整大小的
         primaryStage.setResizable(true);
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icon.jpg")));

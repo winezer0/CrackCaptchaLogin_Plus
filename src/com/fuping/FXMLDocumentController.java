@@ -4,7 +4,6 @@ import com.fuping.BrowserUtils.MyDialogHandler;
 import com.fuping.CommonUtils.ElementUtils;
 import com.fuping.CommonUtils.MyFileUtils;
 import com.fuping.CommonUtils.SystemUtilization;
-import com.fuping.LoadConfig.Constant;
 import com.fuping.LoadDict.UserPassPair;
 import com.teamdev.jxbrowser.chromium.Callback;
 import com.teamdev.jxbrowser.chromium.*;
@@ -86,6 +85,11 @@ public class FXMLDocumentController implements Initializable {
     private TextField bro_id_success_regex_text;
     @FXML
     private TextField bro_id_failure_regex_text;
+
+    @FXML
+    private ComboBox<String> bro_id_pre_click_ele_type_combo;
+    @FXML
+    private TextField bro_id_pre_click_ele_text;
 
     //浏览器设置相关
     @FXML
@@ -467,6 +471,12 @@ public class FXMLDocumentController implements Initializable {
         this.bro_id_login_actual_method_combo.setTooltip(new Tooltip("登录包的实际请求方法"));
 
         //设置登录框
+        setWithCheck(this.bro_id_pre_click_ele_text, default_pre_click_ele_value);
+        this.bro_id_pre_click_ele_text.setTooltip(new Tooltip("预点击元素定位方式和对应值"));
+        setWithCheck(this.bro_id_pre_click_ele_type_combo, default_pre_click_ele_type.name());
+        this.bro_id_pre_click_ele_type_combo.setTooltip(new Tooltip("预点击元素定位方式和对应值"));
+
+        //设置登录框
         setWithCheck(this.bro_id_name_box_ele_text, default_name_box_ele_value);
         this.bro_id_name_box_ele_text.setTooltip(new Tooltip("账号框元素定位方式和对应值"));
         setWithCheck(this.bro_id_name_box_ele_type_combo, default_name_box_ele_type.name());
@@ -699,6 +709,10 @@ public class FXMLDocumentController implements Initializable {
             EleFindType bro_id_submit_btn_ele_type = EleFindType.fromString(this.bro_id_submit_btn_ele_type_combo.getValue());
             if (isEmptyIfStr(bro_submit_btn_ele_text)) { this.bro_id_submit_btn_ele_text.requestFocus(); return;}
 
+            //预点击按钮元素 可以为空
+            String bro_pre_click_ele_text = this.bro_id_pre_click_ele_text.getText().trim();
+            EleFindType bro_pre_click_ele_type = EleFindType.fromString(this.bro_id_pre_click_ele_type_combo.getValue());
+
             //检查验证码输入URL的内容
             if (this.bro_id_ident_captcha_switch_check.isSelected()) {
                 //获取验证码URL
@@ -834,6 +848,19 @@ public class FXMLDocumentController implements Initializable {
 
                             //加载URl文档
                             DOMDocument document = browser.getDocument();
+
+                            //进行预点击操作 //不进行错误处理
+                            if (bro_pre_click_ele_text.length()>0){
+                                try {
+                                    Element submitElement = findElementByOption(document, bro_pre_click_ele_text, bro_pre_click_ele_type);
+                                    submitElement.click();
+                                    Thread.sleep(500);
+                                } catch (Exception exception) {
+                                    exception.printStackTrace();
+                                    printlnErrorOnUIAndConsole(String.format("Error For Location:[%s] <--> Action:[%s] <--> Error:[%s]", bro_pre_click_ele_text, bro_pre_click_ele_type, exception.getMessage()));
+                                }
+                            }
+
                             //输入用户名
                             EleFoundStatus eleFoundStatusAction;
                             if (executeJavaScriptMode){
